@@ -6,6 +6,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { v4 as uuidV4 } from 'uuid';
 import { envValidationSchema } from './env-validation-schema';
 import { MongooseModule } from '@nestjs/mongoose';
+import { ExampleModule } from './example/example.module';
 
 @Module({
     imports: [
@@ -32,6 +33,7 @@ import { MongooseModule } from '@nestjs/mongoose';
                 uri: config.getOrThrow('MONGODB_URI'),
             }),
         }),
+        ExampleModule,
     ],
     controllers: [AppController],
     providers: [AppService],
