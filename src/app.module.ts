@@ -4,10 +4,15 @@ import { AppService } from './app.service';
 import { LoggerModule } from 'nestjs-pino';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { v4 as uuidV4 } from 'uuid';
+import { envValidationSchema } from './env-validation-schema';
 
 @Module({
     imports: [
-        ConfigModule.forRoot({ isGlobal: true }),
+        ConfigModule.forRoot({
+            isGlobal: true,
+            validationSchema: envValidationSchema,
+        }),
+
         LoggerModule.forRootAsync({
             inject: [ConfigService],
             useFactory: (config: ConfigService) => {

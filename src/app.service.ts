@@ -8,7 +8,6 @@ export class AppService {
     private readonly logger = new Logger(AppService.name);
 
     getHello(): string {
-        this.logger.debug(`hello world ${this.config.getOrThrow('LOG_LEVEL')}`);
-        return 'Hello World!';
+        return `hello world from ${this.config.getOrThrow('ENV_NAME')}`;
     }
 }
