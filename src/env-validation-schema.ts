@@ -5,4 +5,5 @@ export const envValidationSchema = Joi.object({
     ENV_NAME: Joi.string().required(),
     LOG_PRETTY: Joi.boolean(),
     LOG_LEVEL: Joi.string().required(),
+    MONGODB_URI: Joi.string().required(),
 });
