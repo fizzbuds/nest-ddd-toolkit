@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { ExampleReadModelRepo } from './infrastructure/read-model-repo';
+import { ExampleReadModelRepo } from './infrastructure';
 
 @Injectable()
 export class ExampleQueries {
