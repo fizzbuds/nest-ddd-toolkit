@@ -1,6 +1,6 @@
 import { Body, Controller, Param, Post, Put } from '@nestjs/common';
 import { ExampleCommands } from '../example.commands';
-import { UpdateDtoDto } from './dto/update-dto.dto';
+import { addNameDto } from './dto/add-name.dto';
 
 @Controller('example')
 export class ExampleController {
@@ -12,7 +12,7 @@ export class ExampleController {
     }
 
     @Put(':id/add-name')
-    public async addName(@Param('id') id: string, @Body() { name }: UpdateDtoDto) {
+    public async addName(@Param('id') id: string, @Body() { name }: addNameDto) {
         return await this.exampleCommands.addNameCmd(id, name);
     }
 }
