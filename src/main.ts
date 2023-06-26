@@ -4,6 +4,7 @@ import { Logger } from 'nestjs-pino';
 import { ConfigService } from '@nestjs/config';
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { RequestIdInterceptor } from './common/interceptors';
 
 async function bootstrap() {
     const app = await NestFactory.create(AppModule, { bufferLogs: true });
@@ -18,8 +19,9 @@ async function bootstrap() {
     const openApiDocument = SwaggerModule.createDocument(app, openApiConfig);
     SwaggerModule.setup('api', app, openApiDocument);
 
-    const configService = app.get(ConfigService);
     app.getHttpAdapter().getInstance().disable('x-powered-by');
+    app.useGlobalInterceptors(new RequestIdInterceptor());
+    const configService = app.get(ConfigService);
     await app.listen(configService.getOrThrow('APP_PORT'));
 }
 

@@ -2,10 +2,10 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { LoggerModule } from 'nestjs-pino';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { v4 as uuidV4 } from 'uuid';
 import { envValidationSchema } from './env-validation-schema';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ExampleModule } from './example/example.module';
+import { Id } from './common';
 
 @Module({
     imports: [
@@ -20,7 +20,7 @@ import { ExampleModule } from './example/example.module';
                 return {
                     pinoHttp: {
                         level: config.getOrThrow('LOG_LEVEL'),
-                        genReqId: () => uuidV4(),
+                        genReqId: () => Id.createFromType('req').getString(),
                         transport: config.get('LOG_PRETTY') ? { target: 'pino-pretty' } : undefined,
                     },
                 };
