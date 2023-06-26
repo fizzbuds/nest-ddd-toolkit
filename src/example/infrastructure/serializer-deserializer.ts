@@ -1,6 +1,6 @@
 import { ExampleWriteModel } from './write-model';
 import { ExampleAggregateRoot } from '../domain';
-import { ISerializerDeserializer } from '../../common';
+import { Id, ISerializerDeserializer } from '../../common';
 
 export class ExampleMongoSerializerDeserializer
     implements ISerializerDeserializer<ExampleAggregateRoot, ExampleWriteModel>
@@ -9,7 +9,7 @@ export class ExampleMongoSerializerDeserializer
         return {
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             //@ts-ignore
-            id: aggregate.id,
+            id: aggregate.id.getString(),
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             //@ts-ignore
             name: aggregate.name,
@@ -19,6 +19,6 @@ export class ExampleMongoSerializerDeserializer
     public writeModelToAggregate(writeModel: ExampleWriteModel) {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         //@ts-ignore
-        return new ExampleAggregateRoot(writeModel.id, writeModel.name);
+        return new ExampleAggregateRoot(Id.fromString(writeModel.id), writeModel.name);
     }
 }

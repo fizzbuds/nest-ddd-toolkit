@@ -11,7 +11,7 @@ export class ExampleCommands {
         const exampleAggregateRoot = ExampleAggregateRoot.createEmpty();
         await this.repo.save(exampleAggregateRoot);
 
-        return { exampleId: exampleAggregateRoot.getId() };
+        return { exampleId: exampleAggregateRoot.getId().getString() };
     }
 
     public async addNameCmd(exampleId: string, name: string) {

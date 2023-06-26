@@ -13,7 +13,7 @@ export class ExampleRepoHooks implements IRepoHooks<ExampleAggregateRoot> {
         await this.exampleReadModelRepo.bulkWrite([
             {
                 updateOne: {
-                    filter: { id: aggregate.getId() },
+                    filter: { id: aggregate.getId().getString() },
                     update: { $set: { ...exampleReadModel } },
                     upsert: true,
                 },
@@ -24,6 +24,6 @@ export class ExampleRepoHooks implements IRepoHooks<ExampleAggregateRoot> {
     private composeReadModel(exampleAggregateRoot: ExampleAggregateRoot): ExampleReadModel {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
-        return { id: exampleAggregateRoot.getId(), name: exampleAggregateRoot.name };
+        return { id: exampleAggregateRoot.getId().getString(), name: exampleAggregateRoot.name };
     }
 }

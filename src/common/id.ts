@@ -17,4 +17,9 @@ export class Id {
     getString(): string {
         return `${this.type}_${this.value}`;
     }
+
+    static fromString(idAsString: string) {
+        const strParts = idAsString.split('_');
+        return new Id(strParts[0], strParts[1]);
+    }
 }

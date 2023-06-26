@@ -1,14 +1,14 @@
-import { v4 as uuid } from 'uuid';
+import { Id } from '../../common';
 
 export class ExampleAggregateRoot {
-    private constructor(private id: string, private name?: string) {}
+    private constructor(private id: Id, private name?: string) {}
 
     public addName(name: string) {
         this.name = name;
     }
 
     static createEmpty() {
-        const id = uuid();
+        const id = Id.createFromType('example');
         return new ExampleAggregateRoot(id);
     }
 
