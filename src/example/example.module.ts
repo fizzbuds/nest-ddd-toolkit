@@ -1,5 +1,7 @@
 export const mongoExampleRepoToken = 'MongoExampleRepo';
-
+import { ExampleQueries } from './example.queries';
+import { ExampleReadModelRepo } from './infrastructure/read-model-repo';
+import { ExampleRepoHooks } from './infrastructure/repo-hooks';
 import { Module } from '@nestjs/common';
 import { ExampleController } from './api/example.controller';
 import { Connection } from 'mongoose';
@@ -13,16 +15,20 @@ import { ExampleAggregateRoot } from './domain';
     controllers: [ExampleController],
     providers: [
         ExampleCommands,
+        ExampleRepoHooks,
+        ExampleReadModelRepo,
+        ExampleQueries,
         {
             provide: mongoExampleRepoToken,
-            useFactory: (conn: Connection) => {
+            useFactory: (conn: Connection, exampleRepoHooks: ExampleRepoHooks) => {
                 return new MongoRepo<ExampleAggregateRoot, ExampleWriteModel>(
                     new ExampleMongoSerializerDeserializer(),
                     conn,
                     'example_write_model',
+                    exampleRepoHooks,
                 );
             },
-            inject: [getConnectionToken()],
+            inject: [getConnectionToken(), ExampleRepoHooks],
         },
     ],
 })

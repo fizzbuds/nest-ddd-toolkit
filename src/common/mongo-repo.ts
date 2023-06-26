@@ -2,13 +2,14 @@ import { ISerializerDeserializer } from './serializer-deserializer';
 import { Collection, Connection } from 'mongoose';
 import { IRepoHooks } from './repo-hooks';
 import { Document } from 'mongodb';
+import { OnModuleInit } from '@nestjs/common';
 
 export interface IRepo<A> {
     getById: (id: string) => Promise<A | null>;
     save: (aggregate: A) => Promise<void>;
 }
 
-export class MongoRepo<A, WM extends Document> implements IRepo<A> {
+export class MongoRepo<A, WM extends Document> implements IRepo<A>, OnModuleInit {
     constructor(
         private readonly serializerDeserializer: ISerializerDeserializer<A, WM>,
         private readonly mongoConn: Connection,
@@ -19,6 +20,10 @@ export class MongoRepo<A, WM extends Document> implements IRepo<A> {
     }
 
     private collection: Collection<WM>;
+
+    async onModuleInit() {
+        await this.collection.createIndex({ id: 1 }, { unique: true });
+    }
 
     async save(aggregate: A) {
         const writeModel = this.serializerDeserializer.aggregateToWriteModel(aggregate);

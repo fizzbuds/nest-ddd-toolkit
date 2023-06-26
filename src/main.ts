@@ -19,6 +19,7 @@ async function bootstrap() {
     SwaggerModule.setup('api', app, openApiDocument);
 
     const configService = app.get(ConfigService);
+    app.getHttpAdapter().getInstance().disable('x-powered-by');
     await app.listen(configService.getOrThrow('APP_PORT'));
 }
 
