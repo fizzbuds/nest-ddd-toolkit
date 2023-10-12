@@ -1,17 +1,12 @@
-export const mongoExampleRepoToken = 'MongoExampleRepo';
+export const exampleMongoWriteRepoToken = 'ExampleMongoWriteRepoToken'; // This variable must be defined before imports
 import { ExampleQueries } from './example.queries';
-import {
-    ExampleMongoSerializerDeserializer,
-    ExampleReadModelRepo,
-    ExampleRepoHooks,
-    ExampleWriteModel,
-} from './infrastructure';
+import { ExampleAggregateModel, ExampleMongoSerializer, ExampleReadRepo, ExampleRepoHooks } from './infrastructure';
 import { Module } from '@nestjs/common';
 import { ExampleController } from './api/example.controller';
 import { Connection } from 'mongoose';
 import { getConnectionToken } from '@nestjs/mongoose';
 import { ExampleCommands } from './example.commands';
-import { MongoRepo } from '../common';
+import { MongoAggregateRepo } from '../common';
 import { ExampleAggregateRoot } from './domain';
 
 @Module({
@@ -19,19 +14,25 @@ import { ExampleAggregateRoot } from './domain';
     providers: [
         ExampleCommands,
         ExampleRepoHooks,
-        ExampleReadModelRepo,
         ExampleQueries,
         {
-            provide: mongoExampleRepoToken,
+            provide: exampleMongoWriteRepoToken,
+            inject: [getConnectionToken(), ExampleRepoHooks],
             useFactory: (conn: Connection, exampleRepoHooks: ExampleRepoHooks) => {
-                return new MongoRepo<ExampleAggregateRoot, ExampleWriteModel>(
-                    new ExampleMongoSerializerDeserializer(),
+                return new MongoAggregateRepo<ExampleAggregateRoot, ExampleAggregateModel>(
+                    new ExampleMongoSerializer(),
                     conn,
                     'example_write_model',
                     exampleRepoHooks,
                 );
             },
-            inject: [getConnectionToken(), ExampleRepoHooks],
+        },
+        {
+            provide: ExampleReadRepo,
+            inject: [getConnectionToken()],
+            useFactory: (conn: Connection) => {
+                return new ExampleReadRepo(conn, 'example_read_model');
+            },
         },
     ],
 })

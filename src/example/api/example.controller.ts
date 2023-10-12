@@ -1,7 +1,8 @@
 import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
 import { ExampleCommands } from '../example.commands';
-import { addNameDto } from './dto/add-name.dto';
+import { AddNameDto } from './dto/add-name.dto';
 import { ExampleQueries } from '../example.queries';
+import { GenericId } from '../../common';
 
 @Controller('example')
 export class ExampleController {
@@ -9,12 +10,12 @@ export class ExampleController {
 
     @Post('')
     public async create() {
-        return await this.exampleCommands.createCmd();
+        return (await this.exampleCommands.createCmd()).toString();
     }
 
     @Put(':id/add-name')
-    public async addName(@Param('id') id: string, @Body() { name }: addNameDto) {
-        return await this.exampleCommands.addNameCmd(id, name);
+    public async addName(@Param('id') id: string, @Body() { name }: AddNameDto) {
+        return await this.exampleCommands.addNameCmd(id as unknown as GenericId, name);
     }
 
     @Get(':id')

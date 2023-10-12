@@ -5,7 +5,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { envValidationSchema } from './env-validation-schema';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ExampleModule } from './example/example.module';
-import { Id } from './common';
+import { RequestId } from './common';
 
 @Module({
     imports: [
@@ -20,7 +20,7 @@ import { Id } from './common';
                 return {
                     pinoHttp: {
                         level: config.getOrThrow('LOG_LEVEL'),
-                        genReqId: () => Id.createFromType('req').getString(),
+                        genReqId: () => RequestId.generate().toString(),
                         transport: config.get('LOG_PRETTY') ? { target: 'pino-pretty' } : undefined,
                     },
                 };

@@ -1,20 +1,20 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { ExampleAggregateRoot } from './domain';
-import { IRepo } from '../common';
-import { mongoExampleRepoToken } from './example.module';
+import { GenericId, IAggregateRepo } from '../common';
+import { exampleMongoWriteRepoToken } from './example.module';
 
 @Injectable()
 export class ExampleCommands {
-    constructor(@Inject(mongoExampleRepoToken) private readonly repo: IRepo<ExampleAggregateRoot>) {}
+    constructor(@Inject(exampleMongoWriteRepoToken) private readonly repo: IAggregateRepo<ExampleAggregateRoot>) {}
 
     public async createCmd() {
         const exampleAggregateRoot = ExampleAggregateRoot.createEmpty();
         await this.repo.save(exampleAggregateRoot);
 
-        return { exampleId: exampleAggregateRoot.getId().getString() };
+        return exampleAggregateRoot.getId();
     }
 
-    public async addNameCmd(exampleId: string, name: string) {
+    public async addNameCmd(exampleId: GenericId, name: string) {
         const exampleAggregateRoot = await this.repo.getById(exampleId);
         if (!exampleAggregateRoot) throw new NotFoundException();
 

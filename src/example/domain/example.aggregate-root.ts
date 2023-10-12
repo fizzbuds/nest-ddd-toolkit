@@ -1,18 +1,18 @@
-import { Id } from '../../common';
+import { ExampleId } from './example-id';
 
 export class ExampleAggregateRoot {
-    private constructor(private id: Id, private name?: string) {}
-
-    public addName(name: string) {
-        this.name = name;
-    }
+    constructor(private id: ExampleId, private name?: string) {}
 
     static createEmpty() {
-        const id = Id.createFromType('example');
+        const id = ExampleId.generate();
         return new ExampleAggregateRoot(id);
     }
 
     public getId() {
         return this.id;
+    }
+
+    public addName(name: string) {
+        this.name = name;
     }
 }

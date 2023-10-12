@@ -3,9 +3,10 @@ import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { AppModule } from '../src/app.module';
 
-describe('AppController (e2e)', () => {
+describe('AppController (api)', () => {
     let app: INestApplication;
 
+    // FIXME setup a local database for testing
     beforeEach(async () => {
         const moduleFixture: TestingModule = await Test.createTestingModule({
             imports: [AppModule],
