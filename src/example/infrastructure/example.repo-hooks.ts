@@ -1,11 +1,11 @@
 import { IRepoHooks } from '../../common';
 import { ExampleAggregateRoot } from '../domain';
 import { Injectable } from '@nestjs/common';
-import { ExampleReadModel, ExampleReadRepo } from './example.read-repo';
+import { ExampleQueryRepo, ExampleReadModel } from './example-query-repo.service';
 
 @Injectable()
 export class ExampleRepoHooks implements IRepoHooks<ExampleAggregateRoot> {
-    constructor(private readonly exampleReadModelRepo: ExampleReadRepo) {}
+    constructor(private readonly exampleReadModelRepo: ExampleQueryRepo) {}
 
     public async onSave(aggregate: ExampleAggregateRoot) {
         const exampleReadModel = this.composeReadModel(aggregate);

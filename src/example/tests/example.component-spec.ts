@@ -1,14 +1,15 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { MongoMemoryReplSet } from 'mongodb-memory-server';
-import { Connection } from 'mongoose';
 import { getConnectionToken, MongooseModule } from '@nestjs/mongoose';
 import { ExampleAggregateRoot } from '../domain';
 import { GenericId, MongoAggregateRepo } from '../../common';
-import { ExampleAggregateModel, ExampleMongoSerializer, ExampleReadRepo, ExampleRepoHooks } from '../infrastructure';
+import { ExampleAggregateModel, ExampleMongoSerializer, ExampleQueryRepo, ExampleRepoHooks } from '../infrastructure';
 import { ExampleCommands } from '../example.commands';
 import { ExampleQueries } from '../example.queries';
 import { exampleMongoWriteRepoToken } from '../example.module';
 import { ExampleId } from '../domain/example-id';
+import { Db } from 'mongodb';
+import { Connection } from 'mongoose';
 
 describe('Example Component Test', () => {
     let module: TestingModule;
@@ -43,10 +44,10 @@ describe('Example Component Test', () => {
                 ExampleCommands,
                 ExampleRepoHooks,
                 {
-                    provide: ExampleReadRepo,
+                    provide: ExampleQueryRepo,
                     inject: [getConnectionToken()],
-                    useFactory: (conn: Connection) => {
-                        return new ExampleReadRepo(conn, 'example_read_model');
+                    useFactory: (db: Db) => {
+                        return new ExampleQueryRepo(db, 'example_read_model');
                     },
                 },
                 ExampleQueries,

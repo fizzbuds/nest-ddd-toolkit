@@ -1,7 +1,7 @@
+import { exampleMongoWriteRepoToken } from './example.module';
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { ExampleAggregateRoot } from './domain';
 import { GenericId, IAggregateRepo } from '../common';
-import { exampleMongoWriteRepoToken } from './example.module';
 
 @Injectable()
 export class ExampleCommands {

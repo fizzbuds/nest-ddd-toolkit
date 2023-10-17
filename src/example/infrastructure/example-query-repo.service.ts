@@ -1,5 +1,4 @@
-import { Document } from 'mongoose';
-import { AnyBulkWriteOperation, BulkWriteOptions, Filter, FindOptions } from 'mongodb';
+import { AnyBulkWriteOperation, BulkWriteOptions, Document, Filter, FindOptions } from 'mongodb';
 import { Injectable } from '@nestjs/common';
 import { MongoQueryRepo } from '../../common/infrastructure/mongo-query-repo';
 
@@ -9,7 +8,7 @@ export interface ExampleReadModel {
 }
 
 @Injectable()
-export class ExampleReadRepo extends MongoQueryRepo<ExampleReadModel & Document> {
+export class ExampleQueryRepo extends MongoQueryRepo<ExampleReadModel & Document> {
     protected readonly indexes = [{ indexSpec: { name: 1 } }];
 
     public async getMany() {

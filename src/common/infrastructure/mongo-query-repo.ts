@@ -1,7 +1,5 @@
-import { Collection, Connection, Document } from 'mongoose';
-import { CreateIndexesOptions, IndexDirection, IndexSpecification } from 'mongodb';
+import { Collection, CreateIndexesOptions, Db, Document, IndexDirection, IndexSpecification } from 'mongodb';
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
-import { InjectConnection } from '@nestjs/mongoose';
 import { isEmpty } from 'lodash';
 
 type IndexType<T> = {
@@ -14,12 +12,9 @@ export abstract class MongoQueryRepo<RM extends Document> implements OnModuleIni
     protected readonly collection: Collection<RM>;
     protected abstract readonly indexes: { indexSpec: IndexType<RM>; options?: CreateIndexesOptions }[];
 
-    constructor(
-        @InjectConnection() private readonly mongoConnection: Connection,
-        private readonly collectionName: string,
-    ) {
+    constructor(db: Db, private readonly collectionName: string) {
         // TODO wrap collection with a proxy to log all queries
-        this.collection = mongoConnection.collection<RM>(this.collectionName);
+        this.collection = db.collection<RM>(this.collectionName);
     }
 
     async onModuleInit() {
