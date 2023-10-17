@@ -8,7 +8,6 @@ import { ExampleCommands } from '../example.commands';
 import { ExampleQueries } from '../example.queries';
 import { exampleMongoWriteRepoToken } from '../example.module';
 import { ExampleId } from '../domain/example-id';
-import { Db } from 'mongodb';
 import { Connection } from 'mongoose';
 
 describe('Example Component Test', () => {
@@ -46,8 +45,8 @@ describe('Example Component Test', () => {
                 {
                     provide: ExampleQueryRepo,
                     inject: [getConnectionToken()],
-                    useFactory: (db: Db) => {
-                        return new ExampleQueryRepo(db, 'example_read_model');
+                    useFactory: (conn: Connection) => {
+                        return new ExampleQueryRepo(conn.getClient(), 'example_read_model');
                     },
                 },
                 ExampleQueries,

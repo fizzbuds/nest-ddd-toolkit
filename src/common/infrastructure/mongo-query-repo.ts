@@ -1,4 +1,4 @@
-import { Collection, CreateIndexesOptions, Db, Document, IndexDirection, IndexSpecification } from 'mongodb';
+import { Collection, CreateIndexesOptions, Document, IndexDirection, IndexSpecification, MongoClient } from 'mongodb';
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { isEmpty } from 'lodash';
 
@@ -12,9 +12,9 @@ export abstract class MongoQueryRepo<RM extends Document> implements OnModuleIni
     protected readonly collection: Collection<RM>;
     protected abstract readonly indexes: { indexSpec: IndexType<RM>; options?: CreateIndexesOptions }[];
 
-    constructor(db: Db, private readonly collectionName: string) {
+    constructor(mongoClient: MongoClient, private readonly collectionName: string) {
         // TODO wrap collection with a proxy to log all queries
-        this.collection = db.collection<RM>(this.collectionName);
+        this.collection = mongoClient.db().collection(this.collectionName);
     }
 
     async onModuleInit() {

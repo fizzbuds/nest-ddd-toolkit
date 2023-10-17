@@ -1,5 +1,4 @@
 export const exampleMongoWriteRepoToken = 'ExampleMongoWriteRepoToken'; // This variable must be defined before imports
-import { Db } from 'mongodb';
 import { ExampleQueries } from './example.queries';
 import { ExampleAggregateModel, ExampleMongoSerializer, ExampleQueryRepo, ExampleRepoHooks } from './infrastructure';
 import { Module } from '@nestjs/common';
@@ -31,8 +30,8 @@ import { ExampleAggregateRoot } from './domain';
         {
             provide: ExampleQueryRepo,
             inject: [getConnectionToken()],
-            useFactory: (db: Db) => {
-                return new ExampleQueryRepo(db, 'example_read_model');
+            useFactory: (conn: Connection) => {
+                return new ExampleQueryRepo(conn.getClient(), 'example_read_model');
             },
         },
     ],
