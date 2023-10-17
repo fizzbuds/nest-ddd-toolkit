@@ -34,7 +34,7 @@ describe('Example Component Test', () => {
                     useFactory: (mongoConn: Connection, exampleRepoHooks: ExampleRepoHooks) => {
                         return new MongoAggregateRepo<ExampleAggregateRoot, ExampleAggregateModel>(
                             new ExampleMongoSerializer(),
-                            mongoConn,
+                            mongoConn.getClient(),
                             'example_write_model',
                             exampleRepoHooks,
                         );

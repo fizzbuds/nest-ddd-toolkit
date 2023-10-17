@@ -22,7 +22,7 @@ import { ExampleAggregateRoot } from './domain';
             useFactory: (conn: Connection, exampleRepoHooks: ExampleRepoHooks) => {
                 return new MongoAggregateRepo<ExampleAggregateRoot, ExampleAggregateModel>(
                     new ExampleMongoSerializer(),
-                    conn,
+                    conn.getClient(),
                     'example_write_model',
                     exampleRepoHooks,
                 );

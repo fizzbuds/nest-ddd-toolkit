@@ -1,6 +1,5 @@
-import { Collection, Connection } from 'mongoose';
 import { IRepoHooks } from './repo-hooks';
-import { Document } from 'mongodb';
+import { Collection, Document, MongoClient } from 'mongodb';
 import { OnModuleInit } from '@nestjs/common';
 import { GenericId } from './generic-id';
 import { ISerializer } from './serializer.interface';
@@ -23,11 +22,11 @@ export class MongoAggregateRepo<A, AM extends DocumentWithId> implements IAggreg
 
     constructor(
         private readonly serializer: ISerializer<A, AM>,
-        private readonly mongoConnection: Connection,
+        private readonly mongoClient: MongoClient,
         private readonly collectionName: string,
         private readonly repoHooks?: IRepoHooks<A>,
     ) {
-        this.collection = this.mongoConnection.collection(this.collectionName);
+        this.collection = this.mongoClient.db().collection(this.collectionName);
     }
 
     async onModuleInit() {
@@ -38,7 +37,7 @@ export class MongoAggregateRepo<A, AM extends DocumentWithId> implements IAggreg
         const aggregateModel = this.serializer.aggregateToAggregateModel(aggregate);
         const aggregateModelWithVersion: WithVersion<AM> = { ...aggregateModel, __version: aggregate.__version || 0 };
 
-        const session = await this.mongoConnection.startSession();
+        const session = this.mongoClient.startSession();
 
         try {
             await session.withTransaction(async () => {
