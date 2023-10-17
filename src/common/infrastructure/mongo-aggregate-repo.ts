@@ -35,17 +35,21 @@ export class MongoAggregateRepo<A, AM extends DocumentWithId> implements IAggreg
     }
 
     async save(aggregate: WithOptionalVersion<A>) {
-        const writeModel = this.serializer.aggregateToAggregateModel(aggregate);
-        const writeModelWithId: WithVersion<AM> = { ...writeModel, __version: aggregate.__version || 0 };
+        const aggregateModel = this.serializer.aggregateToAggregateModel(aggregate);
+        const aggregateModelWithVersion: WithVersion<AM> = { ...aggregateModel, __version: aggregate.__version || 0 };
 
         const session = await this.mongoConnection.startSession();
 
         try {
             await session.withTransaction(async () => {
                 await this.collection.updateOne(
-                    { id: writeModel.id, __version: writeModelWithId.__version } as any,
+                    { id: aggregateModel.id, __version: aggregateModelWithVersion.__version } as any,
                     {
-                        $set: { ...writeModelWithId, __version: writeModelWithId.__version + 1, updatedAt: new Date() },
+                        $set: {
+                            ...aggregateModelWithVersion,
+                            __version: aggregateModelWithVersion.__version + 1,
+                            updatedAt: new Date(),
+                        },
                         $setOnInsert: { createdAt: new Date() } as any,
                     },
                     { upsert: true, session, ignoreUndefined: true },
@@ -54,7 +58,9 @@ export class MongoAggregateRepo<A, AM extends DocumentWithId> implements IAggreg
             });
         } catch (e) {
             if (e.code === 11000) {
-                throw new Error(`Cannot save aggregate with id: ${writeModel.id} due to optimistic locking.`);
+                throw new Error(
+                    `Cannot save aggregate with id: ${aggregateModel.id} due to duplicated id, it might be also due to optimistic locking.`,
+                );
             }
             throw e;
         } finally {
@@ -62,6 +68,7 @@ export class MongoAggregateRepo<A, AM extends DocumentWithId> implements IAggreg
         }
     }
 
+    // TODO evaluate to implement getOrThrow
     async getById(id: GenericId): Promise<WithVersion<A> | null> {
         const aggregateModel = await this.collection.findOne({ id: id.toString() } as any);
         if (!aggregateModel) return null;

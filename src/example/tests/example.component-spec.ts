@@ -101,27 +101,74 @@ describe('Example Component Test', () => {
     });
 
     describe('Optimistic Lock', () => {
-        let exampleId: ExampleId;
+        describe('Given a created aggregate', () => {
+            let exampleId: ExampleId;
 
-        beforeEach(async () => {
-            exampleId = await commands.createCmd();
-        });
+            beforeEach(async () => {
+                exampleId = await commands.createCmd();
+            });
 
-        describe('Given a created example', () => {
-            it('should throw when save with old version', async () => {
-                const firstInstance = await aggregateRepo.getById(exampleId);
-                // TODO evaluate to implement getOrThrow
-                if (firstInstance === null) throw new Error('Example not found');
-                firstInstance.addName('Foo');
+            describe('When getting from db the aggregate', () => {
+                it('should return an aggregate with version 1', async () => {
+                    expect(await aggregateRepo.getById(exampleId)).toMatchObject({ __version: 1 });
+                });
+            });
 
-                const secondInstance = await aggregateRepo.getById(exampleId);
-                if (secondInstance === null) throw new Error('Example not found');
-                secondInstance.addName('Bar');
-                await aggregateRepo.save(secondInstance);
+            describe('When creating a new instance with the same id', () => {
+                it('should throw due to unique index on id', async () => {
+                    const newAggregate = new ExampleAggregateRoot(exampleId);
+                    await expect(async () => await aggregateRepo.save(newAggregate)).rejects.toThrowError(
+                        'duplicated id',
+                    );
+                });
+            });
 
-                await expect(async () => await aggregateRepo.save(firstInstance)).rejects.toThrowError(
-                    'optimistic locking',
-                );
+            describe('When saving an aggregate with undefined __version', () => {
+                it('should throw due to optimistic locking', async () => {
+                    const aggregate = await aggregateRepo.getById(exampleId);
+                    if (aggregate === null) throw new Error('Example not found');
+                    aggregate.addName('Foo');
+                    aggregate.__version = undefined!;
+
+                    await expect(async () => await aggregateRepo.save(aggregate)).rejects.toThrowError(
+                        'optimistic locking',
+                    );
+                });
+            });
+
+            describe('When multiple saved aggregate changes', () => {
+                it('should increase the aggregate version', async () => {
+                    const firstInstance = await aggregateRepo.getById(exampleId);
+                    if (firstInstance === null) throw new Error('Example not found');
+                    firstInstance.addName('Foo');
+                    await aggregateRepo.save(firstInstance);
+
+                    const secondInstance = await aggregateRepo.getById(exampleId);
+                    if (secondInstance === null) throw new Error('Example not found');
+                    secondInstance.addName('Bar');
+                    await aggregateRepo.save(secondInstance);
+
+                    const thirdInstance = await aggregateRepo.getById(exampleId);
+                    if (thirdInstance === null) throw new Error('Example not found');
+                    expect(thirdInstance).toMatchObject({ __version: 3 });
+                });
+            });
+
+            describe('When saving an outdated aggregate', () => {
+                it('should throw an optimistic locking error', async () => {
+                    const firstInstance = await aggregateRepo.getById(exampleId);
+                    if (firstInstance === null) throw new Error('Example not found');
+                    firstInstance.addName('Foo');
+
+                    const secondInstance = await aggregateRepo.getById(exampleId);
+                    if (secondInstance === null) throw new Error('Example not found');
+                    secondInstance.addName('Bar');
+                    await aggregateRepo.save(secondInstance);
+
+                    await expect(async () => await aggregateRepo.save(firstInstance)).rejects.toThrowError(
+                        'optimistic locking',
+                    );
+                });
             });
         });
     });
