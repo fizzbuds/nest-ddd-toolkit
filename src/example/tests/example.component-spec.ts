@@ -130,9 +130,7 @@ describe('Example Component Test', () => {
                     aggregate.addName('Foo');
                     aggregate.__version = undefined!;
 
-                    await expect(async () => await aggregateRepo.save(aggregate)).rejects.toThrowError(
-                        'optimistic locking',
-                    );
+                    await expect(async () => await aggregateRepo.save(aggregate)).rejects.toThrowError('duplicated id');
                 });
             });
 

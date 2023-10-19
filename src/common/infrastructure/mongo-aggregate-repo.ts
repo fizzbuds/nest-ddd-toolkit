@@ -4,6 +4,7 @@ import { OnModuleInit } from '@nestjs/common';
 import { GenericId } from './generic-id';
 import { ISerializer } from './serializer.interface';
 import { merge } from 'lodash';
+import { DuplicatedIdError, OptimisticLockError } from './errors';
 
 export interface IAggregateRepo<A> {
     getById: (id: GenericId) => Promise<WithVersion<A> | null>;
@@ -17,6 +18,8 @@ export type WithVersion<T> = T & { __version: number };
 type WithOptionalVersion<T> = T & { __version?: number };
 
 // TODO probably we should create a dedicated interface wiht like DocumentWithIdAndTimestamps
+const MONGODB_UNIQUE_INDEX_CONSTRAINT_ERROR = 11000;
+
 export class MongoAggregateRepo<A, AM extends DocumentWithId> implements IAggregateRepo<A>, OnModuleInit {
     private collection: Collection<AM>;
 
@@ -35,18 +38,18 @@ export class MongoAggregateRepo<A, AM extends DocumentWithId> implements IAggreg
 
     async save(aggregate: WithOptionalVersion<A>) {
         const aggregateModel = this.serializer.aggregateToAggregateModel(aggregate);
-        const aggregateModelWithVersion: WithVersion<AM> = { ...aggregateModel, __version: aggregate.__version || 0 };
+        const aggregateVersion = aggregate.__version || 0;
 
         const session = this.mongoClient.startSession();
 
         try {
             await session.withTransaction(async () => {
                 await this.collection.updateOne(
-                    { id: aggregateModel.id, __version: aggregateModelWithVersion.__version } as any,
+                    { id: aggregateModel.id, __version: aggregateVersion } as any,
                     {
                         $set: {
-                            ...aggregateModelWithVersion,
-                            __version: aggregateModelWithVersion.__version + 1,
+                            ...aggregateModel,
+                            __version: aggregateVersion + 1,
                             updatedAt: new Date(),
                         },
                         $setOnInsert: { createdAt: new Date() } as any,
@@ -56,15 +59,25 @@ export class MongoAggregateRepo<A, AM extends DocumentWithId> implements IAggreg
                 if (this.repoHooks) await this.repoHooks.onSave(aggregate);
             });
         } catch (e) {
-            if (e.code === 11000) {
-                throw new Error(
-                    `Cannot save aggregate with id: ${aggregateModel.id} due to duplicated id, it might be also due to optimistic locking.`,
-                );
+            if (e.code === MONGODB_UNIQUE_INDEX_CONSTRAINT_ERROR) {
+                if (this.isTheFirstVersion(aggregateVersion)) {
+                    throw new DuplicatedIdError(
+                        `Cannot save aggregate with id: ${aggregateModel.id} due to duplicated id.`,
+                    );
+                } else {
+                    throw new OptimisticLockError(
+                        `Cannot save aggregate with id: ${aggregateModel.id} due to optimistic locking.`,
+                    );
+                }
             }
             throw e;
         } finally {
             await session.endSession();
         }
+    }
+
+    private isTheFirstVersion(aggregateVersion: number) {
+        return aggregateVersion === 0;
     }
 
     // TODO evaluate to implement getOrThrow
