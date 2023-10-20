@@ -15,13 +15,14 @@ import {
     MemberRegistrationQueryRepo,
 } from '../infrastructure/member-registration-query.repo';
 import { MemberRegistrationRepoHooks } from '../infrastructure/member-registration.repo-hooks';
+import { MemberRegistrationQueries } from '../member-registration.queries';
 
 describe('Member Registration Component Test', () => {
     let module: TestingModule;
     let mongodb: MongoMemoryReplSet;
     let commands: MemberRegistrationCommands;
+    let queries: MemberRegistrationQueries;
     let aggregateRepo: MongoAggregateRepo<MemberRegistrationAggregate, MemberRegistrationAggregateModel>;
-    let queryRepo: MemberRegistrationQueryRepo;
 
     beforeAll(async () => {
         mongodb = await MongoMemoryReplSet.create({
@@ -35,7 +36,7 @@ describe('Member Registration Component Test', () => {
         module = await Test.createTestingModule({
             providers: [
                 MemberRegistrationCommands,
-                MemberRegistrationQueryRepo,
+                MemberRegistrationQueries,
                 MemberRegistrationRepoHooks,
                 {
                     provide: memberRegistrationAggregateRepo,
@@ -65,8 +66,7 @@ describe('Member Registration Component Test', () => {
             memberRegistrationAggregateRepo,
         );
         await aggregateRepo.onModuleInit();
-        queryRepo = module.get<MemberRegistrationQueryRepo>(MemberRegistrationQueryRepo);
-        await queryRepo.onModuleInit();
+        queries = module.get<MemberRegistrationQueries>(MemberRegistrationQueries);
     });
 
     afterEach(async () => {
@@ -95,7 +95,7 @@ describe('Member Registration Component Test', () => {
         describe('When getting on member from query model', () => {
             let member: MemberRegistrationQueryModel | null;
             beforeEach(async () => {
-                member = await queryRepo.getMember(memberId);
+                member = await queries.getMember(memberId);
             });
 
             it('should return a member', () => {
