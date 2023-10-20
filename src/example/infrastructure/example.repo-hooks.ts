@@ -5,13 +5,13 @@ import { ExampleQueryRepo, ExampleReadModel } from './example-query-repo.service
 
 @Injectable()
 export class ExampleRepoHooks implements IRepoHooks<ExampleAggregateRoot> {
-    constructor(private readonly exampleReadModelRepo: ExampleQueryRepo) {}
+    constructor(private readonly exampleQueryModelRepo: ExampleQueryRepo) {}
 
     public async onSave(aggregate: ExampleAggregateRoot) {
         const exampleReadModel = this.composeReadModel(aggregate);
 
         // TODO implement save instead of bulkWrite and move mongo query to exampleReadModelRepo
-        await this.exampleReadModelRepo.bulkWrite([
+        await this.exampleQueryModelRepo.bulkWrite([
             {
                 updateOne: {
                     filter: { id: aggregate.getId().toString() },

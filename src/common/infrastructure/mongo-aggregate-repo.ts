@@ -56,6 +56,7 @@ export class MongoAggregateRepo<A, AM extends DocumentWithId> implements IAggreg
                     },
                     { upsert: true, session, ignoreUndefined: true },
                 );
+
                 if (this.repoHooks) await this.repoHooks.onSave(aggregate);
             });
         } catch (e) {
