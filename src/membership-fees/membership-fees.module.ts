@@ -27,4 +27,4 @@ import { MembershipFeesSerializer } from './infrastructure/membership-fees.seria
         },
     ],
 })
-export class ExampleModule {}
+export class MembershipFeesModule {}
