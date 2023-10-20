@@ -7,10 +7,10 @@ export class MemberRegistrationSerializer
     implements ISerializer<MemberRegistrationAggregate, MemberRegistrationAggregateModel>
 {
     public aggregateModelToAggregate(aggregateModel: MemberRegistrationAggregateModel): MemberRegistrationAggregate {
-        return new MemberRegistrationAggregate(MemberId.fromString(aggregateModel.id));
+        return new MemberRegistrationAggregate(MemberId.fromString(aggregateModel.id), aggregateModel['name']);
     }
 
     public aggregateToAggregateModel(aggregate: MemberRegistrationAggregate): MemberRegistrationAggregateModel {
-        return { id: aggregate.id.toString() };
+        return { id: aggregate.id.toString(), name: aggregate['name'] };
     }
 }

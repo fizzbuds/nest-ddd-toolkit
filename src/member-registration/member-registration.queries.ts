@@ -6,7 +6,7 @@ import { MemberId } from './domain/ids/member-id';
 export class MemberRegistrationQueries {
     constructor(private readonly memberRegistrationQueryRepo: MemberRegistrationQueryRepo) {}
 
-    public async getMember(memberId: MemberId) {
+    public async getMemberQuery(memberId: MemberId) {
         return await this.memberRegistrationQueryRepo.getMember(memberId);
     }
 }

@@ -9,10 +9,10 @@ export class MemberRegistrationCommands {
         @Inject(memberRegistrationAggregateRepo)
         private readonly aggregateRepo: IAggregateRepo<MemberRegistrationAggregate>,
     ) {}
-    public async createCmd() {
+    public async createCmd(name: string) {
         const memberId = MemberId.generate();
 
-        const memberRegistrationAggregate = MemberRegistrationAggregate.create(memberId);
+        const memberRegistrationAggregate = MemberRegistrationAggregate.create(memberId, name);
 
         await this.aggregateRepo.save(memberRegistrationAggregate);
         return memberId;

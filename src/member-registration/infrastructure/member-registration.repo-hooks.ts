@@ -8,11 +8,11 @@ export class MemberRegistrationRepoHooks implements IRepoHooks<MemberRegistratio
     constructor(private readonly queryRepo: MemberRegistrationQueryRepo) {}
 
     public async onSave(aggregate: MemberRegistrationAggregate) {
-        const queryModel = this.composeReadModel(aggregate);
+        const queryModel = this.composeQueryModel(aggregate);
         await this.queryRepo.save(queryModel);
     }
 
-    private composeReadModel(aggregate: MemberRegistrationAggregate): MemberRegistrationQueryModel {
-        return { id: aggregate.id.toString() };
+    private composeQueryModel(aggregate: MemberRegistrationAggregate): MemberRegistrationQueryModel {
+        return { id: aggregate.id.toString(), name: aggregate['name'] };
     }
 }

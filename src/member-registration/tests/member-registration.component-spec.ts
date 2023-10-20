@@ -1,20 +1,14 @@
-import { memberRegistrationAggregateRepo } from '../member-registration.module';
+import { memberRegistrationAggregateRepo, memberRegistrationProviders } from '../member-registration.module';
 import 'jest';
 import { MongoMemoryReplSet } from 'mongodb-memory-server';
 import { Test, TestingModule } from '@nestjs/testing';
 import { MongoAggregateRepo } from '../../common';
 import { MemberRegistrationAggregate } from '../domain/member-registration.aggregate';
-import { Connection } from 'mongoose';
-import { MemberRegistrationSerializer } from '../infrastructure/member-registration.serializer';
-import { getConnectionToken, MongooseModule } from '@nestjs/mongoose';
+import { MongooseModule } from '@nestjs/mongoose';
 import { MemberRegistrationCommands } from '../member-registration.commands';
 import { MemberId } from '../domain/ids/member-id';
 import { MemberRegistrationAggregateModel } from '../infrastructure/member-registration-aggregate.model';
-import {
-    MemberRegistrationQueryModel,
-    MemberRegistrationQueryRepo,
-} from '../infrastructure/member-registration-query.repo';
-import { MemberRegistrationRepoHooks } from '../infrastructure/member-registration.repo-hooks';
+import { MemberRegistrationQueryModel } from '../infrastructure/member-registration-query.repo';
 import { MemberRegistrationQueries } from '../member-registration.queries';
 
 describe('Member Registration Component Test', () => {
@@ -34,30 +28,7 @@ describe('Member Registration Component Test', () => {
         });
 
         module = await Test.createTestingModule({
-            providers: [
-                MemberRegistrationCommands,
-                MemberRegistrationQueries,
-                MemberRegistrationRepoHooks,
-                {
-                    provide: memberRegistrationAggregateRepo,
-                    inject: [getConnectionToken(), MemberRegistrationRepoHooks],
-                    useFactory: (conn: Connection, memberRegistrationRepoHooks: MemberRegistrationRepoHooks) => {
-                        return new MongoAggregateRepo<MemberRegistrationAggregate, MemberRegistrationAggregateModel>(
-                            new MemberRegistrationSerializer(),
-                            conn.getClient(),
-                            'membership_fees_aggregate',
-                            memberRegistrationRepoHooks,
-                        );
-                    },
-                },
-                {
-                    provide: MemberRegistrationQueryRepo,
-                    inject: [getConnectionToken()],
-                    useFactory: (conn: Connection) => {
-                        return new MemberRegistrationQueryRepo(conn.getClient(), 'member_query_repo');
-                    },
-                },
-            ],
+            providers: memberRegistrationProviders,
             imports: [MongooseModule.forRoot(mongodb.getUri('test'))],
         }).compile();
 
@@ -81,7 +52,7 @@ describe('Member Registration Component Test', () => {
     describe('Given a Member Registration', () => {
         let memberId: MemberId;
         beforeEach(async () => {
-            memberId = await commands.createCmd();
+            memberId = await commands.createCmd('John Doe');
         });
 
         it('should return an id', () => {
@@ -95,11 +66,17 @@ describe('Member Registration Component Test', () => {
         describe('When getting on member from query model', () => {
             let member: MemberRegistrationQueryModel | null;
             beforeEach(async () => {
-                member = await queries.getMember(memberId);
+                member = await queries.getMemberQuery(memberId);
             });
 
             it('should return a member', () => {
                 expect(member).not.toBeNull();
+            });
+
+            it('should return a member with a name', () => {
+                expect(member).toMatchObject({
+                    name: 'John Doe',
+                });
             });
         });
     });

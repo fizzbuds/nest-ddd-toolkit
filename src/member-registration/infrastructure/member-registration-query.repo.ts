@@ -5,6 +5,7 @@ import { MemberId } from '../domain/ids/member-id';
 
 export interface MemberRegistrationQueryModel {
     id: string;
+    name: string;
 }
 
 @Injectable()

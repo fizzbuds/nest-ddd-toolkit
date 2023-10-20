@@ -5,7 +5,7 @@ describe('MemberRegistrationAggregate', () => {
     describe('When creating a MemberRegistrationAggregate', () => {
         let memberRegistrationAggregate: MemberRegistrationAggregate;
         beforeEach(() => {
-            memberRegistrationAggregate = MemberRegistrationAggregate.create(MemberId.generate());
+            memberRegistrationAggregate = MemberRegistrationAggregate.create(MemberId.generate(), 'John Doe');
         });
 
         it('should create it', () => {
