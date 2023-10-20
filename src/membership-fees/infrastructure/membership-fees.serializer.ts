@@ -1,6 +1,6 @@
 import { ISerializer } from '../../common';
 import { MembershipFeesAggregate } from '../domain/membership-fees.aggregate';
-import { MembershipFeesId } from '../domain/membership-fees-id';
+import { MembershipFeesId } from '../domain/ids/membership-fees-id';
 import { MembershipFeesAggregateModel } from './membership-fees-aggregate.model';
 
 export class MembershipFeesSerializer implements ISerializer<MembershipFeesAggregate, MembershipFeesAggregateModel> {

@@ -8,8 +8,8 @@ import { Connection } from 'mongoose';
 import { MembershipFeesSerializer } from '../infrastructure/membership-fees.serializer';
 import { getConnectionToken, MongooseModule } from '@nestjs/mongoose';
 import { MembershipFeesCommands } from '../membership-fees.commands';
-import { MembershipFeesId } from '../domain/membership-fees-id';
-import { FeeId } from '../domain/fee-id';
+import { MembershipFeesId } from '../domain/ids/membership-fees-id';
+import { FeeId } from '../domain/ids/fee-id';
 import { MembershipFeesAggregateModel } from '../infrastructure/membership-fees-aggregate.model';
 
 describe('Membership Fees Component Test', () => {

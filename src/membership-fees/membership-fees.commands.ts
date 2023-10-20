@@ -1,4 +1,4 @@
-import { MembershipFeesId } from './domain/membership-fees-id';
+import { MembershipFeesId } from './domain/ids/membership-fees-id';
 import { MembershipFeesAggregate } from './domain/membership-fees.aggregate';
 import { IAggregateRepo } from '../common';
 import { Inject, NotFoundException } from '@nestjs/common';

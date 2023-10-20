@@ -1,4 +1,4 @@
-import { FeeId } from '../domain/fee-id';
+import { FeeId } from '../domain/ids/fee-id';
 
 export interface MembershipFeesAggregateModel {
     id: string;
