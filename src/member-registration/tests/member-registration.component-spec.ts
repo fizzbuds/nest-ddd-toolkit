@@ -10,12 +10,18 @@ import { getConnectionToken, MongooseModule } from '@nestjs/mongoose';
 import { MemberRegistrationCommands } from '../member-registration.commands';
 import { MemberId } from '../domain/ids/member-id';
 import { MemberRegistrationAggregateModel } from '../infrastructure/member-registration-aggregate.model';
+import {
+    MemberRegistrationQueryModel,
+    MemberRegistrationQueryRepo,
+} from '../infrastructure/member-registration-query.repo';
+import { MemberRegistrationRepoHooks } from '../infrastructure/member-registration.repo-hooks';
 
 describe('Member Registration Component Test', () => {
     let module: TestingModule;
     let mongodb: MongoMemoryReplSet;
     let commands: MemberRegistrationCommands;
     let aggregateRepo: MongoAggregateRepo<MemberRegistrationAggregate, MemberRegistrationAggregateModel>;
+    let queryRepo: MemberRegistrationQueryRepo;
 
     beforeAll(async () => {
         mongodb = await MongoMemoryReplSet.create({
@@ -29,15 +35,25 @@ describe('Member Registration Component Test', () => {
         module = await Test.createTestingModule({
             providers: [
                 MemberRegistrationCommands,
+                MemberRegistrationQueryRepo,
+                MemberRegistrationRepoHooks,
                 {
                     provide: memberRegistrationAggregateRepo,
-                    inject: [getConnectionToken()],
-                    useFactory: (conn: Connection) => {
+                    inject: [getConnectionToken(), MemberRegistrationRepoHooks],
+                    useFactory: (conn: Connection, memberRegistrationRepoHooks: MemberRegistrationRepoHooks) => {
                         return new MongoAggregateRepo<MemberRegistrationAggregate, MemberRegistrationAggregateModel>(
                             new MemberRegistrationSerializer(),
                             conn.getClient(),
                             'membership_fees_aggregate',
+                            memberRegistrationRepoHooks,
                         );
+                    },
+                },
+                {
+                    provide: MemberRegistrationQueryRepo,
+                    inject: [getConnectionToken()],
+                    useFactory: (conn: Connection) => {
+                        return new MemberRegistrationQueryRepo(conn.getClient(), 'member_query_repo');
                     },
                 },
             ],
@@ -49,6 +65,8 @@ describe('Member Registration Component Test', () => {
             memberRegistrationAggregateRepo,
         );
         await aggregateRepo.onModuleInit();
+        queryRepo = module.get<MemberRegistrationQueryRepo>(MemberRegistrationQueryRepo);
+        await queryRepo.onModuleInit();
     });
 
     afterEach(async () => {
@@ -60,18 +78,29 @@ describe('Member Registration Component Test', () => {
         await mongodb.stop();
     });
 
-    describe('When creating a Member Registration', () => {
-        let memberRegistration: MemberId;
+    describe('Given a Member Registration', () => {
+        let memberId: MemberId;
         beforeEach(async () => {
-            memberRegistration = await commands.createCmd();
+            memberId = await commands.createCmd();
         });
 
         it('should return an id', () => {
-            expect(memberRegistration.toString()).toContain('member');
+            expect(memberId.toString()).toContain('member');
         });
 
         it('should be saved into aggregate model', async () => {
-            expect(await aggregateRepo.getById(memberRegistration)).not.toBeNull();
+            expect(await aggregateRepo.getById(memberId)).not.toBeNull();
+        });
+
+        describe('When getting on member from query model', () => {
+            let member: MemberRegistrationQueryModel | null;
+            beforeEach(async () => {
+                member = await queryRepo.getMember(memberId);
+            });
+
+            it('should return a member', () => {
+                expect(member).not.toBeNull();
+            });
         });
     });
 });
