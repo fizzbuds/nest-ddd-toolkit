@@ -1,4 +1,6 @@
 export const membershipFeesAggregateRepo = 'MembershipFeesAggregateRepo'; // This variable must be defined before imports
+
+import { MembershipFeesAggregateModel } from './infrastructure/membership-fees-aggregate.model';
 import { getConnectionToken } from '@nestjs/mongoose';
 import { Module } from '@nestjs/common';
 import { Connection } from 'mongoose';
