@@ -1,13 +1,14 @@
+import 'jest';
+import { membershipFeesAggregateRepo } from '../membership-fees.module';
 import { MongoMemoryReplSet } from 'mongodb-memory-server';
 import { Test, TestingModule } from '@nestjs/testing';
 import { MongoAggregateRepo } from '../../common';
 import { MembershipFeesAggregate } from '../domain/membership-fees.aggregate';
-import { membershipFeesAggregateRepo } from '../membership-fees.module';
 import { Connection } from 'mongoose';
 import { MembershipFeesSerializer } from '../infrastructure/membership-fees.serializer';
 import { getConnectionToken, MongooseModule } from '@nestjs/mongoose';
 import { MembershipFeesCommands } from '../membership-fees.commands';
-import { MembershipFeesId } from '../domain/membership-fees-id';
+import { FeesId } from '../domain/fees-id';
 
 describe('Membership Fees Component Test', () => {
     let module: TestingModule;
@@ -59,14 +60,18 @@ describe('Membership Fees Component Test', () => {
         await mongodb.stop();
     });
 
-    describe('When create example', () => {
-        let membershipFeesId: MembershipFeesId;
+    describe('When creating new Memebership Fees', () => {
+        let membershipFeesId: FeesId;
         beforeEach(async () => {
             membershipFeesId = await commands.createCmd();
         });
 
-        it('should be saved into write model', async () => {
-            expect(await aggregateRepo.getById(membershipFeesId)).toBeDefined();
+        it('should return an id', () => {
+            expect(membershipFeesId.toString()).toContain('fee');
+        });
+
+        it('should be saved into aggregate model', async () => {
+            expect(await aggregateRepo.getById(membershipFeesId)).not.toBeNull();
         });
     });
 });

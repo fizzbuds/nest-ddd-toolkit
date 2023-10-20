@@ -1,3 +1,4 @@
+export const membershipFeesAggregateRepo = 'MembershipFeesAggregateRepo'; // This variable must be defined before imports
 import { getConnectionToken } from '@nestjs/mongoose';
 import { Module } from '@nestjs/common';
 import { Connection } from 'mongoose';
@@ -6,8 +7,6 @@ import { MembershipFeesController } from './api/membership-fees.controller';
 import { MembershipFeesCommands } from './membership-fees.commands';
 import { MembershipFeesAggregate } from './domain/membership-fees.aggregate';
 import { MembershipFeesSerializer } from './infrastructure/membership-fees.serializer';
-
-export const membershipFeesAggregateRepo = 'MembershipFeesAggregateRepo'; // This variable must be defined before imports
 
 @Module({
     controllers: [MembershipFeesController],
