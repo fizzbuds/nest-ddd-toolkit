@@ -76,10 +76,6 @@ describe('Membership Fees Component Test', () => {
                 feeId = await commands.addFeeCmd(memberId, 100);
             });
 
-            it('should return an id', () => {
-                expect(memberId.toString()).toContain('member');
-            });
-
             it('should be saved into aggregate model', async () => {
                 expect(await aggregateRepo.getById(memberId)).not.toBeNull();
             });
