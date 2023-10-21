@@ -28,7 +28,7 @@ describe('AppController (api)', () => {
 
     async function createMember() {
         const response = await request(app.getHttpServer()).post('/members/').send({ name: 'John Doe' });
-        return response.body.memberId;
+        return response.body.id;
     }
 
     it('POST /members', async () => {
@@ -39,6 +39,6 @@ describe('AppController (api)', () => {
     it('GET /members/:id', async () => {
         const memberId = await createMember();
         const response = await request(app.getHttpServer()).get(`/members/${memberId}`);
-        expect(response.statusCode).toBe(200);
+        expect(response.body.name).toBe('John Doe');
     });
 });
