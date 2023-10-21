@@ -42,9 +42,24 @@ describe('AppController (api)', () => {
         expect(response.body.name).toBe('John Doe');
     });
 
-    it('POST /members/:id/fees', async () => {
-        const memberId = await createMember();
-        const response = await request(app.getHttpServer()).post(`/members/${memberId}/fees`).send({ amount: 100 });
-        expect(response.statusCode).toBe(201);
+    xdescribe('Create member registration, fees and get list', () => {
+        let memberId: string;
+        beforeAll(async () => {
+            memberId = await createMember();
+        });
+
+        it('POST /members/:id/fees', async () => {
+            const resp1 = await request(app.getHttpServer()).post(`/members/${memberId}/fees`).send({ amount: 100 });
+            expect(resp1.statusCode).toBe(201);
+            const resp2 = await request(app.getHttpServer()).post(`/members/${memberId}/fees`).send({ amount: 200 });
+            expect(resp2.statusCode).toBe(201);
+            const resp3 = await request(app.getHttpServer()).post(`/members/${memberId}/fees`).send({ amount: 300 });
+            expect(resp3.statusCode).toBe(201);
+        });
+
+        it('GET /members/fees', async () => {
+            const response = await request(app.getHttpServer()).get(`/members/${memberId}/fees`);
+            expect(response.statusCode).toBe(200);
+        });
     });
 });

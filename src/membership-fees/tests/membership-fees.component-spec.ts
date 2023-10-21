@@ -4,7 +4,7 @@ import { MongoMemoryReplSet } from 'mongodb-memory-server';
 import { Test, TestingModule } from '@nestjs/testing';
 import { MongoAggregateRepo } from '../../common';
 import { MembershipFeesAggregate } from '../domain/membership-fees.aggregate';
-import { Connection } from 'mongoose';
+import mongoose, { Connection } from 'mongoose';
 import { MembershipFeesSerializer } from '../infrastructure/membership-fees.serializer';
 import { getConnectionToken, MongooseModule } from '@nestjs/mongoose';
 import { MembershipFeesCommands } from '../membership-fees.commands';
@@ -12,6 +12,9 @@ import { FeeId } from '../domain/ids/fee-id';
 import { MembershipFeesAggregateModel } from '../infrastructure/membership-fees-aggregate.model';
 import { MemberId } from '../../member-registration/domain/ids/member-id';
 
+const getActiveConnection = (): mongoose.Connection => {
+    return mongoose.connections.find((_) => _.readyState)!;
+};
 describe('Membership Fees Component Test', () => {
     let module: TestingModule;
     let mongodb: MongoMemoryReplSet;
@@ -55,6 +58,7 @@ describe('Membership Fees Component Test', () => {
 
     afterEach(async () => {
         jest.resetAllMocks();
+        await getActiveConnection().collection('membership_fees_aggregate').deleteMany({});
     });
 
     afterAll(async () => {
@@ -63,26 +67,21 @@ describe('Membership Fees Component Test', () => {
     });
 
     describe('Given a Membership Fees', () => {
-        let memberId: MemberId;
-        beforeEach(async () => {
-            memberId = await commands.createCmd(MemberId.generate());
-        });
-
-        describe('When creating new Membership Fees', () => {
-            it('should return an id', () => {
-                expect(memberId.toString()).toContain('member');
-            });
-
-            it('should be saved into aggregate model', async () => {
-                expect(await aggregateRepo.getById(memberId)).not.toBeNull();
-            });
-        });
+        const memberId = MemberId.generate();
 
         describe('When adding a fee', () => {
             let feeId: FeeId;
 
             beforeEach(async () => {
                 feeId = await commands.addFeeCmd(memberId, 100);
+            });
+
+            it('should return an id', () => {
+                expect(memberId.toString()).toContain('member');
+            });
+
+            it('should be saved into aggregate model', async () => {
+                expect(await aggregateRepo.getById(memberId)).not.toBeNull();
             });
 
             it('should return a fee id', async () => {
