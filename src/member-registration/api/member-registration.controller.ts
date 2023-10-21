@@ -3,7 +3,7 @@ import { MemberRegistrationCommands } from '../member-registration.commands';
 import { MemberRegistrationQueries } from '../member-registration.queries';
 import { MemberId } from '../domain/ids/member-id';
 
-@Controller('members')
+@Controller('member-registrations')
 export class MemberRegistrationController {
     constructor(
         private readonly memberRegistrationCommands: MemberRegistrationCommands,
