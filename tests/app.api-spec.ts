@@ -41,4 +41,10 @@ describe('AppController (api)', () => {
         const response = await request(app.getHttpServer()).get(`/members/${memberId}`);
         expect(response.body.name).toBe('John Doe');
     });
+
+    it('POST /members/:id/fees', async () => {
+        const memberId = await createMember();
+        const response = await request(app.getHttpServer()).post(`/members/${memberId}/fees`).send({ amount: 100 });
+        expect(response.statusCode).toBe(201);
+    });
 });

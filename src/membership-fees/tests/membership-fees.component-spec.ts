@@ -8,9 +8,9 @@ import { Connection } from 'mongoose';
 import { MembershipFeesSerializer } from '../infrastructure/membership-fees.serializer';
 import { getConnectionToken, MongooseModule } from '@nestjs/mongoose';
 import { MembershipFeesCommands } from '../membership-fees.commands';
-import { MembershipFeesId } from '../domain/ids/membership-fees-id';
 import { FeeId } from '../domain/ids/fee-id';
 import { MembershipFeesAggregateModel } from '../infrastructure/membership-fees-aggregate.model';
+import { MemberId } from '../../member-registration/domain/ids/member-id';
 
 describe('Membership Fees Component Test', () => {
     let module: TestingModule;
@@ -63,18 +63,18 @@ describe('Membership Fees Component Test', () => {
     });
 
     describe('Given a Membership Fees', () => {
-        let membershipFeesId: MembershipFeesId;
+        let memberId: MemberId;
         beforeEach(async () => {
-            membershipFeesId = await commands.createCmd();
+            memberId = await commands.createCmd(MemberId.generate());
         });
 
         describe('When creating new Membership Fees', () => {
             it('should return an id', () => {
-                expect(membershipFeesId.toString()).toContain('fee');
+                expect(memberId.toString()).toContain('member');
             });
 
             it('should be saved into aggregate model', async () => {
-                expect(await aggregateRepo.getById(membershipFeesId)).not.toBeNull();
+                expect(await aggregateRepo.getById(memberId)).not.toBeNull();
             });
         });
 
@@ -82,7 +82,7 @@ describe('Membership Fees Component Test', () => {
             let feeId: FeeId;
 
             beforeEach(async () => {
-                feeId = await commands.addFeeCmd(membershipFeesId, 100);
+                feeId = await commands.addFeeCmd(memberId, 100);
             });
 
             it('should return a fee id', async () => {
@@ -90,7 +90,7 @@ describe('Membership Fees Component Test', () => {
             });
 
             it('should add a fee', async () => {
-                expect(await aggregateRepo.getById(membershipFeesId)).toMatchObject({
+                expect(await aggregateRepo.getById(memberId)).toMatchObject({
                     fees: [{ feeId: expect.anything(), value: 100 }],
                 });
             });

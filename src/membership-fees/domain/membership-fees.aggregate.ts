@@ -1,14 +1,14 @@
-import { MembershipFeesId } from './ids/membership-fees-id';
 import { FeeId } from './ids/fee-id';
+import { MemberId } from '../../member-registration/domain/ids/member-id';
 
 export class MembershipFeesAggregate {
     constructor(
-        readonly id: MembershipFeesId,
+        readonly id: MemberId,
         private readonly fees: { feeId: FeeId; value: number }[] = [],
         private creditAmount: number = 0,
     ) {}
 
-    public static create(id: MembershipFeesId) {
+    public static create(id: MemberId) {
         return new MembershipFeesAggregate(id);
     }
 

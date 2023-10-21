@@ -1,11 +1,11 @@
 import { ISerializer } from '../../common';
 import { MembershipFeesAggregate } from '../domain/membership-fees.aggregate';
-import { MembershipFeesId } from '../domain/ids/membership-fees-id';
 import { MembershipFeesAggregateModel } from './membership-fees-aggregate.model';
+import { MemberId } from '../../member-registration/domain/ids/member-id';
 
 export class MembershipFeesSerializer implements ISerializer<MembershipFeesAggregate, MembershipFeesAggregateModel> {
     public aggregateModelToAggregate(aggregateModel: MembershipFeesAggregateModel): MembershipFeesAggregate {
-        return new MembershipFeesAggregate(MembershipFeesId.fromString(aggregateModel.id), aggregateModel.fees);
+        return new MembershipFeesAggregate(MemberId.fromString(aggregateModel.id), aggregateModel.fees);
     }
 
     public aggregateToAggregateModel(aggregate: MembershipFeesAggregate): MembershipFeesAggregateModel {

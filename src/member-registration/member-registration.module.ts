@@ -24,7 +24,7 @@ export const memberRegistrationProviders = [
             return new MongoAggregateRepo<MemberRegistrationAggregate, MemberRegistrationAggregateModel>(
                 new MemberRegistrationSerializer(),
                 conn.getClient(),
-                'membership_fees_aggregate',
+                'member_aggregate',
                 memberRegistrationRepoHooks,
             );
         },
