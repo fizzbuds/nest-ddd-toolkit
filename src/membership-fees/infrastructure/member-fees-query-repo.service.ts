@@ -13,7 +13,7 @@ export class MemberFeesQueryRepo extends MongoQueryRepo<MemberFeesQueryModel & D
     protected readonly indexes = [{ indexSpec: { name: 1 } }];
 
     public async getFeesByMember(id: MemberId) {
-        return await this.collection.findOne({ id: id.toString() });
+        return this.collection.find({ id: id.toString() }).toArray();
     }
 
     public async save(queryModel: MemberFeesQueryModel) {

@@ -6,7 +6,7 @@ import { MemberFeesQueryRepo } from './infrastructure/member-fees-query-repo.ser
 export class MemberFeesQueries {
     constructor(private readonly membershipFeesQueryRepo: MemberFeesQueryRepo) {}
 
-    public async getMemberQuery(memberId: MemberId) {
+    public async getMemberFees(memberId: MemberId) {
         return await this.membershipFeesQueryRepo.getFeesByMember(memberId);
     }
 }
