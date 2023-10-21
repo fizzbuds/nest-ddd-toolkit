@@ -57,7 +57,7 @@ describe('AppController (api)', () => {
             expect(resp3.body).toMatchObject({ feeId: expect.any(String) });
         });
 
-        xit('GET /members/fees', async () => {
+        it('GET /members/fees', async () => {
             const response = await request(app.getHttpServer()).get(`/members/${memberId}/fees`);
             expect(response.body).toMatchObject([
                 { id: memberId, feeId: expect.any(String), name: 'John Doe', value: 100 },

@@ -17,7 +17,7 @@ export class MembershipFeesController {
     }
 
     @Get('')
-    public async get(@Param('id') memberId: string) {
-        return { memberFees: await this.membershipFeesQueries.getMemberFees(MemberId.fromString(memberId)) };
+    public async getList() {
+        return { memberFees: await this.membershipFeesQueries.getMemberFees() };
     }
 }
