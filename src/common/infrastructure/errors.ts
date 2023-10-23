@@ -9,3 +9,9 @@ export class OptimisticLockError extends Error {
         super(message);
     }
 }
+
+export class RepoHookError extends Error {
+    constructor(message: string) {
+        super(message);
+    }
+}
