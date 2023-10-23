@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { MongoQueryRepo } from '../../common/infrastructure/mongo-query-repo';
 
 export type MemberFeesQueryModel = {
-    feeId: string;
+    id: string;
     memberId: string;
     name: string;
     value: number;
@@ -11,7 +11,7 @@ export type MemberFeesQueryModel = {
 
 @Injectable()
 export class MemberFeesQueryRepo extends MongoQueryRepo<MemberFeesQueryModel & Document> {
-    protected readonly indexes = [{ indexSpec: { name: 1 } }];
+    protected readonly indexes = [];
 
     public async getFees() {
         return this.collection.find({}).toArray();
@@ -22,7 +22,7 @@ export class MemberFeesQueryRepo extends MongoQueryRepo<MemberFeesQueryModel & D
             queryModel.map((qm) => {
                 return {
                     updateOne: {
-                        filter: { feeId: qm.feeId },
+                        filter: { id: qm.id },
                         update: { $set: { ...qm } },
                         upsert: true,
                     },

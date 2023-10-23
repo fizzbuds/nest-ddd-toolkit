@@ -1,5 +1,6 @@
 export const membershipFeesAggregateRepo = 'MembershipFeesAggregateRepo'; // This variable must be defined before imports
 
+import { MemberFeesRepoHooks } from './infrastructure/member-fees.repo-hooks';
 import { MemberFeesQueries } from './member-fees-queries.service';
 import { MembershipFeesAggregateModel } from './infrastructure/membership-fees-aggregate.model';
 import { getConnectionToken } from '@nestjs/mongoose';
@@ -17,14 +18,16 @@ import { MemberFeesQueryRepo } from './infrastructure/member-fees-query-repo.ser
     providers: [
         MembershipFeesCommands,
         MemberFeesQueries,
+        MemberFeesRepoHooks,
         {
             provide: membershipFeesAggregateRepo,
-            inject: [getConnectionToken()],
-            useFactory: (conn: Connection) => {
+            inject: [getConnectionToken(), MemberFeesRepoHooks],
+            useFactory: (conn: Connection, memberFeesRepoHooks: MemberFeesRepoHooks) => {
                 return new MongoAggregateRepo<MembershipFeesAggregate, MembershipFeesAggregateModel>(
                     new MembershipFeesSerializer(),
                     conn.getClient(),
                     'membership_fees_aggregate',
+                    memberFeesRepoHooks,
                 );
             },
         },

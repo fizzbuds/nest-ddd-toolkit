@@ -13,14 +13,13 @@ export class MemberFeesRepoHooks implements IRepoHooks<MembershipFeesAggregate> 
     }
 
     private composeQueryModel(aggregate: MembershipFeesAggregate): MemberFeesQueryModel[] {
-        const queryModels = aggregate['fees'].map((fee) => {
+        return aggregate['fees'].map((fee) => {
             return {
                 memberId: aggregate.id.toString(),
-                feeId: fee['feeId'].toString(),
+                id: fee['feeId'].toString(),
                 value: fee['value'],
                 name: '',
             };
         });
-        return queryModels;
     }
 }

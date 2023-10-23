@@ -18,6 +18,6 @@ export class MembershipFeesController {
 
     @Get('/')
     public async getList() {
-        return { memberFees: await this.membershipFeesQueries.getMemberFees() };
+        return await this.membershipFeesQueries.getMemberFees();
     }
 }
