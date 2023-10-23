@@ -20,11 +20,14 @@ $ pnpm run start:prod
 ## Test
 
 ```bash
-# unit tests
+# unit and component tests
 $ pnpm run tests
 
-# e2e tests
-$ pnpm run tests:e2e
+# api tests
+$ pnpm run tests:api
+
+# integration tests
+$ pnpm run tests:integration
 
 # tests coverage
 $ pnpm run tests:cov
