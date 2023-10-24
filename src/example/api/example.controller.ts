@@ -19,7 +19,7 @@ export class ExampleController {
     }
 
     @Get(':id')
-    public async getOneOrThrow(@Param('id') exampleId: string) {
+    public async getOne(@Param('id') exampleId: string) {
         return await this.exampleQueries.getOneExampleQuery(exampleId);
     }
 

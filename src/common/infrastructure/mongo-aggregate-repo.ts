@@ -4,7 +4,7 @@ import { OnModuleInit } from '@nestjs/common';
 import { GenericId } from './generic-id';
 import { ISerializer } from './serializer.interface';
 import { merge } from 'lodash';
-import { DuplicatedIdError, OptimisticLockError } from './errors';
+import { DuplicatedIdError, OptimisticLockError, RepoHookError } from './errors';
 
 export interface IAggregateRepo<A> {
     getById: (id: GenericId) => Promise<WithVersion<A> | null>;
@@ -56,8 +56,11 @@ export class MongoAggregateRepo<A, AM extends DocumentWithId> implements IAggreg
                     },
                     { upsert: true, session, ignoreUndefined: true },
                 );
-
-                if (this.repoHooks) await this.repoHooks.onSave(aggregate);
+                try {
+                    if (this.repoHooks) await this.repoHooks.onSave(aggregate);
+                } catch (e) {
+                    throw new RepoHookError(`RepoHook onSave method failed with error: ${e.message}`);
+                }
             });
         } catch (e) {
             if (e.code === MONGODB_UNIQUE_INDEX_CONSTRAINT_ERROR) {

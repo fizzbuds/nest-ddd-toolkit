@@ -6,6 +6,8 @@ import { envValidationSchema } from './env-validation-schema';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ExampleModule } from './example/example.module';
 import { RequestId } from './common';
+import { MemberRegistrationModule } from './member-registration/member-registration.module';
+import { MembershipFeesModule } from './membership-fees/membership-fees.module';
 
 @Module({
     imports: [
@@ -33,6 +35,8 @@ import { RequestId } from './common';
             }),
         }),
         ExampleModule,
+        MemberRegistrationModule,
+        MembershipFeesModule,
     ],
     controllers: [AppController],
     providers: [],
