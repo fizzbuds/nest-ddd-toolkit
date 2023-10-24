@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { MemberFeesQueryRepo } from './infrastructure/member-fees-query-repo.service';
+import { MemberFeesQueryRepo } from './infrastructure/member-fees-query.repo';
 
 @Injectable()
 export class MemberFeesQueries {

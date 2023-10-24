@@ -1,7 +1,7 @@
 import { IRepoHooks } from '../../common';
 import { Injectable } from '@nestjs/common';
 import { MembershipFeesAggregate } from '../domain/membership-fees.aggregate';
-import { MemberFeesQueryModel, MemberFeesQueryRepo } from './member-fees-query-repo.service';
+import { MemberFeesQueryModel, MemberFeesQueryRepo } from './member-fees-query.repo';
 import { MemberRegistrationQueries } from '../../member-registration/member-registration.queries';
 
 @Injectable()

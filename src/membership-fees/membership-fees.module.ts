@@ -6,7 +6,7 @@ import { getConnectionToken } from '@nestjs/mongoose';
 import { Module } from '@nestjs/common';
 import { MembershipFeesController } from './api/membership-fees.controller';
 import { MembershipFeesCommands } from './membership-fees.commands';
-import { MemberFeesQueryRepo } from './infrastructure/member-fees-query-repo.service';
+import { MemberFeesQueryRepo } from './infrastructure/member-fees-query.repo';
 import { MemberRegistrationModule } from '../member-registration/member-registration.module';
 
 @Module({
