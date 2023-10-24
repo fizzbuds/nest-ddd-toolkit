@@ -4,7 +4,6 @@ import { LoggerModule } from 'nestjs-pino';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { envValidationSchema } from './env-validation-schema';
 import { MongooseModule } from '@nestjs/mongoose';
-import { ExampleModule } from './example/example.module';
 import { RequestId } from './common';
 import { MemberRegistrationModule } from './member-registration/member-registration.module';
 import { MembershipFeesModule } from './membership-fees/membership-fees.module';
@@ -15,7 +14,6 @@ import { MembershipFeesModule } from './membership-fees/membership-fees.module';
             isGlobal: true,
             validationSchema: envValidationSchema,
         }),
-
         LoggerModule.forRootAsync({
             inject: [ConfigService],
             useFactory: (config: ConfigService) => {
@@ -34,7 +32,6 @@ import { MembershipFeesModule } from './membership-fees/membership-fees.module';
                 uri: config.getOrThrow('MONGODB_URI'),
             }),
         }),
-        ExampleModule,
         MemberRegistrationModule,
         MembershipFeesModule,
     ],

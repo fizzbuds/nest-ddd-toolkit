@@ -4,7 +4,14 @@
 $ pnpm install
 ```
 
+## Local MongoDB
+
+```bash
+$ docker run --name mongodb -p 27017:27017 -d mongo
+``` 
+
 ## Running the app
+Make sure docker is running and the local MongoDB is up and running.
 
 ```bash
 # development
@@ -18,6 +25,7 @@ $ pnpm run start:prod
 ```
 
 ## Test
+Tests don't need a running MongoDB instance, they use an in memory database.
 
 ```bash
 # unit and component tests
