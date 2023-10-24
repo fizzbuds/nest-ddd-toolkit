@@ -1,16 +1,12 @@
-export const membershipFeesAggregateRepo = 'MembershipFeesAggregateRepo'; // This variable must be defined before imports
+import { MembershipFeesAggregateRepo } from './infrastructure/membership-fees-aggregate.repo';
 
 import { MemberFeesRepoHooks } from './infrastructure/member-fees.repo-hooks';
 import { MemberFeesQueries } from './member-fees-queries.service';
-import { MembershipFeesAggregateModel } from './infrastructure/membership-fees-aggregate.model';
 import { getConnectionToken } from '@nestjs/mongoose';
 import { Module } from '@nestjs/common';
 import { Connection } from 'mongoose';
-import { MongoAggregateRepo } from '../common';
 import { MembershipFeesController } from './api/membership-fees.controller';
 import { MembershipFeesCommands } from './membership-fees.commands';
-import { MembershipFeesAggregate } from './domain/membership-fees.aggregate';
-import { MembershipFeesSerializer } from './infrastructure/membership-fees.serializer';
 import { MemberFeesQueryRepo } from './infrastructure/member-fees-query-repo.service';
 
 @Module({
@@ -20,16 +16,9 @@ import { MemberFeesQueryRepo } from './infrastructure/member-fees-query-repo.ser
         MemberFeesQueries,
         MemberFeesRepoHooks,
         {
-            provide: membershipFeesAggregateRepo,
+            provide: MembershipFeesAggregateRepo,
             inject: [getConnectionToken(), MemberFeesRepoHooks],
-            useFactory: (conn: Connection, memberFeesRepoHooks: MemberFeesRepoHooks) => {
-                return new MongoAggregateRepo<MembershipFeesAggregate, MembershipFeesAggregateModel>(
-                    new MembershipFeesSerializer(),
-                    conn.getClient(),
-                    'membership_fees_aggregate',
-                    memberFeesRepoHooks,
-                );
-            },
+            useFactory: MembershipFeesAggregateRepo.providerFactory,
         },
         {
             provide: MemberFeesQueryRepo,
@@ -39,5 +28,6 @@ import { MemberFeesQueryRepo } from './infrastructure/member-fees-query-repo.ser
             },
         },
     ],
+    //imports: [MemberRegistrationModule],
 })
 export class MembershipFeesModule {}

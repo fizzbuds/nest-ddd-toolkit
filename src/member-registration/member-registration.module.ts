@@ -1,16 +1,12 @@
-export const memberRegistrationAggregateRepo = 'MemberRegristrationAggregateRepo'; // This variable must be defined before imports
+import { MemberRegistrationAggregateRepo } from './infrastructure/member-registration-aggregate.repo';
 
 import { MemberRegistrationQueryRepo } from './infrastructure/member-registration-query.repo';
 import { MemberRegistrationQueries } from './member-registration.queries';
-import { MemberRegistrationAggregateModel } from './infrastructure/member-registration-aggregate.model';
 import { getConnectionToken } from '@nestjs/mongoose';
 import { Module } from '@nestjs/common';
 import { Connection } from 'mongoose';
-import { MongoAggregateRepo } from '../common';
 import { MemberRegistrationController } from './api/member-registration.controller';
 import { MemberRegistrationCommands } from './member-registration.commands';
-import { MemberRegistrationAggregate } from './domain/member-registration.aggregate';
-import { MemberRegistrationSerializer } from './infrastructure/member-registration.serializer';
 import { MemberRegistrationRepoHooks } from './infrastructure/member-registration.repo-hooks';
 
 export const memberRegistrationProviders = [
@@ -18,16 +14,9 @@ export const memberRegistrationProviders = [
     MemberRegistrationQueries,
     MemberRegistrationRepoHooks,
     {
-        provide: memberRegistrationAggregateRepo,
+        provide: MemberRegistrationAggregateRepo,
         inject: [getConnectionToken(), MemberRegistrationRepoHooks],
-        useFactory: (conn: Connection, memberRegistrationRepoHooks: MemberRegistrationRepoHooks) => {
-            return new MongoAggregateRepo<MemberRegistrationAggregate, MemberRegistrationAggregateModel>(
-                new MemberRegistrationSerializer(),
-                conn.getClient(),
-                'member_aggregate',
-                memberRegistrationRepoHooks,
-            );
-        },
+        useFactory: MemberRegistrationAggregateRepo.providerFactory,
     },
     {
         provide: MemberRegistrationQueryRepo,

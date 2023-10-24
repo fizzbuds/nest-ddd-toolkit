@@ -1,4 +1,3 @@
-import { membershipFeesAggregateRepo } from '../membership-fees.module';
 import 'jest';
 import { MongoMemoryReplSet } from 'mongodb-memory-server';
 import { Test, TestingModule } from '@nestjs/testing';
@@ -9,8 +8,11 @@ import { MembershipFeesSerializer } from '../infrastructure/membership-fees.seri
 import { getConnectionToken, MongooseModule } from '@nestjs/mongoose';
 import { MembershipFeesCommands } from '../membership-fees.commands';
 import { FeeId } from '../domain/ids/fee-id';
-import { MembershipFeesAggregateModel } from '../infrastructure/membership-fees-aggregate.model';
 import { MemberId } from '../../member-registration/domain/ids/member-id';
+import {
+    MembershipFeesAggregateModel,
+    MembershipFeesAggregateRepo,
+} from '../infrastructure/membership-fees-aggregate.repo';
 
 const getActiveConnection = (): mongoose.Connection => {
     return mongoose.connections.find((_) => _.readyState)!;
@@ -34,7 +36,7 @@ describe('Membership Fees Component Test', () => {
             providers: [
                 MembershipFeesCommands,
                 {
-                    provide: membershipFeesAggregateRepo,
+                    provide: MembershipFeesAggregateRepo,
                     inject: [getConnectionToken()],
                     useFactory: (conn: Connection) => {
                         return new MongoAggregateRepo<MembershipFeesAggregate, MembershipFeesAggregateModel>(
@@ -51,7 +53,7 @@ describe('Membership Fees Component Test', () => {
         commands = module.get<MembershipFeesCommands>(MembershipFeesCommands);
         aggregateRepo =
             module.get<MongoAggregateRepo<MembershipFeesAggregate, MembershipFeesAggregateModel>>(
-                membershipFeesAggregateRepo,
+                MembershipFeesAggregateRepo,
             );
         await aggregateRepo.onModuleInit();
     });

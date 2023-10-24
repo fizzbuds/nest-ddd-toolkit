@@ -1,13 +1,13 @@
 import { MembershipFeesAggregate } from './domain/membership-fees.aggregate';
 import { IAggregateRepo } from '../common';
 import { Inject } from '@nestjs/common';
-import { membershipFeesAggregateRepo } from './membership-fees.module';
 import { MemberId } from '../member-registration/domain/ids/member-id';
 import { FeeId } from './domain/ids/fee-id';
+import { MembershipFeesAggregateRepo } from './infrastructure/membership-fees-aggregate.repo';
 
 export class MembershipFeesCommands {
     constructor(
-        @Inject(membershipFeesAggregateRepo) private readonly aggregateRepo: IAggregateRepo<MembershipFeesAggregate>,
+        @Inject(MembershipFeesAggregateRepo) private readonly aggregateRepo: IAggregateRepo<MembershipFeesAggregate>,
     ) {}
 
     public async addFeeCmd(memberId: MemberId, number: number) {

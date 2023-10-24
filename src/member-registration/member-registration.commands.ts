@@ -2,11 +2,11 @@ import { MemberId } from './domain/ids/member-id';
 import { MemberRegistrationAggregate } from './domain/member-registration.aggregate';
 import { IAggregateRepo } from '../common';
 import { Inject } from '@nestjs/common';
-import { memberRegistrationAggregateRepo } from './member-registration.module';
+import { MemberRegistrationAggregateRepo } from './infrastructure/member-registration-aggregate.repo';
 
 export class MemberRegistrationCommands {
     constructor(
-        @Inject(memberRegistrationAggregateRepo)
+        @Inject(MemberRegistrationAggregateRepo)
         private readonly aggregateRepo: IAggregateRepo<MemberRegistrationAggregate>,
     ) {}
     public async createCmd(name: string) {

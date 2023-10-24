@@ -1,4 +1,4 @@
-import { memberRegistrationAggregateRepo, memberRegistrationProviders } from '../member-registration.module';
+import { memberRegistrationProviders } from '../member-registration.module';
 import 'jest';
 import { MongoMemoryReplSet } from 'mongodb-memory-server';
 import { Test, TestingModule } from '@nestjs/testing';
@@ -7,9 +7,12 @@ import { MemberRegistrationAggregate } from '../domain/member-registration.aggre
 import { MongooseModule } from '@nestjs/mongoose';
 import { MemberRegistrationCommands } from '../member-registration.commands';
 import { MemberId } from '../domain/ids/member-id';
-import { MemberRegistrationAggregateModel } from '../infrastructure/member-registration-aggregate.model';
 import { MemberRegistrationQueryModel } from '../infrastructure/member-registration-query.repo';
 import { MemberRegistrationQueries } from '../member-registration.queries';
+import {
+    MemberRegistrationAggregateModel,
+    MemberRegistrationAggregateRepo,
+} from '../infrastructure/member-registration-aggregate.repo';
 
 describe('Member Registration Component Test', () => {
     let module: TestingModule;
@@ -34,7 +37,7 @@ describe('Member Registration Component Test', () => {
 
         commands = module.get<MemberRegistrationCommands>(MemberRegistrationCommands);
         aggregateRepo = module.get<MongoAggregateRepo<MemberRegistrationAggregate, MemberRegistrationAggregateModel>>(
-            memberRegistrationAggregateRepo,
+            MemberRegistrationAggregateRepo,
         );
         await aggregateRepo.onModuleInit();
         queries = module.get<MemberRegistrationQueries>(MemberRegistrationQueries);
