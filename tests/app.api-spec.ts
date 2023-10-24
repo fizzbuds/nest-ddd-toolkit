@@ -3,13 +3,28 @@ import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { AppModule } from '../src/app.module';
 import { MongoMemoryReplSet } from 'mongodb-memory-server';
-import { MongooseModule } from '@nestjs/mongoose';
+import { ConfigService } from '@nestjs/config';
 
 describe('AppController (api)', () => {
     let mongodb: MongoMemoryReplSet;
     let app: INestApplication;
 
-    // FIXME setup a local database for testing
+    class ConfigServiceFake {
+        get(key: string) {
+            switch (key) {
+                case 'MONGODB_URI':
+                    return mongodb.getUri('test');
+                case 'LOG_LEVEL':
+                    return 'debug';
+                default:
+                    return '';
+            }
+        }
+        getOrThrow(key: string) {
+            return this.get(key);
+        }
+    }
+
     beforeAll(async () => {
         mongodb = await MongoMemoryReplSet.create({
             replSet: {
@@ -19,8 +34,11 @@ describe('AppController (api)', () => {
             },
         });
         const moduleFixture: TestingModule = await Test.createTestingModule({
-            imports: [MongooseModule.forRoot(mongodb.getUri('test')), AppModule],
-        }).compile();
+            imports: [AppModule],
+        })
+            .overrideProvider(ConfigService)
+            .useClass(ConfigServiceFake)
+            .compile();
 
         app = moduleFixture.createNestApplication();
         await app.init();

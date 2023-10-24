@@ -16,7 +16,7 @@ import {
 import mongoose from 'mongoose';
 
 const getActiveConnection = (): mongoose.Connection => {
-    return mongoose.connections.find((_) => _.readyState)!;
+    return mongoose.connections.find((_) => _.readyState)!; // TODO maybe there is a better way using mongodb
 };
 describe('Member Registration Component Test', () => {
     let module: TestingModule;

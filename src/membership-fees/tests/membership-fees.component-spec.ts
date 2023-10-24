@@ -15,7 +15,7 @@ import {
 } from '../infrastructure/membership-fees-aggregate.repo';
 
 const getActiveConnection = (): mongoose.Connection => {
-    return mongoose.connections.find((_) => _.readyState)!;
+    return mongoose.connections.find((_) => _.readyState)!; // TODO maybe there is a better way using mongodb
 };
 describe('Membership Fees Component Test', () => {
     let module: TestingModule;
