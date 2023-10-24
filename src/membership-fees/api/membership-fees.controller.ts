@@ -11,7 +11,7 @@ export class MembershipFeesController {
     ) {}
 
     @Post(':id')
-    public async create(@Param('id') memberId: string, @Body('amount') amount: number) {
+    public async add(@Param('id') memberId: string, @Body('amount') amount: number) {
         const feeId = await this.membershipFeesCommands.addFeeCmd(MemberId.fromString(memberId), amount);
         return { feeId: feeId.toString() };
     }

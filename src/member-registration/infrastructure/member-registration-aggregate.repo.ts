@@ -14,7 +14,7 @@ export class MemberRegistrationAggregateRepo {
         return new MongoAggregateRepo<MemberRegistrationAggregate, MemberRegistrationAggregateModel>(
             new MemberRegistrationSerializer(),
             conn.getClient(),
-            'member_aggregate',
+            'member_registration_aggregate',
             memberRegistrationRepoHooks,
         );
     }

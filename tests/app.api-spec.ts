@@ -60,9 +60,9 @@ describe('AppController (api)', () => {
         it('GET /membership-fees/', async () => {
             const response = await request(app.getHttpServer()).get(`/membership-fees`);
             expect(response.body).toMatchObject([
-                { feeId: expect.any(String), memberId: memberId, name: 'John Doe', value: 100 },
-                { feeId: expect.any(String), memberId: memberId, name: 'John Doe', value: 200 },
-                { feeId: expect.any(String), memberId: memberId, name: 'John Doe', value: 300 },
+                { id: expect.any(String), memberId: memberId, name: 'John Doe', value: 100 },
+                { id: expect.any(String), memberId: memberId, name: 'John Doe', value: 200 },
+                { id: expect.any(String), memberId: memberId, name: 'John Doe', value: 300 },
             ]);
         });
     });

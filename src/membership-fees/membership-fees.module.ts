@@ -7,6 +7,7 @@ import { Module } from '@nestjs/common';
 import { MembershipFeesController } from './api/membership-fees.controller';
 import { MembershipFeesCommands } from './membership-fees.commands';
 import { MemberFeesQueryRepo } from './infrastructure/member-fees-query-repo.service';
+import { MemberRegistrationModule } from '../member-registration/member-registration.module';
 
 @Module({
     controllers: [MembershipFeesController],
@@ -25,6 +26,6 @@ import { MemberFeesQueryRepo } from './infrastructure/member-fees-query-repo.ser
             useFactory: MemberFeesQueryRepo.providerFactory,
         },
     ],
-    //imports: [MemberRegistrationModule],
+    imports: [MemberRegistrationModule],
 })
 export class MembershipFeesModule {}

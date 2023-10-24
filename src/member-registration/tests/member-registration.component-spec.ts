@@ -13,7 +13,11 @@ import {
     MemberRegistrationAggregateModel,
     MemberRegistrationAggregateRepo,
 } from '../infrastructure/member-registration-aggregate.repo';
+import mongoose from 'mongoose';
 
+const getActiveConnection = (): mongoose.Connection => {
+    return mongoose.connections.find((_) => _.readyState)!;
+};
 describe('Member Registration Component Test', () => {
     let module: TestingModule;
     let mongodb: MongoMemoryReplSet;
@@ -45,6 +49,7 @@ describe('Member Registration Component Test', () => {
 
     afterEach(async () => {
         jest.resetAllMocks();
+        await getActiveConnection().collection('member_registration_aggregate').deleteMany({});
     });
 
     afterAll(async () => {

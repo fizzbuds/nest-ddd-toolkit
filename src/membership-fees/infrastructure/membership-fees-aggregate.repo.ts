@@ -3,11 +3,11 @@ import { MemberFeesRepoHooks } from './member-fees.repo-hooks';
 import { MongoAggregateRepo } from '../../common';
 import { MembershipFeesAggregate } from '../domain/membership-fees.aggregate';
 import { MembershipFeesSerializer } from './membership-fees.serializer';
-import { FeeId } from '../domain/ids/fee-id';
 
 export interface MembershipFeesAggregateModel {
     id: string;
-    fees: { feeId: FeeId; value: number }[];
+    fees: { feeId: string; value: number }[];
+    creditAmount: number;
 }
 
 export class MembershipFeesAggregateRepo {
