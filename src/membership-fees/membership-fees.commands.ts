@@ -1,9 +1,9 @@
 import { MembershipFeesAggregate } from './domain/membership-fees.aggregate';
-import { IAggregateRepo } from '../common';
 import { Inject } from '@nestjs/common';
 import { MemberId } from '../member-registration/domain/ids/member-id';
 import { FeeId } from './domain/ids/fee-id';
 import { MembershipFeesAggregateRepo } from './infrastructure/membership-fees-aggregate.repo';
+import { IAggregateRepo } from '@fizzbuds/ddd-toolkit';
 
 export class MembershipFeesCommands {
     constructor(

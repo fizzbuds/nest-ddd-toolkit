@@ -4,7 +4,6 @@ import { LoggerModule } from 'nestjs-pino';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { envValidationSchema } from './env-validation-schema';
 import { MongooseModule } from '@nestjs/mongoose';
-import { RequestId } from './common';
 import { MemberRegistrationModule } from './member-registration/member-registration.module';
 import { MembershipFeesModule } from './membership-fees/membership-fees.module';
 
@@ -20,7 +19,6 @@ import { MembershipFeesModule } from './membership-fees/membership-fees.module';
                 return {
                     pinoHttp: {
                         level: config.getOrThrow('LOG_LEVEL'),
-                        genReqId: () => RequestId.generate().toString(),
                         transport: config.get('LOG_PRETTY') ? { target: 'pino-pretty' } : undefined,
                     },
                 };

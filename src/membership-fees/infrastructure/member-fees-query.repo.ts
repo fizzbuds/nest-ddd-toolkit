@@ -1,6 +1,6 @@
 import { Document } from 'mongodb';
 import { Injectable } from '@nestjs/common';
-import { MongoQueryRepo } from '../../common/infrastructure/mongo-query-repo';
+import { MongoQueryRepo } from '@fizzbuds/ddd-toolkit';
 import { Connection } from 'mongoose';
 
 export type MemberFeesQueryModel = {
@@ -17,6 +17,7 @@ export class MemberFeesQueryRepo extends MongoQueryRepo<MemberFeesQueryModel & D
     public static providerFactory(conn: Connection) {
         return new MemberFeesQueryRepo(conn.getClient(), 'member_fees_query_repo');
     }
+
     public async getFees() {
         return this.collection.find({}).toArray();
     }

@@ -1,8 +1,8 @@
 import { Document } from 'mongodb';
 import { Injectable } from '@nestjs/common';
-import { MongoQueryRepo } from '../../common/infrastructure/mongo-query-repo';
 import { MemberId } from '../domain/ids/member-id';
 import { Connection } from 'mongoose';
+import { MongoQueryRepo } from '@fizzbuds/ddd-toolkit';
 
 export interface MemberRegistrationQueryModel {
     id: string;

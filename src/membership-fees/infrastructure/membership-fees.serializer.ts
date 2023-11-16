@@ -1,8 +1,8 @@
-import { ISerializer } from '../../common';
 import { MembershipFeesAggregate } from '../domain/membership-fees.aggregate';
 import { MemberId } from '../../member-registration/domain/ids/member-id';
 import { MembershipFeesAggregateModel } from './membership-fees-aggregate.repo';
 import { FeeId } from '../domain/ids/fee-id';
+import { ISerializer } from '@fizzbuds/ddd-toolkit';
 
 export class MembershipFeesSerializer implements ISerializer<MembershipFeesAggregate, MembershipFeesAggregateModel> {
     public aggregateModelToAggregate(aggregateModel: MembershipFeesAggregateModel): MembershipFeesAggregate {

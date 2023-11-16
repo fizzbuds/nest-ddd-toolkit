@@ -1,7 +1,7 @@
-import { IRepoHooks } from '../../common';
 import { Injectable } from '@nestjs/common';
 import { MemberRegistrationAggregate } from '../domain/member-registration.aggregate';
 import { MemberRegistrationQueryModel, MemberRegistrationQueryRepo } from './member-registration-query.repo';
+import { IRepoHooks } from '@fizzbuds/ddd-toolkit';
 
 @Injectable()
 export class MemberRegistrationRepoHooks implements IRepoHooks<MemberRegistrationAggregate> {

@@ -1,8 +1,8 @@
 import { Connection } from 'mongoose';
 import { MemberFeesRepoHooks } from './member-fees.repo-hooks';
-import { MongoAggregateRepo } from '../../common';
 import { MembershipFeesAggregate } from '../domain/membership-fees.aggregate';
 import { MembershipFeesSerializer } from './membership-fees.serializer';
+import { MongoAggregateRepo } from '@fizzbuds/ddd-toolkit';
 
 export interface MembershipFeesAggregateModel {
     id: string;

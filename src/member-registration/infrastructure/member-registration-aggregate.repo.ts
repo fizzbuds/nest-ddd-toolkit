@@ -1,8 +1,8 @@
 import { Connection } from 'mongoose';
 import { MemberRegistrationRepoHooks } from './member-registration.repo-hooks';
-import { MongoAggregateRepo } from '../../common';
 import { MemberRegistrationAggregate } from '../domain/member-registration.aggregate';
 import { MemberRegistrationSerializer } from './member-registration.serializer';
+import { MongoAggregateRepo } from '@fizzbuds/ddd-toolkit';
 
 export interface MemberRegistrationAggregateModel {
     id: string;

@@ -1,4 +1,4 @@
-import { IRepoHooks } from '../../common';
+import { IRepoHooks } from '@fizzbuds/ddd-toolkit';
 import { Injectable } from '@nestjs/common';
 import { MembershipFeesAggregate } from '../domain/membership-fees.aggregate';
 import { MemberFeesQueryModel, MemberFeesQueryRepo } from './member-fees-query.repo';

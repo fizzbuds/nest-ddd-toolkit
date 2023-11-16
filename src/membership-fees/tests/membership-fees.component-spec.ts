@@ -1,7 +1,6 @@
 import 'jest';
 import { MongoMemoryReplSet } from 'mongodb-memory-server';
 import { Test, TestingModule } from '@nestjs/testing';
-import { MongoAggregateRepo } from '../../common';
 import { MembershipFeesAggregate } from '../domain/membership-fees.aggregate';
 import mongoose, { Connection } from 'mongoose';
 import { MembershipFeesSerializer } from '../infrastructure/membership-fees.serializer';
@@ -13,6 +12,7 @@ import {
     MembershipFeesAggregateModel,
     MembershipFeesAggregateRepo,
 } from '../infrastructure/membership-fees-aggregate.repo';
+import { MongoAggregateRepo } from '@fizzbuds/ddd-toolkit';
 
 const getActiveConnection = (): mongoose.Connection => {
     return mongoose.connections.find((_) => _.readyState)!; // TODO maybe there is a better way using mongodb

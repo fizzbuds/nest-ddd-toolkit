@@ -2,7 +2,6 @@ import { memberRegistrationProviders } from '../member-registration.module';
 import 'jest';
 import { MongoMemoryReplSet } from 'mongodb-memory-server';
 import { Test, TestingModule } from '@nestjs/testing';
-import { MongoAggregateRepo } from '../../common';
 import { MemberRegistrationAggregate } from '../domain/member-registration.aggregate';
 import { MongooseModule } from '@nestjs/mongoose';
 import { MemberRegistrationCommands } from '../member-registration.commands';
@@ -14,6 +13,7 @@ import {
     MemberRegistrationAggregateRepo,
 } from '../infrastructure/member-registration-aggregate.repo';
 import mongoose from 'mongoose';
+import { MongoAggregateRepo } from '@fizzbuds/ddd-toolkit';
 
 const getActiveConnection = (): mongoose.Connection => {
     return mongoose.connections.find((_) => _.readyState)!; // TODO maybe there is a better way using mongodb
