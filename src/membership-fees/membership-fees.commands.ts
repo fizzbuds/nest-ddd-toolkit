@@ -11,7 +11,7 @@ export class MembershipFeesCommands {
     ) {}
 
     public async addFeeCmd(memberId: MemberId, number: number) {
-        const membershipFeesAggregate = await this.aggregateRepo.getById(memberId);
+        const membershipFeesAggregate = await this.aggregateRepo.getById(memberId.toString());
         let feeId: FeeId;
 
         if (!membershipFeesAggregate) {

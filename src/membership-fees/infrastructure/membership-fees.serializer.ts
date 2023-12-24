@@ -5,14 +5,14 @@ import { FeeId } from '../domain/ids/fee-id';
 import { ISerializer } from '@fizzbuds/ddd-toolkit';
 
 export class MembershipFeesSerializer implements ISerializer<MembershipFeesAggregate, MembershipFeesAggregateModel> {
-    public aggregateModelToAggregate(aggregateModel: MembershipFeesAggregateModel): MembershipFeesAggregate {
+    public modelToAggregate(aggregateModel: MembershipFeesAggregateModel): MembershipFeesAggregate {
         const fees = aggregateModel.fees.map((fee) => {
             return { feeId: FeeId.fromString(fee.feeId), value: fee.value };
         });
         return new MembershipFeesAggregate(MemberId.fromString(aggregateModel.id), fees, aggregateModel.creditAmount);
     }
 
-    public aggregateToAggregateModel(aggregate: MembershipFeesAggregate): MembershipFeesAggregateModel {
+    public aggregateToModel(aggregate: MembershipFeesAggregate): MembershipFeesAggregateModel {
         const fees = aggregate['fees'].map((fee) => {
             return { feeId: fee.feeId.toString(), value: fee.value };
         });

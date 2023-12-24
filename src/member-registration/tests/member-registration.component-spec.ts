@@ -68,7 +68,7 @@ describe('Member Registration Component Test', () => {
         });
 
         it('should be saved into aggregate model', async () => {
-            expect(await aggregateRepo.getById(memberId)).not.toBeNull();
+            expect(await aggregateRepo.getById(memberId.toString())).not.toBeNull();
         });
 
         describe('When getting on member from query model', () => {

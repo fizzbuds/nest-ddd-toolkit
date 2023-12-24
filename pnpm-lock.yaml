@@ -6,8 +6,8 @@ settings:
 
 dependencies:
   '@fizzbuds/ddd-toolkit':
-    specifier: ^0.0.1
-    version: 0.0.1
+    specifier: ^0.0.14
+    version: 0.0.14(mongodb@5.6.0)
   '@nestjs/common':
     specifier: ^10.0.0
     version: 10.0.0(class-transformer@0.5.1)(class-validator@0.14.0)(reflect-metadata@0.1.13)(rxjs@7.8.1)
@@ -1434,16 +1434,15 @@ packages:
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
     dev: true
 
-  /@fizzbuds/ddd-toolkit@0.0.1:
-    resolution: {integrity: sha512-lzVzI1n+iLIGEyaqN180VCVi8aJLnfC3aBFchgyGNAFcTdJdO0k/4lRN9RTofWZmpK4gn39/urpad02XfV4Nig==}
+  /@fizzbuds/ddd-toolkit@0.0.14(mongodb@5.6.0):
+    resolution: {integrity: sha512-/xkCJGjfdgPJReaqLQN/sgD/mnT5nHOpn4nJzU/eJ91I4QX6W6O69UkHpdt1KPfirLhTKp6oetGTMd95TfU0Pw==}
+    requiresBuild: true
+    peerDependencies:
+      mongodb: ^4.0.0 || ^5.0.0
     dependencies:
       lodash: 4.17.21
       mongodb: 5.6.0
       uuid: 9.0.0
-    transitivePeerDependencies:
-      - '@aws-sdk/credential-providers'
-      - mongodb-client-encryption
-      - snappy
     dev: false
 
   /@hapi/hoek@9.3.0:

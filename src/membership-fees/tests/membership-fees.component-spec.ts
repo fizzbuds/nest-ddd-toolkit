@@ -79,7 +79,7 @@ describe('Membership Fees Component Test', () => {
             });
 
             it('should be saved into aggregate model', async () => {
-                expect(await aggregateRepo.getById(memberId)).not.toBeNull();
+                expect(await aggregateRepo.getById(memberId.toString())).not.toBeNull();
             });
 
             it('should return a fee id', async () => {
@@ -87,7 +87,7 @@ describe('Membership Fees Component Test', () => {
             });
 
             it('should add a fee', async () => {
-                expect(await aggregateRepo.getById(memberId)).toMatchObject({
+                expect(await aggregateRepo.getById(memberId.toString())).toMatchObject({
                     fees: [{ feeId: expect.anything(), value: 100 }],
                 });
             });

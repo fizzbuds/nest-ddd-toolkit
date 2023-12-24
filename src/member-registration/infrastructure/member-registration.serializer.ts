@@ -7,11 +7,11 @@ import { ISerializer } from '@fizzbuds/ddd-toolkit';
 export class MemberRegistrationSerializer
     implements ISerializer<MemberRegistrationAggregate, MemberRegistrationAggregateModel>
 {
-    public aggregateModelToAggregate(aggregateModel: MemberRegistrationAggregateModel): MemberRegistrationAggregate {
+    public modelToAggregate(aggregateModel: MemberRegistrationAggregateModel): MemberRegistrationAggregate {
         return new MemberRegistrationAggregate(MemberId.fromString(aggregateModel.id), aggregateModel['name']);
     }
 
-    public aggregateToAggregateModel(aggregate: MemberRegistrationAggregate): MemberRegistrationAggregateModel {
+    public aggregateToModel(aggregate: MemberRegistrationAggregate): MemberRegistrationAggregateModel {
         return { id: aggregate.id.toString(), name: aggregate['name'] };
     }
 }
