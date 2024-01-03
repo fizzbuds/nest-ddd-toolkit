@@ -1,5 +1,5 @@
 import { Document } from 'mongodb';
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { MongoQueryRepo } from '@fizzbuds/ddd-toolkit';
 import { Connection } from 'mongoose';
 
@@ -12,14 +12,15 @@ export type MemberFeesQueryModel = {
 
 @Injectable()
 export class MemberFeesQueryRepo extends MongoQueryRepo<MemberFeesQueryModel & Document> {
+    private static logger = new Logger(MemberFeesQueryRepo.name);
     protected readonly indexes = [];
 
     public static providerFactory(conn: Connection) {
-        return new MemberFeesQueryRepo(conn.getClient(), 'member_fees_query_repo');
+        return new MemberFeesQueryRepo(conn.getClient(), 'member_fees_query_repo', MemberFeesQueryRepo.logger);
     }
 
     public async getFees() {
-        return this.collection.find({}).toArray();
+        return this.collection.find({});
     }
 
     public async save(queryModel: MemberFeesQueryModel[]) {

@@ -1,5 +1,5 @@
 import { Document } from 'mongodb';
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { MemberId } from '../domain/ids/member-id';
 import { Connection } from 'mongoose';
 import { MongoQueryRepo } from '@fizzbuds/ddd-toolkit';
@@ -11,11 +11,16 @@ export interface MemberRegistrationQueryModel {
 
 @Injectable()
 export class MemberRegistrationQueryRepo extends MongoQueryRepo<MemberRegistrationQueryModel & Document> {
+    private static logger = new Logger(MemberRegistrationQueryRepo.name);
     protected readonly indexes = [{ indexSpec: { name: 1 } }];
 
-    public static providerFactory = (conn: Connection) => {
-        return new MemberRegistrationQueryRepo(conn.getClient(), 'member_query_repo');
-    };
+    public static providerFactory(conn: Connection) {
+        return new MemberRegistrationQueryRepo(
+            conn.getClient(),
+            'member_query_repo',
+            MemberRegistrationQueryRepo.logger,
+        );
+    }
 
     public async getMember(id: MemberId) {
         return await this.collection.findOne({ id: id.toString() });
