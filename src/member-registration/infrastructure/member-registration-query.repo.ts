@@ -9,7 +9,6 @@ export interface MemberRegistrationQueryModel {
     name: string;
 }
 
-@Injectable()
 export class MemberRegistrationQueryRepo extends MongoQueryRepo<MemberRegistrationQueryModel & Document> {
     private static logger = new Logger(MemberRegistrationQueryRepo.name);
     protected readonly indexes = [{ indexSpec: { name: 1 } }];
