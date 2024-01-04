@@ -1,4 +1,4 @@
-import { Document } from 'mongodb';
+import { ClientSession, Document } from 'mongodb';
 import { Injectable, Logger } from '@nestjs/common';
 import { MongoQueryRepo } from '@fizzbuds/ddd-toolkit';
 import { Connection } from 'mongoose';
@@ -23,7 +23,7 @@ export class MemberFeesQueryRepo extends MongoQueryRepo<MemberFeesQueryModel & D
         return this.collection.find({});
     }
 
-    public async save(queryModel: MemberFeesQueryModel[]) {
+    public async save(queryModel: MemberFeesQueryModel[], session?: ClientSession) {
         await this.collection.bulkWrite(
             queryModel.map((qm) => {
                 return {
@@ -34,6 +34,7 @@ export class MemberFeesQueryRepo extends MongoQueryRepo<MemberFeesQueryModel & D
                     },
                 };
             }),
+            { session },
         );
     }
 }

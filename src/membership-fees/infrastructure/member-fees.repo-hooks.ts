@@ -4,6 +4,7 @@ import { MemberFeesQueryModel, MemberFeesQueryRepo } from './member-fees-query.r
 import { MemberRegistrationQueries } from '../../member-registration/member-registration.queries';
 import { MembershipFeesAggregateModel } from './membership-fees-aggregate.repo';
 import { MemberId } from '../../member-registration/domain/ids/member-id';
+import { ClientSession } from 'mongodb';
 
 @Injectable()
 export class MemberFeesRepoHooks implements IRepoHooks<MembershipFeesAggregateModel> {
@@ -12,9 +13,9 @@ export class MemberFeesRepoHooks implements IRepoHooks<MembershipFeesAggregateMo
         private readonly memberRegistrationQueries: MemberRegistrationQueries,
     ) {}
 
-    public async onSave(aggregate: MembershipFeesAggregateModel) {
+    public async onSave(aggregate: MembershipFeesAggregateModel, session?: ClientSession) {
         const queryModel = await this.composeQueryModel(aggregate);
-        await this.memberFeesQueryRepo.save(queryModel);
+        await this.memberFeesQueryRepo.save(queryModel, session);
     }
 
     private async composeQueryModel(aggregate: MembershipFeesAggregateModel): Promise<MemberFeesQueryModel[]> {

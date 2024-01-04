@@ -1,4 +1,4 @@
-import { Document } from 'mongodb';
+import { ClientSession, Document } from 'mongodb';
 import { Injectable, Logger } from '@nestjs/common';
 import { MemberId } from '../domain/ids/member-id';
 import { Connection } from 'mongoose';
@@ -26,7 +26,7 @@ export class MemberRegistrationQueryRepo extends MongoQueryRepo<MemberRegistrati
         return await this.collection.findOne({ id: id.toString() });
     }
 
-    public async save(queryModel: MemberRegistrationQueryModel) {
-        await this.collection.updateOne({ id: queryModel.id }, { $set: queryModel }, { upsert: true });
+    public async save(queryModel: MemberRegistrationQueryModel, session?: ClientSession) {
+        await this.collection.updateOne({ id: queryModel.id }, { $set: queryModel }, { upsert: true, session });
     }
 }
