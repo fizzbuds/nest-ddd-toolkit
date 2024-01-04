@@ -14,6 +14,7 @@ import {
 } from '../infrastructure/member-registration-aggregate.repo';
 import mongoose from 'mongoose';
 import { MongoAggregateRepo } from '@fizzbuds/ddd-toolkit';
+import { ConfigModule } from '@nestjs/config';
 
 const getActiveConnection = (): mongoose.Connection => {
     return mongoose.connections.find((_) => _.readyState)!; // TODO maybe there is a better way using mongodb
@@ -36,14 +37,14 @@ describe('Member Registration Component Test', () => {
 
         module = await Test.createTestingModule({
             providers: memberRegistrationProviders,
-            imports: [MongooseModule.forRoot(mongodb.getUri('test'))],
+            imports: [MongooseModule.forRoot(mongodb.getUri('test')), ConfigModule.forRoot()],
         }).compile();
 
         commands = module.get<MemberRegistrationCommands>(MemberRegistrationCommands);
         aggregateRepo = module.get<MongoAggregateRepo<MemberRegistrationAggregate, MemberRegistrationAggregateModel>>(
             MemberRegistrationAggregateRepo,
         );
-        await aggregateRepo.onModuleInit();
+        await aggregateRepo.init();
         queries = module.get<MemberRegistrationQueries>(MemberRegistrationQueries);
     });
 

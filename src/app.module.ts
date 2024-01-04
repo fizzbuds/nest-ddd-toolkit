@@ -20,6 +20,7 @@ import { MembershipFeesModule } from './membership-fees/membership-fees.module';
                     pinoHttp: {
                         level: config.getOrThrow('LOG_LEVEL'),
                         transport: config.get('LOG_PRETTY') ? { target: 'pino-pretty' } : undefined,
+                        quietReqLogger: true,
                     },
                 };
             },

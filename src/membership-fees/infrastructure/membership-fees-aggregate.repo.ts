@@ -20,6 +20,7 @@ export class MembershipFeesAggregateRepo {
             conn.getClient(),
             'membership_fees_aggregate',
             memberFeesRepoHooks,
+            undefined,
             MembershipFeesAggregateRepo.logger,
         );
     }

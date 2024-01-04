@@ -2,12 +2,13 @@ import { MemberId } from './domain/ids/member-id';
 import { MemberRegistrationAggregate } from './domain/member-registration.aggregate';
 import { Inject } from '@nestjs/common';
 import { MemberRegistrationAggregateRepo } from './infrastructure/member-registration-aggregate.repo';
-import { IAggregateRepo } from '@fizzbuds/ddd-toolkit';
+import { IAggregateRepoWithOutbox } from '@fizzbuds/ddd-toolkit';
+import { v4 as uuid } from 'uuid';
 
 export class MemberRegistrationCommands {
     constructor(
         @Inject(MemberRegistrationAggregateRepo)
-        private readonly aggregateRepo: IAggregateRepo<MemberRegistrationAggregate>,
+        private readonly aggregateRepo: IAggregateRepoWithOutbox<MemberRegistrationAggregate>,
     ) {}
 
     public async createCmd(name: string) {
@@ -15,7 +16,12 @@ export class MemberRegistrationCommands {
 
         const memberRegistrationAggregate = MemberRegistrationAggregate.create(memberId, name);
 
-        await this.aggregateRepo.save(memberRegistrationAggregate);
+        const event = {
+            id: uuid(),
+            payload: { foo: 'bar' },
+            routingKey: 'member-registration-created',
+        };
+        await this.aggregateRepo.save(memberRegistrationAggregate, [event]);
         return memberId;
     }
 }

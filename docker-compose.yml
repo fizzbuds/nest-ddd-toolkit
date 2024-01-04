@@ -1,0 +1,17 @@
+version: '3'
+
+services:
+  mongodb:
+    container_name: mongodb
+    image: mongo
+    ports:
+      - "27017:27017"
+    restart: always
+
+  rabbit:
+    container_name: rabbit
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"
+      - "8080:15672"
+    restart: always

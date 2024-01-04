@@ -5,6 +5,11 @@ import { ConfigService } from '@nestjs/config';
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
+function randomIntFromInterval(min: number, max: number) {
+    // min and max included
+    return Math.floor(Math.random() * (max - min + 1) + min);
+}
+
 async function bootstrap() {
     const app = await NestFactory.create(AppModule, { bufferLogs: true });
     app.useLogger(app.get(Logger));
@@ -21,6 +26,7 @@ async function bootstrap() {
     app.getHttpAdapter().getInstance().disable('x-powered-by');
     const configService = app.get(ConfigService);
     await app.listen(configService.getOrThrow('APP_PORT'));
+    // await app.listen(randomIntFromInterval(3000, 5000) || configService.getOrThrow('APP_PORT'));
 }
 
 bootstrap();
