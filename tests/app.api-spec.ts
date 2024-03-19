@@ -49,39 +49,56 @@ describe('AppController (api)', () => {
         return response.body.id;
     }
 
-    it('POST /member-registrations', async () => {
-        const response = await request(app.getHttpServer()).post('/member-registrations/').send({ name: 'John Doe' });
-        expect(response.statusCode).toBe(201);
-    });
-
-    it('GET /member-registrations/:id', async () => {
-        const memberId = await createMember();
-        const response = await request(app.getHttpServer()).get(`/member-registrations/${memberId}`);
-        expect(response.body.name).toBe('John Doe');
-    });
-
-    describe('Create member registration, fees and get list', () => {
-        let memberId: string;
-        beforeAll(async () => {
-            memberId = await createMember();
+    describe('/member-registrations', () => {
+        describe('POST /member-registrations', () => {
+            it('should create a new member', async () => {
+                const response = await request(app.getHttpServer())
+                    .post('/member-registrations/')
+                    .send({ name: 'John Doe' });
+                expect(response.statusCode).toBe(201);
+            });
         });
 
-        it('POST /membership-fees', async () => {
-            const resp1 = await request(app.getHttpServer()).post(`/membership-fees/${memberId}`).send({ amount: 100 });
-            expect(resp1.body).toMatchObject({ feeId: expect.any(String) });
-            const resp2 = await request(app.getHttpServer()).post(`/membership-fees/${memberId}`).send({ amount: 200 });
-            expect(resp2.body).toMatchObject({ feeId: expect.any(String) });
-            const resp3 = await request(app.getHttpServer()).post(`/membership-fees/${memberId}`).send({ amount: 300 });
-            expect(resp3.body).toMatchObject({ feeId: expect.any(String) });
+        describe('GET /member-registrations/:id', () => {
+            it('should return the member data', async () => {
+                const memberId = await createMember();
+                const response = await request(app.getHttpServer()).get(`/member-registrations/${memberId}`);
+                expect(response.body.name).toBe('John Doe');
+                expect(response.statusCode).toBe(200);
+            });
         });
+    });
 
-        it('GET /membership-fees/', async () => {
-            const response = await request(app.getHttpServer()).get(`/membership-fees`);
-            expect(response.body).toMatchObject([
-                { id: expect.any(String), memberId: memberId, name: 'John Doe', value: 100 },
-                { id: expect.any(String), memberId: memberId, name: 'John Doe', value: 200 },
-                { id: expect.any(String), memberId: memberId, name: 'John Doe', value: 300 },
-            ]);
+    describe('/membership-fees', () => {
+        describe('Given a member', () => {
+            let memberId: string;
+            beforeAll(async () => {
+                memberId = await createMember();
+            });
+
+            it('POST /membership-fees', async () => {
+                const resp1 = await request(app.getHttpServer())
+                    .post(`/membership-fees/${memberId}`)
+                    .send({ amount: 100 });
+                expect(resp1.body).toMatchObject({ feeId: expect.any(String) });
+                const resp2 = await request(app.getHttpServer())
+                    .post(`/membership-fees/${memberId}`)
+                    .send({ amount: 200 });
+                expect(resp2.body).toMatchObject({ feeId: expect.any(String) });
+                const resp3 = await request(app.getHttpServer())
+                    .post(`/membership-fees/${memberId}`)
+                    .send({ amount: 300 });
+                expect(resp3.body).toMatchObject({ feeId: expect.any(String) });
+            });
+
+            it('GET /membership-fees/', async () => {
+                const response = await request(app.getHttpServer()).get(`/membership-fees`);
+                expect(response.body).toMatchObject([
+                    { id: expect.any(String), memberId: memberId, name: 'John Doe', value: 100 },
+                    { id: expect.any(String), memberId: memberId, name: 'John Doe', value: 200 },
+                    { id: expect.any(String), memberId: memberId, name: 'John Doe', value: 300 },
+                ]);
+            });
         });
     });
 });
