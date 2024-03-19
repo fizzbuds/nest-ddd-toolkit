@@ -16,11 +16,16 @@ export class MemberFeesQueryRepo extends MongoQueryRepo<MemberFeesQueryModel & D
     protected readonly indexes = [];
 
     public static providerFactory(conn: Connection) {
-        return new MemberFeesQueryRepo(conn.getClient(), 'member_fees_query_repo', MemberFeesQueryRepo.logger);
+        return new MemberFeesQueryRepo(
+            conn.getClient(),
+            'member_fees_query_repo',
+            undefined,
+            MemberFeesQueryRepo.logger,
+        );
     }
 
     public async getFees() {
-        return this.collection.find({});
+        return this.collection.find({}).toArray();
     }
 
     public async save(queryModel: MemberFeesQueryModel[], session?: ClientSession) {

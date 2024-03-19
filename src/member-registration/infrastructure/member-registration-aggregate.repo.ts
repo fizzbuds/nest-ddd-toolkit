@@ -18,6 +18,7 @@ export class MemberRegistrationAggregateRepo {
             new MemberRegistrationSerializer(),
             conn.getClient(),
             'member_registration_aggregate',
+            undefined,
             memberRegistrationRepoHooks,
             MemberRegistrationAggregateRepo.logger,
         );

@@ -55,7 +55,7 @@ describe('Membership Fees Component Test', () => {
             module.get<MongoAggregateRepo<MembershipFeesAggregate, MembershipFeesAggregateModel>>(
                 MembershipFeesAggregateRepo,
             );
-        await aggregateRepo.onModuleInit();
+        await aggregateRepo.init();
     });
 
     afterEach(async () => {

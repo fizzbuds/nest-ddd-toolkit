@@ -19,6 +19,7 @@ export class MembershipFeesAggregateRepo {
             new MembershipFeesSerializer(),
             conn.getClient(),
             'membership_fees_aggregate',
+            undefined,
             memberFeesRepoHooks,
             MembershipFeesAggregateRepo.logger,
         );

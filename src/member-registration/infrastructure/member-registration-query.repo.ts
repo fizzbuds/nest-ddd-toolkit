@@ -18,6 +18,7 @@ export class MemberRegistrationQueryRepo extends MongoQueryRepo<MemberRegistrati
         return new MemberRegistrationQueryRepo(
             conn.getClient(),
             'member_query_repo',
+            undefined,
             MemberRegistrationQueryRepo.logger,
         );
     }

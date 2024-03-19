@@ -43,7 +43,7 @@ describe('Member Registration Component Test', () => {
         aggregateRepo = module.get<MongoAggregateRepo<MemberRegistrationAggregate, MemberRegistrationAggregateModel>>(
             MemberRegistrationAggregateRepo,
         );
-        await aggregateRepo.onModuleInit();
+        await aggregateRepo.init();
         queries = module.get<MemberRegistrationQueries>(MemberRegistrationQueries);
     });
 
