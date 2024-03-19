@@ -55,6 +55,7 @@ describe('AppController (api)', () => {
                 const response = await request(app.getHttpServer())
                     .post('/member-registrations/')
                     .send({ name: 'John Doe' });
+                expect(response.body).toMatchObject({ id: expect.any(String) });
                 expect(response.statusCode).toBe(201);
             });
         });
@@ -65,6 +66,16 @@ describe('AppController (api)', () => {
                 const response = await request(app.getHttpServer()).get(`/member-registrations/${memberId}`);
                 expect(response.body.name).toBe('John Doe');
                 expect(response.statusCode).toBe(200);
+            });
+        });
+
+        describe('DELETE /member-registrations/:id', () => {
+            it('should delete the member', async () => {
+                const memberId = await createMember();
+                const deleteResponse = await request(app.getHttpServer()).delete(`/member-registrations/${memberId}`);
+                expect(deleteResponse.statusCode).toBe(200);
+                const getResponse = await request(app.getHttpServer()).get(`/member-registrations/${memberId}`);
+                expect(getResponse.statusCode).toBe(404);
             });
         });
     });

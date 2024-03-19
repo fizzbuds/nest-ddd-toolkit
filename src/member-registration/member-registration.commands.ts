@@ -1,6 +1,6 @@
 import { MemberId } from './domain/ids/member-id';
 import { MemberRegistrationAggregate } from './domain/member-registration.aggregate';
-import { Inject } from '@nestjs/common';
+import { Inject, NotFoundException } from '@nestjs/common';
 import { MemberRegistrationAggregateRepo } from './infrastructure/member-registration-aggregate.repo';
 import { IAggregateRepo } from '@fizzbuds/ddd-toolkit';
 
@@ -17,5 +17,14 @@ export class MemberRegistrationCommands {
 
         await this.aggregateRepo.save(memberRegistrationAggregate);
         return memberId;
+    }
+
+    public async deleteCmd(memberId: MemberId) {
+        const member = await this.aggregateRepo.getById(memberId.toString());
+        if (!member) throw new NotFoundException();
+
+        member.delete();
+
+        await this.aggregateRepo.save(member);
     }
 }

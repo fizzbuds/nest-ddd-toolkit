@@ -8,6 +8,7 @@ import { Logger } from '@nestjs/common';
 export interface MemberRegistrationAggregateModel {
     id: string;
     name: string;
+    deleted: boolean;
 }
 
 export class MemberRegistrationAggregateRepo {

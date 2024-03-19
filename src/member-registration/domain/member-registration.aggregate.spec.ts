@@ -14,4 +14,19 @@ describe('MemberRegistrationAggregate', () => {
             });
         });
     });
+
+    describe('Given an existing MemberRegistrationAggregate', () => {
+        let memberRegistrationAggregate: MemberRegistrationAggregate;
+        beforeEach(() => {
+            memberRegistrationAggregate = MemberRegistrationAggregate.create(MemberId.generate(), 'John Doe');
+        });
+
+        describe('When deleting it', () => {
+            it('should mark it as deleted', () => {
+                memberRegistrationAggregate.delete();
+
+                expect(memberRegistrationAggregate.isDeleted()).toBeTruthy();
+            });
+        });
+    });
 });

@@ -71,7 +71,23 @@ describe('Member Registration Component Test', () => {
             expect(await aggregateRepo.getById(memberId.toString())).not.toBeNull();
         });
 
-        describe('When getting on member from query model', () => {
+        describe('When deleting it', () => {
+            beforeEach(async () => {
+                await commands.deleteCmd(memberId);
+            });
+
+            it('should be soft deleted into aggregate model', async () => {
+                expect(await aggregateRepo.getById(memberId.toString())).toMatchObject({ deleted: true });
+            });
+
+            describe('And getting it from query model', () => {
+                it('should return null', async () => {
+                    expect(await queries.getMemberQuery(memberId)).toBe(null);
+                });
+            });
+        });
+
+        describe('When getting a member from query model', () => {
             let member: MemberRegistrationQueryModel | null;
             beforeEach(async () => {
                 member = await queries.getMemberQuery(memberId);

@@ -13,7 +13,7 @@ export class MemberRegistrationRepoHooks implements IRepoHooks<MemberRegistratio
         await this.queryRepo.save(queryModel, session);
     }
 
-    private composeQueryModel(aggregate: MemberRegistrationAggregateModel): MemberRegistrationQueryModel {
-        return { id: aggregate.id.toString(), name: aggregate['name'] };
+    private composeQueryModel(aggregateModel: MemberRegistrationAggregateModel): MemberRegistrationQueryModel {
+        return { id: aggregateModel.id.toString(), name: aggregateModel['name'], deleted: aggregateModel.deleted };
     }
 }

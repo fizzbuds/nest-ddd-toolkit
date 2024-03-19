@@ -8,10 +8,14 @@ export class MemberRegistrationSerializer
     implements ISerializer<MemberRegistrationAggregate, MemberRegistrationAggregateModel>
 {
     public modelToAggregate(aggregateModel: MemberRegistrationAggregateModel): MemberRegistrationAggregate {
-        return new MemberRegistrationAggregate(MemberId.fromString(aggregateModel.id), aggregateModel['name']);
+        return new MemberRegistrationAggregate(
+            MemberId.fromString(aggregateModel.id),
+            aggregateModel.name,
+            aggregateModel.deleted,
+        );
     }
 
     public aggregateToModel(aggregate: MemberRegistrationAggregate): MemberRegistrationAggregateModel {
-        return { id: aggregate.id.toString(), name: aggregate['name'] };
+        return { id: aggregate.id.toString(), name: aggregate['name'], deleted: aggregate.isDeleted() };
     }
 }

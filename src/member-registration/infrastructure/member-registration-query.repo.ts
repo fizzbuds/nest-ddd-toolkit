@@ -7,6 +7,7 @@ import { MongoQueryRepo } from '@fizzbuds/ddd-toolkit';
 export interface MemberRegistrationQueryModel {
     id: string;
     name: string;
+    deleted: boolean;
 }
 
 @Injectable()
@@ -24,7 +25,7 @@ export class MemberRegistrationQueryRepo extends MongoQueryRepo<MemberRegistrati
     }
 
     public async getMember(id: MemberId) {
-        return await this.collection.findOne({ id: id.toString() });
+        return await this.collection.findOne({ id: id.toString(), deleted: false });
     }
 
     public async save(queryModel: MemberRegistrationQueryModel, session?: ClientSession) {
