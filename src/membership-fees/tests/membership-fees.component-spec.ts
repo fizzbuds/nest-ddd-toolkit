@@ -88,7 +88,27 @@ describe('Membership Fees Component Test', () => {
 
             it('should add a fee', async () => {
                 expect(await aggregateRepo.getById(memberId.toString())).toMatchObject({
-                    fees: [{ feeId: expect.anything(), value: 100, deleted: false }],
+                    fees: [{ feeId: feeId, value: 100, deleted: false }],
+                });
+            });
+        });
+
+        describe('Given a fee', () => {
+            let feeId: FeeId;
+
+            beforeEach(async () => {
+                feeId = await commands.addFeeCmd(memberId, 100);
+            });
+
+            describe('When deleting it', () => {
+                beforeEach(async () => {
+                    await commands.deleteFeeCmd(memberId, feeId);
+                });
+
+                it('should mark it as deleted', async () => {
+                    expect(await aggregateRepo.getById(memberId.toString())).toMatchObject({
+                        fees: [{ feeId: feeId, value: 100, deleted: true }],
+                    });
                 });
             });
         });

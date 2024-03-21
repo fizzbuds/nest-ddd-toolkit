@@ -1,5 +1,5 @@
 import { MembershipFeesAggregate } from './domain/membership-fees.aggregate';
-import { Inject } from '@nestjs/common';
+import { Inject, NotFoundException } from '@nestjs/common';
 import { MemberId } from '../member-registration/domain/ids/member-id';
 import { FeeId } from './domain/ids/fee-id';
 import { MembershipFeesAggregateRepo } from './infrastructure/membership-fees-aggregate.repo';
@@ -24,5 +24,14 @@ export class MembershipFeesCommands {
         feeId = membershipFeesAggregate.addFee(number);
         await this.aggregateRepo.save(membershipFeesAggregate);
         return feeId;
+    }
+
+    public async deleteFeeCmd(memberId: MemberId, feeId: FeeId) {
+        const membershipFeesAggregate = await this.aggregateRepo.getById(memberId.toString());
+        if (!membershipFeesAggregate) throw new NotFoundException();
+
+        membershipFeesAggregate.deleteFee(feeId);
+
+        await this.aggregateRepo.save(membershipFeesAggregate);
     }
 }
