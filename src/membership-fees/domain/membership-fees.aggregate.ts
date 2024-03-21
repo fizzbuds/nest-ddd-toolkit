@@ -1,10 +1,11 @@
 import { FeeId } from './ids/fee-id';
 import { MemberId } from '../../member-registration/domain/ids/member-id';
+import { Error } from 'mongoose';
 
 export type Fee = { feeId: FeeId; value: number; deleted: boolean };
 
 export class MembershipFeesAggregate {
-    constructor(readonly id: MemberId, private readonly fees: Fee[] = [], private creditAmount: number = 0) {}
+    constructor(readonly id: MemberId, private readonly fees: Fee[] = [], private creditAmount = 0) {}
 
     public static create(id: MemberId) {
         return new MembershipFeesAggregate(id);
@@ -26,5 +27,9 @@ export class MembershipFeesAggregate {
         const result = this.fees.find((fee) => fee.feeId.equals(feeId));
         if (!result) throw new Error(`Cannot find fee with id: ${feeId.toString()}`);
         return result;
+    }
+
+    public getCreditAmount(): number {
+        return this.creditAmount;
     }
 }

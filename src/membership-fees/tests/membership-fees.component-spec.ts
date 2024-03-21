@@ -91,6 +91,10 @@ describe('Membership Fees Component Test', () => {
                     fees: [{ feeId: feeId, value: 100, deleted: false }],
                 });
             });
+
+            it('should increase the credit amount', async () => {
+                expect((await aggregateRepo.getById(memberId.toString()))?.getCreditAmount()).toEqual(100);
+            });
         });
 
         describe('Given a fee', () => {
