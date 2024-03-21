@@ -114,6 +114,10 @@ describe('Membership Fees Component Test', () => {
                         fees: [{ feeId: feeId, value: 100, deleted: true }],
                     });
                 });
+
+                it('should decrease the credit amount', async () => {
+                    expect((await aggregateRepo.getById(memberId.toString()))?.getCreditAmount()).toEqual(0);
+                });
             });
         });
     });

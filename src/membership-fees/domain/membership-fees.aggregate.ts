@@ -21,6 +21,8 @@ export class MembershipFeesAggregate {
     public deleteFee(feeId: FeeId) {
         const fee = this.getFee(feeId);
         fee.deleted = true;
+
+        this.creditAmount -= fee.value;
     }
 
     public getFee(feeId: FeeId): Fee {
