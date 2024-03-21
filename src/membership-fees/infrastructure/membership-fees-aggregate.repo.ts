@@ -7,7 +7,7 @@ import { Logger } from '@nestjs/common';
 
 export interface MembershipFeesAggregateModel {
     id: string;
-    fees: { feeId: string; value: number }[];
+    fees: { feeId: string; value: number; deleted: boolean }[];
     creditAmount: number;
 }
 
