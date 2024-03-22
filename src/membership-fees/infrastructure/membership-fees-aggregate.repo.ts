@@ -4,6 +4,7 @@ import { MembershipFeesAggregate } from '../domain/membership-fees.aggregate';
 import { MembershipFeesSerializer } from './membership-fees.serializer';
 import { MongoAggregateRepo } from '@fizzbuds/ddd-toolkit';
 import { Logger } from '@nestjs/common';
+import { InjectConnection } from '@nestjs/mongoose';
 
 export interface MembershipFeesAggregateModel {
     id: string;
@@ -11,11 +12,14 @@ export interface MembershipFeesAggregateModel {
     creditAmount: number;
 }
 
-export class MembershipFeesAggregateRepo {
+export class MembershipFeesAggregateRepo extends MongoAggregateRepo<
+    MembershipFeesAggregate,
+    MembershipFeesAggregateModel
+> {
     private static logger = new Logger(MembershipFeesAggregateRepo.name);
 
-    public static providerFactory(conn: Connection, memberFeesRepoHooks: MemberFeesRepoHooks) {
-        return new MongoAggregateRepo<MembershipFeesAggregate, MembershipFeesAggregateModel>(
+    constructor(@InjectConnection() conn: Connection, memberFeesRepoHooks: MemberFeesRepoHooks) {
+        super(
             new MembershipFeesSerializer(),
             conn.getClient(),
             'membership_fees_aggregate',

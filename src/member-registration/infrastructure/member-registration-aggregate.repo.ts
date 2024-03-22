@@ -4,6 +4,7 @@ import { MemberRegistrationAggregate } from '../domain/member-registration.aggre
 import { MemberRegistrationSerializer } from './member-registration.serializer';
 import { MongoAggregateRepo } from '@fizzbuds/ddd-toolkit';
 import { Logger } from '@nestjs/common';
+import { InjectConnection } from '@nestjs/mongoose';
 
 export interface MemberRegistrationAggregateModel {
     id: string;
@@ -11,11 +12,14 @@ export interface MemberRegistrationAggregateModel {
     deleted: boolean;
 }
 
-export class MemberRegistrationAggregateRepo {
+export class MemberRegistrationAggregateRepo extends MongoAggregateRepo<
+    MemberRegistrationAggregate,
+    MemberRegistrationAggregateModel
+> {
     private static logger = new Logger(MemberRegistrationAggregateRepo.name);
 
-    public static providerFactory(conn: Connection, memberRegistrationRepoHooks: MemberRegistrationRepoHooks) {
-        return new MongoAggregateRepo<MemberRegistrationAggregate, MemberRegistrationAggregateModel>(
+    constructor(@InjectConnection() conn: Connection, memberRegistrationRepoHooks: MemberRegistrationRepoHooks) {
+        super(
             new MemberRegistrationSerializer(),
             conn.getClient(),
             'member_registration_aggregate',

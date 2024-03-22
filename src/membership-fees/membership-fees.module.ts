@@ -2,7 +2,6 @@ import { MembershipFeesAggregateRepo } from './infrastructure/membership-fees-ag
 
 import { MemberFeesRepoHooks } from './infrastructure/member-fees.repo-hooks';
 import { MemberFeesQueries } from './member-fees-queries.service';
-import { getConnectionToken } from '@nestjs/mongoose';
 import { Module } from '@nestjs/common';
 import { MembershipFeesController } from './api/membership-fees.controller';
 import { MembershipFeesCommands } from './membership-fees.commands';
@@ -15,16 +14,8 @@ import { MemberRegistrationModule } from '../member-registration/member-registra
         MembershipFeesCommands,
         MemberFeesQueries,
         MemberFeesRepoHooks,
-        {
-            provide: MembershipFeesAggregateRepo,
-            inject: [getConnectionToken(), MemberFeesRepoHooks],
-            useFactory: MembershipFeesAggregateRepo.providerFactory,
-        },
-        {
-            provide: MemberFeesQueryRepo,
-            inject: [getConnectionToken()],
-            useFactory: MemberFeesQueryRepo.providerFactory,
-        },
+        MembershipFeesAggregateRepo,
+        MemberFeesQueryRepo,
     ],
     imports: [MemberRegistrationModule],
 })

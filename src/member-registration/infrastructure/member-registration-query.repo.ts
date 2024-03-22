@@ -3,6 +3,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { MemberId } from '../domain/ids/member-id';
 import { Connection } from 'mongoose';
 import { MongoQueryRepo } from '@fizzbuds/ddd-toolkit';
+import { InjectConnection } from '@nestjs/mongoose';
 
 export interface MemberRegistrationQueryModel {
     id: string;
@@ -15,13 +16,8 @@ export class MemberRegistrationQueryRepo extends MongoQueryRepo<MemberRegistrati
     private static logger = new Logger(MemberRegistrationQueryRepo.name);
     protected readonly indexes = [{ indexSpec: { name: 1 } }];
 
-    public static providerFactory(conn: Connection) {
-        return new MemberRegistrationQueryRepo(
-            conn.getClient(),
-            'member_query_repo',
-            undefined,
-            MemberRegistrationQueryRepo.logger,
-        );
+    constructor(@InjectConnection() conn: Connection) {
+        super(conn.getClient(), 'member_query_repo', undefined, MemberRegistrationQueryRepo.logger);
     }
 
     public async getMember(id: MemberId) {

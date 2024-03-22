@@ -13,21 +13,22 @@ export class MemberFeesRepoHooks implements IRepoHooks<MembershipFeesAggregateMo
         private readonly memberRegistrationQueries: MemberRegistrationQueries,
     ) {}
 
-    public async onSave(aggregate: MembershipFeesAggregateModel, session?: ClientSession) {
-        const queryModel = await this.composeQueryModel(aggregate);
+    public async onSave(aggregateModel: MembershipFeesAggregateModel, session?: ClientSession) {
+        const queryModel = await this.composeQueryModel(aggregateModel);
         await this.memberFeesQueryRepo.save(queryModel, session);
     }
 
-    private async composeQueryModel(aggregate: MembershipFeesAggregateModel): Promise<MemberFeesQueryModel[]> {
+    private async composeQueryModel(aggregateModel: MembershipFeesAggregateModel): Promise<MemberFeesQueryModel[]> {
         const name =
-            (await this.memberRegistrationQueries.getMemberQuery(MemberId.fromString(aggregate.id)))?.name ?? '';
+            (await this.memberRegistrationQueries.getMemberQuery(MemberId.fromString(aggregateModel.id)))?.name ?? '';
 
-        return aggregate['fees'].map((fee) => {
+        return aggregateModel.fees.map((fee) => {
             return {
-                memberId: aggregate.id.toString(),
-                id: fee['feeId'].toString(),
-                value: fee['value'],
+                memberId: aggregateModel.id,
+                id: fee.feeId,
+                value: fee.value,
                 name,
+                deleted: fee.deleted,
             };
         });
     }

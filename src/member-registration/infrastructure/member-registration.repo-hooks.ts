@@ -14,6 +14,6 @@ export class MemberRegistrationRepoHooks implements IRepoHooks<MemberRegistratio
     }
 
     private composeQueryModel(aggregateModel: MemberRegistrationAggregateModel): MemberRegistrationQueryModel {
-        return { id: aggregateModel.id.toString(), name: aggregateModel['name'], deleted: aggregateModel.deleted };
+        return { id: aggregateModel.id, name: aggregateModel.name, deleted: aggregateModel.deleted };
     }
 }

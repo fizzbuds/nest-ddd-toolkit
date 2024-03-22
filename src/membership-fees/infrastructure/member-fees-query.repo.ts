@@ -2,12 +2,14 @@ import { ClientSession, Document } from 'mongodb';
 import { Injectable, Logger } from '@nestjs/common';
 import { MongoQueryRepo } from '@fizzbuds/ddd-toolkit';
 import { Connection } from 'mongoose';
+import { InjectConnection } from '@nestjs/mongoose';
 
 export type MemberFeesQueryModel = {
     id: string;
     memberId: string;
     name: string;
     value: number;
+    deleted: boolean;
 };
 
 @Injectable()
@@ -15,17 +17,12 @@ export class MemberFeesQueryRepo extends MongoQueryRepo<MemberFeesQueryModel & D
     private static logger = new Logger(MemberFeesQueryRepo.name);
     protected readonly indexes = [];
 
-    public static providerFactory(conn: Connection) {
-        return new MemberFeesQueryRepo(
-            conn.getClient(),
-            'member_fees_query_repo',
-            undefined,
-            MemberFeesQueryRepo.logger,
-        );
+    constructor(@InjectConnection() conn: Connection) {
+        super(conn.getClient(), 'member_fees_query_repo', undefined, MemberFeesQueryRepo.logger);
     }
 
-    public async getFees() {
-        return this.collection.find({}).toArray();
+    public async getFees(deleted = false) {
+        return this.collection.find({ deleted }).toArray();
     }
 
     public async save(queryModel: MemberFeesQueryModel[], session?: ClientSession) {
