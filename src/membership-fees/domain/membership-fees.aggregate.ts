@@ -34,4 +34,11 @@ export class MembershipFeesAggregate {
     public getCreditAmount(): number {
         return this.creditAmount;
     }
+
+    public deleteAllFees() {
+        this.fees.forEach((fee) => {
+            fee.deleted = true;
+        });
+        this.creditAmount = 0;
+    }
 }

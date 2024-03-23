@@ -34,4 +34,13 @@ export class MembershipFeesCommands {
 
         await this.aggregateRepo.save(membershipFeesAggregate);
     }
+
+    public async deleteAllFeesCmd(memberId: MemberId) {
+        const membershipFeesAggregate = await this.aggregateRepo.getById(memberId.toString());
+        if (!membershipFeesAggregate) return;
+
+        membershipFeesAggregate.deleteAllFees();
+
+        await this.aggregateRepo.save(membershipFeesAggregate);
+    }
 }

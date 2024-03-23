@@ -129,6 +129,17 @@ describe('AppController (api)', () => {
                     { id: expect.any(String), memberId: memberId, name: 'John Doe', value: 300 },
                 ]);
             });
+
+            describe('When deleting the member', () => {
+                beforeEach(async () => {
+                    await request(app.getHttpServer()).delete(`/member-registrations/${memberId}`);
+                });
+
+                it('should delete all fees', async () => {
+                    const response = await request(app.getHttpServer()).get(`/membership-fees`);
+                    expect(response.body).toEqual([]);
+                });
+            });
         });
 
         describe('DELETE /membership-fees/:memberId/:feeId', () => {

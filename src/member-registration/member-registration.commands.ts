@@ -3,11 +3,14 @@ import { MemberRegistrationAggregate } from './domain/member-registration.aggreg
 import { Inject, NotFoundException } from '@nestjs/common';
 import { MemberRegistrationAggregateRepo } from './infrastructure/member-registration-aggregate.repo';
 import { IAggregateRepo } from '@fizzbuds/ddd-toolkit';
+import { EventBus } from '../local-event-bus/local-event-bus.module';
+import { MemberDeleted } from './events/member-deleted.event';
 
 export class MemberRegistrationCommands {
     constructor(
         @Inject(MemberRegistrationAggregateRepo)
         private readonly aggregateRepo: IAggregateRepo<MemberRegistrationAggregate>,
+        private readonly eventBus: EventBus,
     ) {}
 
     public async createCmd(name: string) {
@@ -24,7 +27,8 @@ export class MemberRegistrationCommands {
         if (!member) throw new NotFoundException();
 
         member.delete();
-
         await this.aggregateRepo.save(member);
+
+        await this.eventBus.publishAndWaitForHandlers(new MemberDeleted({ memberId: member.id.toString() }));
     }
 }

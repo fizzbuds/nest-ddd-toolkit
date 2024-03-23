@@ -14,6 +14,7 @@ import {
 } from '../infrastructure/member-registration-aggregate.repo';
 import mongoose from 'mongoose';
 import { MongoAggregateRepo } from '@fizzbuds/ddd-toolkit';
+import { LocalEventBusModule } from '../../local-event-bus/local-event-bus.module';
 
 const getActiveConnection = (): mongoose.Connection => {
     return mongoose.connections.find((_) => _.readyState)!; // TODO maybe there is a better way using mongodb
@@ -36,7 +37,7 @@ describe('Member Registration Component Test', () => {
 
         module = await Test.createTestingModule({
             providers: memberRegistrationProviders,
-            imports: [MongooseModule.forRoot(mongodb.getUri('test'))],
+            imports: [MongooseModule.forRoot(mongodb.getUri('test')), LocalEventBusModule],
         }).compile();
 
         commands = module.get<MemberRegistrationCommands>(MemberRegistrationCommands);
