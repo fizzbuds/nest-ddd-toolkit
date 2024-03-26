@@ -32,6 +32,11 @@ describe('MembershipFeesAggregate', () => {
 
                     expect(membershipFeesAggregate.getFee(feeId).deleted).toBeTruthy();
                 });
+                it('should decrease the credit amount', () => {
+                    membershipFeesAggregate.deleteFee(feeId);
+
+                    expect(membershipFeesAggregate.getCreditAmount()).toBe(0);
+                });
             });
         });
     });
