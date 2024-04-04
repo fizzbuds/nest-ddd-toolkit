@@ -1,6 +1,5 @@
 import { FeeId } from './ids/fee-id';
 import { MemberId } from '../../member-registration/domain/ids/member-id';
-import { Error } from 'mongoose';
 
 export type Fee = { feeId: FeeId; value: number; deleted: boolean };
 

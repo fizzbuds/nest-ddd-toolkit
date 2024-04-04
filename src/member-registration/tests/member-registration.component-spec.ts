@@ -3,7 +3,6 @@ import 'jest';
 import { MongoMemoryReplSet } from 'mongodb-memory-server';
 import { Test, TestingModule } from '@nestjs/testing';
 import { MemberRegistrationAggregate } from '../domain/member-registration.aggregate';
-import { MongooseModule } from '@nestjs/mongoose';
 import { MemberRegistrationCommands } from '../member-registration.commands';
 import { MemberId } from '../domain/ids/member-id';
 import { MemberRegistrationQueryModel } from '../infrastructure/member-registration-query.repo';
@@ -12,13 +11,11 @@ import {
     MemberRegistrationAggregateModel,
     MemberRegistrationAggregateRepo,
 } from '../infrastructure/member-registration-aggregate.repo';
-import mongoose from 'mongoose';
 import { MongoAggregateRepo } from '@fizzbuds/ddd-toolkit';
 import { LocalEventBusModule } from '../../local-event-bus/local-event-bus.module';
+import { getMongoToken, MongoModule } from '@golee/mongo-nest';
+import { MongoClient } from 'mongodb';
 
-const getActiveConnection = (): mongoose.Connection => {
-    return mongoose.connections.find((_) => _.readyState)!; // TODO maybe there is a better way using mongodb
-};
 describe('Member Registration Component Test', () => {
     let module: TestingModule;
     let mongodb: MongoMemoryReplSet;
@@ -37,7 +34,7 @@ describe('Member Registration Component Test', () => {
 
         module = await Test.createTestingModule({
             providers: memberRegistrationProviders,
-            imports: [MongooseModule.forRoot(mongodb.getUri('test')), LocalEventBusModule],
+            imports: [MongoModule.forRoot({ uri: mongodb.getUri('test') }), LocalEventBusModule],
         }).compile();
 
         commands = module.get<MemberRegistrationCommands>(MemberRegistrationCommands);
@@ -50,7 +47,7 @@ describe('Member Registration Component Test', () => {
 
     afterEach(async () => {
         jest.resetAllMocks();
-        await getActiveConnection().collection('member_registration_aggregate').deleteMany({});
+        await (module.get(getMongoToken()) as MongoClient).db().dropDatabase();
     });
 
     afterAll(async () => {

@@ -1,12 +1,10 @@
 import { Controller, Get, Req } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { Connection, STATES } from 'mongoose';
-import { InjectConnection } from '@nestjs/mongoose';
 import { Request } from 'express';
+import { ConfigService } from '@nestjs/config';
 
 @Controller()
 export class AppController {
-    constructor(private readonly config: ConfigService, @InjectConnection() private readonly connection: Connection) {}
+    constructor(private readonly config: ConfigService) {}
 
     @Get()
     getHello(@Req() req: Request) {
@@ -15,6 +13,6 @@ export class AppController {
 
     @Get('/health')
     health() {
-        return { mongoConnectionStatus: STATES[this.connection.readyState] };
+        return 'ok';
     }
 }

@@ -1,10 +1,10 @@
-import { Connection } from 'mongoose';
 import { MemberRegistrationRepoHooks } from './member-registration.repo-hooks';
 import { MemberRegistrationAggregate } from '../domain/member-registration.aggregate';
 import { MemberRegistrationSerializer } from './member-registration.serializer';
 import { MongoAggregateRepo } from '@fizzbuds/ddd-toolkit';
 import { Logger } from '@nestjs/common';
-import { InjectConnection } from '@nestjs/mongoose';
+import { InjectMongo } from '@golee/mongo-nest';
+import { MongoClient } from 'mongodb';
 
 export interface MemberRegistrationAggregateModel {
     id: string;
@@ -18,10 +18,10 @@ export class MemberRegistrationAggregateRepo extends MongoAggregateRepo<
 > {
     private static logger = new Logger(MemberRegistrationAggregateRepo.name);
 
-    constructor(@InjectConnection() conn: Connection, memberRegistrationRepoHooks: MemberRegistrationRepoHooks) {
+    constructor(@InjectMongo() mongoClient: MongoClient, memberRegistrationRepoHooks: MemberRegistrationRepoHooks) {
         super(
             new MemberRegistrationSerializer(),
-            conn.getClient(),
+            mongoClient,
             'member_registration_aggregate',
             undefined,
             memberRegistrationRepoHooks,

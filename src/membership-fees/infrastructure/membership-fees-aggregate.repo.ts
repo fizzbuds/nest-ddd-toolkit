@@ -1,10 +1,10 @@
-import { Connection } from 'mongoose';
 import { MemberFeesRepoHooks } from './member-fees.repo-hooks';
 import { MembershipFeesAggregate } from '../domain/membership-fees.aggregate';
 import { MembershipFeesSerializer } from './membership-fees.serializer';
 import { MongoAggregateRepo } from '@fizzbuds/ddd-toolkit';
 import { Logger } from '@nestjs/common';
-import { InjectConnection } from '@nestjs/mongoose';
+import { InjectMongo } from '@golee/mongo-nest';
+import { MongoClient } from 'mongodb';
 
 export interface MembershipFeesAggregateModel {
     id: string;
@@ -18,10 +18,10 @@ export class MembershipFeesAggregateRepo extends MongoAggregateRepo<
 > {
     private static logger = new Logger(MembershipFeesAggregateRepo.name);
 
-    constructor(@InjectConnection() conn: Connection, memberFeesRepoHooks: MemberFeesRepoHooks) {
+    constructor(@InjectMongo() mongoClient: MongoClient, memberFeesRepoHooks: MemberFeesRepoHooks) {
         super(
             new MembershipFeesSerializer(),
-            conn.getClient(),
+            mongoClient,
             'membership_fees_aggregate',
             undefined,
             memberFeesRepoHooks,

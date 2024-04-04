@@ -1,8 +1,7 @@
-import { ClientSession, Document } from 'mongodb';
+import { ClientSession, Document, MongoClient } from 'mongodb';
 import { Injectable, Logger } from '@nestjs/common';
 import { MongoQueryRepo } from '@fizzbuds/ddd-toolkit';
-import { Connection } from 'mongoose';
-import { InjectConnection } from '@nestjs/mongoose';
+import { InjectMongo } from '@golee/mongo-nest';
 
 export type MemberFeesQueryModel = {
     id: string;
@@ -17,8 +16,8 @@ export class MemberFeesQueryRepo extends MongoQueryRepo<MemberFeesQueryModel & D
     private static logger = new Logger(MemberFeesQueryRepo.name);
     protected readonly indexes = [];
 
-    constructor(@InjectConnection() conn: Connection) {
-        super(conn.getClient(), 'member_fees_query_repo', undefined, MemberFeesQueryRepo.logger);
+    constructor(@InjectMongo() mongoClient: MongoClient) {
+        super(mongoClient, 'member_fees_query_repo', undefined, MemberFeesQueryRepo.logger);
     }
 
     public async getFees(deleted = false) {

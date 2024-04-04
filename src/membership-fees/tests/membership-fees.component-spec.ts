@@ -2,9 +2,7 @@ import 'jest';
 import { MongoMemoryReplSet } from 'mongodb-memory-server';
 import { Test, TestingModule } from '@nestjs/testing';
 import { MembershipFeesAggregate } from '../domain/membership-fees.aggregate';
-import mongoose, { Connection } from 'mongoose';
 import { MembershipFeesSerializer } from '../infrastructure/membership-fees.serializer';
-import { getConnectionToken, MongooseModule } from '@nestjs/mongoose';
 import { MembershipFeesCommands } from '../membership-fees.commands';
 import { FeeId } from '../domain/ids/fee-id';
 import { MemberId } from '../../member-registration/domain/ids/member-id';
@@ -13,10 +11,9 @@ import {
     MembershipFeesAggregateRepo,
 } from '../infrastructure/membership-fees-aggregate.repo';
 import { MongoAggregateRepo } from '@fizzbuds/ddd-toolkit';
+import { getMongoToken, MongoModule } from '@golee/mongo-nest';
+import { MongoClient } from 'mongodb';
 
-const getActiveConnection = (): mongoose.Connection => {
-    return mongoose.connections.find((_) => _.readyState)!; // TODO maybe there is a better way using mongodb
-};
 describe('Membership Fees Component Test', () => {
     let module: TestingModule;
     let mongodb: MongoMemoryReplSet;
@@ -37,17 +34,17 @@ describe('Membership Fees Component Test', () => {
                 MembershipFeesCommands,
                 {
                     provide: MembershipFeesAggregateRepo,
-                    inject: [getConnectionToken()],
-                    useFactory: (conn: Connection) => {
+                    inject: [getMongoToken()],
+                    useFactory: (mongoClient: MongoClient) => {
                         return new MongoAggregateRepo<MembershipFeesAggregate, MembershipFeesAggregateModel>(
                             new MembershipFeesSerializer(),
-                            conn.getClient(),
+                            mongoClient,
                             'membership_fees_aggregate',
                         );
                     },
                 },
             ],
-            imports: [MongooseModule.forRoot(mongodb.getUri('test'))],
+            imports: [MongoModule.forRoot({ uri: mongodb.getUri('test') })],
         }).compile();
 
         commands = module.get<MembershipFeesCommands>(MembershipFeesCommands);
@@ -60,7 +57,7 @@ describe('Membership Fees Component Test', () => {
 
     afterEach(async () => {
         jest.resetAllMocks();
-        await getActiveConnection().collection('membership_fees_aggregate').deleteMany({});
+        await (module.get(getMongoToken()) as MongoClient).db().dropDatabase();
     });
 
     afterAll(async () => {

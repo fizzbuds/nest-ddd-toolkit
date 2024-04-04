@@ -3,9 +3,9 @@ import { AppController } from './app.controller';
 import { LoggerModule } from 'nestjs-pino';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { envValidationSchema } from './env-validation-schema';
-import { MongooseModule } from '@nestjs/mongoose';
 import { MemberRegistrationModule } from './member-registration/member-registration.module';
 import { MembershipFeesModule } from './membership-fees/membership-fees.module';
+import { MongoModule } from '@golee/mongo-nest';
 
 @Module({
     imports: [
@@ -24,7 +24,7 @@ import { MembershipFeesModule } from './membership-fees/membership-fees.module';
                 };
             },
         }),
-        MongooseModule.forRootAsync({
+        MongoModule.forRootAsync({
             inject: [ConfigService],
             useFactory: (config: ConfigService) => ({
                 uri: config.getOrThrow('MONGODB_URI'),
