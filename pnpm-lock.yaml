@@ -6,8 +6,8 @@ settings:
 
 dependencies:
   '@fizzbuds/ddd-toolkit':
-    specifier: ^0.0.34
-    version: 0.0.34(mongodb@5.6.0)
+    specifier: ^0.1.0
+    version: 0.1.0(mongodb@5.6.0)
   '@golee/mongo-nest':
     specifier: ^0.0.2
     version: 0.0.2(@nestjs/common@10.0.0)(@nestjs/core@10.0.0)(mongodb@5.6.0)
@@ -1498,10 +1498,10 @@ packages:
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
     dev: true
 
-  /@fizzbuds/ddd-toolkit@0.0.34(mongodb@5.6.0):
-    resolution: {integrity: sha512-3ywAsW4oDRfE0zgHv5lSiOa5ewEgw+xa1RC6J9G35T03KfWCCnn4ApySQl8VcYKJCBC66rd5CfpPo/OCJ06zog==}
+  /@fizzbuds/ddd-toolkit@0.1.0(mongodb@5.6.0):
+    resolution: {integrity: sha512-2eGw5nIfqdSOU127z0WKCdQwvOm2zI77ZLChF9Z1Ub9ffpkxk5b7P04qGKtZGLhQdgNfWum+6nnTpXyiR5GQ9Q==}
     peerDependencies:
-      mongodb: ^4.0.0 || ^5.0.0 || ^6.0.0
+      mongodb: ^4.0.0 || ^5.0.0
     dependencies:
       lodash: 4.17.21
       mongodb: 5.6.0

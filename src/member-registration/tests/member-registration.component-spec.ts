@@ -4,7 +4,6 @@ import { MongoMemoryReplSet } from 'mongodb-memory-server';
 import { Test, TestingModule } from '@nestjs/testing';
 import { MemberRegistrationAggregate } from '../domain/member-registration.aggregate';
 import { MemberRegistrationCommands } from '../member-registration.commands';
-import { MemberId } from '../domain/ids/member-id';
 import { MemberRegistrationQueryModel } from '../infrastructure/member-registration-query.repo';
 import { MemberRegistrationQueries } from '../member-registration.queries';
 import {
@@ -56,13 +55,9 @@ describe('Member Registration Component Test', () => {
     });
 
     describe('Given a Member Registration', () => {
-        let memberId: MemberId;
+        let memberId: string;
         beforeEach(async () => {
             memberId = await commands.createCmd('John Doe');
-        });
-
-        it('should return an id', () => {
-            expect(memberId.toString()).toContain('member');
         });
 
         it('should be saved into aggregate model', async () => {

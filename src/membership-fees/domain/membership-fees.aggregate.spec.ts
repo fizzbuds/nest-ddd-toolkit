@@ -1,12 +1,11 @@
 import { MembershipFeesAggregate } from './membership-fees.aggregate';
-import { MemberId } from '../../member-registration/domain/ids/member-id';
-import { FeeId } from './ids/fee-id';
+import { v4 as uuidV4 } from 'uuid';
 
 describe('MembershipFeesAggregate', () => {
     describe('Given a MembershipFeesAggregate', () => {
         let membershipFeesAggregate: MembershipFeesAggregate;
         beforeEach(() => {
-            membershipFeesAggregate = MembershipFeesAggregate.create(MemberId.generate());
+            membershipFeesAggregate = MembershipFeesAggregate.create(uuidV4());
         });
         describe('When adding a fee', () => {
             beforeEach(() => {
@@ -22,7 +21,7 @@ describe('MembershipFeesAggregate', () => {
         });
 
         describe('Given a fee', () => {
-            let feeId: FeeId;
+            let feeId: string;
             beforeEach(() => {
                 feeId = membershipFeesAggregate.addFee(123);
             });

@@ -23,7 +23,7 @@
         "prepare": "husky install"
     },
     "dependencies": {
-        "@fizzbuds/ddd-toolkit": "^0.0.34",
+        "@fizzbuds/ddd-toolkit": "^0.1.0",
         "@golee/mongo-nest": "^0.0.2",
         "@nestjs/common": "^10.0.0",
         "@nestjs/config": "^3.0.0",

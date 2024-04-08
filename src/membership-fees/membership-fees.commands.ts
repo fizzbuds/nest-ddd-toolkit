@@ -1,7 +1,5 @@
 import { MembershipFeesAggregate } from './domain/membership-fees.aggregate';
 import { Inject, NotFoundException } from '@nestjs/common';
-import { MemberId } from '../member-registration/domain/ids/member-id';
-import { FeeId } from './domain/ids/fee-id';
 import { MembershipFeesAggregateRepo } from './infrastructure/membership-fees-aggregate.repo';
 import { IAggregateRepo } from '@fizzbuds/ddd-toolkit';
 
@@ -10,9 +8,9 @@ export class MembershipFeesCommands {
         @Inject(MembershipFeesAggregateRepo) private readonly aggregateRepo: IAggregateRepo<MembershipFeesAggregate>,
     ) {}
 
-    public async addFeeCmd(memberId: MemberId, number: number) {
+    public async addFeeCmd(memberId: string, number: number) {
         const membershipFeesAggregate = await this.aggregateRepo.getById(memberId.toString());
-        let feeId: FeeId;
+        let feeId: string;
 
         if (!membershipFeesAggregate) {
             const membershipFeesAggregate = MembershipFeesAggregate.create(memberId);
@@ -26,8 +24,8 @@ export class MembershipFeesCommands {
         return feeId;
     }
 
-    public async deleteFeeCmd(memberId: MemberId, feeId: FeeId) {
-        const membershipFeesAggregate = await this.aggregateRepo.getById(memberId.toString());
+    public async deleteFeeCmd(memberId: string, feeId: string) {
+        const membershipFeesAggregate = await this.aggregateRepo.getById(memberId);
         if (!membershipFeesAggregate) throw new NotFoundException();
 
         membershipFeesAggregate.deleteFee(feeId);
@@ -35,8 +33,8 @@ export class MembershipFeesCommands {
         await this.aggregateRepo.save(membershipFeesAggregate);
     }
 
-    public async deleteAllFeesCmd(memberId: MemberId) {
-        const membershipFeesAggregate = await this.aggregateRepo.getById(memberId.toString());
+    public async deleteAllFeesCmd(memberId: string) {
+        const membershipFeesAggregate = await this.aggregateRepo.getById(memberId);
         if (!membershipFeesAggregate) return;
 
         membershipFeesAggregate.deleteAllFees();

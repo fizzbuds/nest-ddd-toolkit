@@ -3,7 +3,6 @@ import { Injectable } from '@nestjs/common';
 import { MemberFeesQueryModel, MemberFeesQueryRepo } from './member-fees-query.repo';
 import { MemberRegistrationQueries } from '../../member-registration/member-registration.queries';
 import { MembershipFeesAggregateModel } from './membership-fees-aggregate.repo';
-import { MemberId } from '../../member-registration/domain/ids/member-id';
 import { ClientSession } from 'mongodb';
 
 @Injectable()
@@ -19,8 +18,7 @@ export class MemberFeesRepoHooks implements IRepoHooks<MembershipFeesAggregateMo
     }
 
     private async composeQueryModel(aggregateModel: MembershipFeesAggregateModel): Promise<MemberFeesQueryModel[]> {
-        const name =
-            (await this.memberRegistrationQueries.getMemberQuery(MemberId.fromString(aggregateModel.id)))?.name ?? '';
+        const name = (await this.memberRegistrationQueries.getMemberQuery(aggregateModel.id))?.name ?? '';
 
         return aggregateModel.fees.map((fee) => {
             return {

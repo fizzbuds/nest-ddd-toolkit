@@ -1,11 +1,11 @@
 import { MemberRegistrationAggregate } from './member-registration.aggregate';
-import { MemberId } from './ids/member-id';
+import { v4 as uuidV4 } from 'uuid';
 
 describe('MemberRegistrationAggregate', () => {
     describe('When creating a MemberRegistrationAggregate', () => {
         let memberRegistrationAggregate: MemberRegistrationAggregate;
         beforeEach(() => {
-            memberRegistrationAggregate = MemberRegistrationAggregate.create(MemberId.generate(), 'John Doe');
+            memberRegistrationAggregate = MemberRegistrationAggregate.create(uuidV4(), 'John Doe');
         });
 
         it('should create it', () => {
@@ -18,7 +18,7 @@ describe('MemberRegistrationAggregate', () => {
     describe('Given an existing MemberRegistrationAggregate', () => {
         let memberRegistrationAggregate: MemberRegistrationAggregate;
         beforeEach(() => {
-            memberRegistrationAggregate = MemberRegistrationAggregate.create(MemberId.generate(), 'John Doe');
+            memberRegistrationAggregate = MemberRegistrationAggregate.create(uuidV4(), 'John Doe');
         });
 
         describe('When deleting it', () => {

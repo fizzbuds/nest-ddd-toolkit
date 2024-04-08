@@ -1,7 +1,6 @@
 import { Body, Controller, Delete, Get, NotFoundException, Param, Post } from '@nestjs/common';
 import { MemberRegistrationCommands } from '../member-registration.commands';
 import { MemberRegistrationQueries } from '../member-registration.queries';
-import { MemberId } from '../domain/ids/member-id';
 
 @Controller('member-registrations')
 export class MemberRegistrationController {
@@ -18,13 +17,13 @@ export class MemberRegistrationController {
 
     @Get(':id')
     public async get(@Param('id') id: string) {
-        const result = await this.memberRegistrationQueries.getMemberQuery(MemberId.fromString(id));
+        const result = await this.memberRegistrationQueries.getMemberQuery(id);
         if (!result) throw new NotFoundException();
         return result;
     }
 
     @Delete(':id')
     public async delete(@Param('id') id: string) {
-        return this.memberRegistrationCommands.deleteCmd(MemberId.fromString(id));
+        return this.memberRegistrationCommands.deleteCmd(id);
     }
 }

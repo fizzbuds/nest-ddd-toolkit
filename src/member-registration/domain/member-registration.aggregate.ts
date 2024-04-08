@@ -1,9 +1,7 @@
-import { MemberId } from './ids/member-id';
-
 export class MemberRegistrationAggregate {
-    constructor(readonly id: MemberId, private readonly name: string, private deleted: boolean) {}
+    constructor(readonly id: string, private readonly name: string, private deleted: boolean) {}
 
-    public static create(id: MemberId, name: string) {
+    public static create(id: string, name: string) {
         return new MemberRegistrationAggregate(id, name, false);
     }
 

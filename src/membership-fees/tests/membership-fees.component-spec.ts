@@ -4,8 +4,6 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { MembershipFeesAggregate } from '../domain/membership-fees.aggregate';
 import { MembershipFeesSerializer } from '../infrastructure/membership-fees.serializer';
 import { MembershipFeesCommands } from '../membership-fees.commands';
-import { FeeId } from '../domain/ids/fee-id';
-import { MemberId } from '../../member-registration/domain/ids/member-id';
 import {
     MembershipFeesAggregateModel,
     MembershipFeesAggregateRepo,
@@ -66,10 +64,10 @@ describe('Membership Fees Component Test', () => {
     });
 
     describe('Given a Membership Fees', () => {
-        const memberId = MemberId.generate();
+        const memberId = 'foo-member-id';
 
         describe('When adding a fee', () => {
-            let feeId: FeeId;
+            let feeId: string;
 
             beforeEach(async () => {
                 feeId = await commands.addFeeCmd(memberId, 100);
@@ -77,10 +75,6 @@ describe('Membership Fees Component Test', () => {
 
             it('should be saved into aggregate model', async () => {
                 expect(await aggregateRepo.getById(memberId.toString())).not.toBeNull();
-            });
-
-            it('should return a fee id', async () => {
-                expect(feeId.type).toBe('fee');
             });
 
             it('should add a fee', async () => {
@@ -95,7 +89,7 @@ describe('Membership Fees Component Test', () => {
         });
 
         describe('Given a fee', () => {
-            let feeId: FeeId;
+            let feeId: string;
 
             beforeEach(async () => {
                 feeId = await commands.addFeeCmd(memberId, 100);

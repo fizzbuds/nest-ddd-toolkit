@@ -1,6 +1,5 @@
 import { ClientSession, Document, MongoClient } from 'mongodb';
 import { Injectable, Logger } from '@nestjs/common';
-import { MemberId } from '../domain/ids/member-id';
 import { MongoQueryRepo } from '@fizzbuds/ddd-toolkit';
 import { InjectMongo } from '@golee/mongo-nest';
 
@@ -19,7 +18,7 @@ export class MemberRegistrationQueryRepo extends MongoQueryRepo<MemberRegistrati
         super(mongoClient, 'member_query_repo', undefined, MemberRegistrationQueryRepo.logger);
     }
 
-    public async getMember(id: MemberId) {
+    public async getMember(id: string) {
         return await this.collection.findOne({ id: id.toString(), deleted: false });
     }
 
