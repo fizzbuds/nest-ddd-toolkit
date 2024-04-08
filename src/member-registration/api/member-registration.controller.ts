@@ -4,6 +4,7 @@ import { COMMAND_BUS } from '../../command-bus/command-bus.module';
 import { CreateMemberCommand } from '../commands/create-member.command';
 import { DeleteMemberCommand } from '../commands/delete-member.command';
 import { ICommandBus } from '@fizzbuds/ddd-toolkit';
+import { CreateMemberDto } from './dto/create-member.dto';
 
 @Controller('member-registrations')
 export class MemberRegistrationController {
@@ -13,8 +14,8 @@ export class MemberRegistrationController {
     ) {}
 
     @Post('')
-    public async create(@Body('name') name: string) {
-        const { memberId } = await this.commandBus.sendSync(new CreateMemberCommand({ name }));
+    public async create(@Body() body: CreateMemberDto) {
+        const { memberId } = await this.commandBus.sendSync(new CreateMemberCommand({ name: body.name }));
         return { id: memberId };
     }
 
