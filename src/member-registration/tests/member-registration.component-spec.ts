@@ -9,13 +9,13 @@ import {
     MemberRegistrationAggregateRepo,
 } from '../infrastructure/member-registration-aggregate.repo';
 import { ICommandBus, MongoAggregateRepo } from '@fizzbuds/ddd-toolkit';
-import { LocalEventBusModule } from '../../local-event-bus/local-event-bus.module';
 import { getMongoToken, MongoModule } from '@golee/mongo-nest';
 import { MongoClient } from 'mongodb';
 import { COMMAND_BUS, CommandBusModule } from '../../command-bus/command-bus.module';
 import { CreateMemberCommand } from '../commands/create-member.command';
 import { DeleteMemberCommand } from '../commands/delete-member.command';
 import { MemberRegistrationQueryModel } from '../infrastructure/member-registration-query.repo';
+import { EventBusModule } from '../../event-bus/event-bus.module';
 
 describe('Member Registration Component Test', () => {
     let module: TestingModule;
@@ -35,7 +35,7 @@ describe('Member Registration Component Test', () => {
 
         module = await Test.createTestingModule({
             providers: memberRegistrationProviders,
-            imports: [MongoModule.forRoot({ uri: mongodb.getUri('test') }), LocalEventBusModule, CommandBusModule],
+            imports: [MongoModule.forRoot({ uri: mongodb.getUri('test') }), EventBusModule, CommandBusModule],
         }).compile();
 
         commandBus = module.get(COMMAND_BUS);

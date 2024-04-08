@@ -7,6 +7,7 @@ import { MemberRegistrationModule } from './member-registration/member-registrat
 import { MembershipFeesModule } from './membership-fees/membership-fees.module';
 import { MongoModule } from '@golee/mongo-nest';
 import { CommandBusModule } from './command-bus/command-bus.module';
+import { EventBusModule } from './event-bus/event-bus.module';
 
 @Module({
     imports: [
@@ -32,6 +33,7 @@ import { CommandBusModule } from './command-bus/command-bus.module';
             }),
         }),
         CommandBusModule,
+        EventBusModule,
         MemberRegistrationModule,
         MembershipFeesModule,
     ],

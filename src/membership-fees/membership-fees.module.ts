@@ -6,7 +6,6 @@ import { Module } from '@nestjs/common';
 import { MembershipFeesController } from './api/membership-fees.controller';
 import { MemberFeesQueryRepo } from './infrastructure/member-fees-query.repo';
 import { MemberRegistrationModule } from '../member-registration/member-registration.module';
-import { LocalEventBusModule } from '../local-event-bus/local-event-bus.module';
 import { MemberDeletedPolicy } from './policies/member-deleted.policy';
 import { CommandHandlers } from './commands/handlers';
 
@@ -20,6 +19,6 @@ import { CommandHandlers } from './commands/handlers';
         MemberDeletedPolicy,
         ...CommandHandlers,
     ],
-    imports: [MemberRegistrationModule, LocalEventBusModule],
+    imports: [MemberRegistrationModule],
 })
 export class MembershipFeesModule {}

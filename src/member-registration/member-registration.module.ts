@@ -5,7 +5,6 @@ import { MemberRegistrationQueries } from './member-registration.queries';
 import { Module } from '@nestjs/common';
 import { MemberRegistrationController } from './api/member-registration.controller';
 import { MemberRegistrationRepoHooks } from './infrastructure/member-registration.repo-hooks';
-import { LocalEventBusModule } from '../local-event-bus/local-event-bus.module';
 import { CommandHandlers } from './commands/handlers';
 
 export const memberRegistrationProviders = [
@@ -17,7 +16,7 @@ export const memberRegistrationProviders = [
 ];
 
 @Module({
-    imports: [LocalEventBusModule],
+    imports: [],
     controllers: [MemberRegistrationController],
     providers: memberRegistrationProviders,
     exports: [MemberRegistrationQueries],
