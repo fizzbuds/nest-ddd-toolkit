@@ -2,7 +2,6 @@ import 'jest';
 import { MongoMemoryReplSet } from 'mongodb-memory-server';
 import { Test, TestingModule } from '@nestjs/testing';
 import { MembershipFeesAggregate } from '../domain/membership-fees.aggregate';
-import { MembershipFeesSerializer } from '../infrastructure/membership-fees.serializer';
 import {
     MembershipFeesAggregateModel,
     MembershipFeesAggregateRepo,
@@ -12,8 +11,10 @@ import { getMongoToken, MongoModule } from '@golee/mongo-nest';
 import { MongoClient } from 'mongodb';
 import { AddFeeCommand } from '../commands/add-fee.command';
 import { DeleteFeeCommand } from '../commands/delete-fee.command';
-import { CommandHandlers } from '../commands/handlers';
 import { COMMAND_BUS, CommandBusModule } from '../../command-bus/command-bus.module';
+import { MembershipFeesProviders } from '../membership-fees.module';
+import { EventBusModule } from '../../event-bus/event-bus.module';
+import { MemberRegistrationQueries } from '../../member-registration/member-registration.queries';
 
 describe('Membership Fees Component Test', () => {
     let module: TestingModule;
@@ -32,20 +33,13 @@ describe('Membership Fees Component Test', () => {
 
         module = await Test.createTestingModule({
             providers: [
-                ...CommandHandlers,
+                ...MembershipFeesProviders,
                 {
-                    provide: MembershipFeesAggregateRepo,
-                    inject: [getMongoToken()],
-                    useFactory: (mongoClient: MongoClient) => {
-                        return new MongoAggregateRepo<MembershipFeesAggregate, MembershipFeesAggregateModel>(
-                            new MembershipFeesSerializer(),
-                            mongoClient,
-                            'membership_fees_aggregate',
-                        );
-                    },
+                    provide: MemberRegistrationQueries,
+                    useValue: { getMemberQuery: jest.fn() },
                 },
             ],
-            imports: [MongoModule.forRoot({ uri: mongodb.getUri('test') }), CommandBusModule],
+            imports: [MongoModule.forRoot({ uri: mongodb.getUri('test') }), CommandBusModule, EventBusModule],
         }).compile();
 
         commandBus = module.get(COMMAND_BUS);

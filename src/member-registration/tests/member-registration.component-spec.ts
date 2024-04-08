@@ -1,4 +1,4 @@
-import { memberRegistrationProviders } from '../member-registration.module';
+import { MemberRegistrationProviders } from '../member-registration.module';
 import 'jest';
 import { MongoMemoryReplSet } from 'mongodb-memory-server';
 import { Test, TestingModule } from '@nestjs/testing';
@@ -34,7 +34,7 @@ describe('Member Registration Component Test', () => {
         });
 
         module = await Test.createTestingModule({
-            providers: memberRegistrationProviders,
+            providers: MemberRegistrationProviders,
             imports: [MongoModule.forRoot({ uri: mongodb.getUri('test') }), EventBusModule, CommandBusModule],
         }).compile();
 

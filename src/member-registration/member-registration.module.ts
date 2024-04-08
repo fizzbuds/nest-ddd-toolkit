@@ -7,7 +7,7 @@ import { MemberRegistrationController } from './api/member-registration.controll
 import { MemberRegistrationRepoHooks } from './infrastructure/member-registration.repo-hooks';
 import { CommandHandlers } from './commands/handlers';
 
-export const memberRegistrationProviders = [
+export const MemberRegistrationProviders = [
     MemberRegistrationQueries,
     MemberRegistrationRepoHooks,
     MemberRegistrationAggregateRepo,
@@ -18,7 +18,7 @@ export const memberRegistrationProviders = [
 @Module({
     imports: [],
     controllers: [MemberRegistrationController],
-    providers: memberRegistrationProviders,
+    providers: MemberRegistrationProviders,
     exports: [MemberRegistrationQueries],
 })
 export class MemberRegistrationModule {}

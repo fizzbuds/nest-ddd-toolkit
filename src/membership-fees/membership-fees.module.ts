@@ -9,16 +9,18 @@ import { MemberRegistrationModule } from '../member-registration/member-registra
 import { MemberDeletedPolicy } from './policies/member-deleted.policy';
 import { CommandHandlers } from './commands/handlers';
 
+export const MembershipFeesProviders = [
+    MemberFeesQueries,
+    MemberFeesRepoHooks,
+    MembershipFeesAggregateRepo,
+    MemberFeesQueryRepo,
+    MemberDeletedPolicy,
+    ...CommandHandlers,
+];
+
 @Module({
     controllers: [MembershipFeesController],
-    providers: [
-        MemberFeesQueries,
-        MemberFeesRepoHooks,
-        MembershipFeesAggregateRepo,
-        MemberFeesQueryRepo,
-        MemberDeletedPolicy,
-        ...CommandHandlers,
-    ],
+    providers: MembershipFeesProviders,
     imports: [MemberRegistrationModule],
 })
 export class MembershipFeesModule {}
