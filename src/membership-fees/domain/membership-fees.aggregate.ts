@@ -25,7 +25,7 @@ export class MembershipFeesAggregate {
 
     public getFee(feeId: string): Fee {
         const result = this.fees.find(({ feeId }) => feeId === feeId);
-        if (!result) throw new Error(`Cannot find fee with id: ${feeId.toString()}`);
+        if (!result) throw new Error(`Cannot find fee with id: ${feeId}`);
         return result;
     }
 

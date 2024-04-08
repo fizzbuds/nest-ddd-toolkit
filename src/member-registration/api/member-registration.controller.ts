@@ -1,18 +1,21 @@
-import { Body, Controller, Delete, Get, NotFoundException, Param, Post } from '@nestjs/common';
-import { MemberRegistrationCommands } from '../member-registration.commands';
+import { Body, Controller, Delete, Get, Inject, NotFoundException, Param, Post } from '@nestjs/common';
 import { MemberRegistrationQueries } from '../member-registration.queries';
+import { COMMAND_BUS } from '../../command-bus/command-bus.module';
+import { CreateMemberCommand } from '../commands/create-member.command';
+import { DeleteMemberCommand } from '../commands/delete-member.command';
+import { ICommandBus } from '@fizzbuds/ddd-toolkit';
 
 @Controller('member-registrations')
 export class MemberRegistrationController {
     constructor(
-        private readonly memberRegistrationCommands: MemberRegistrationCommands,
+        @Inject(COMMAND_BUS) private readonly commandBus: ICommandBus,
         private readonly memberRegistrationQueries: MemberRegistrationQueries,
     ) {}
 
     @Post('')
     public async create(@Body('name') name: string) {
-        const id = (await this.memberRegistrationCommands.createCmd(name)).toString();
-        return { id };
+        const { memberId } = await this.commandBus.sendSync(new CreateMemberCommand({ name }));
+        return { id: memberId };
     }
 
     @Get(':id')
@@ -23,7 +26,7 @@ export class MemberRegistrationController {
     }
 
     @Delete(':id')
-    public async delete(@Param('id') id: string) {
-        return this.memberRegistrationCommands.deleteCmd(id);
+    public async delete(@Param('id') memberId: string) {
+        await this.commandBus.sendSync(new DeleteMemberCommand({ memberId }));
     }
 }

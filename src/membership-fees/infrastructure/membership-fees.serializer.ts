@@ -12,8 +12,8 @@ export class MembershipFeesSerializer implements ISerializer<MembershipFeesAggre
 
     public aggregateToModel(aggregate: MembershipFeesAggregate): MembershipFeesAggregateModel {
         const fees = aggregate['fees'].map((fee) => {
-            return { feeId: fee.feeId.toString(), value: fee.value, deleted: fee.deleted };
+            return { feeId: fee.feeId, value: fee.value, deleted: fee.deleted };
         });
-        return { id: aggregate.id.toString(), fees, creditAmount: aggregate['creditAmount'] };
+        return { id: aggregate.id, fees, creditAmount: aggregate['creditAmount'] };
     }
 }

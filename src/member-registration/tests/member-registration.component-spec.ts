@@ -3,22 +3,24 @@ import 'jest';
 import { MongoMemoryReplSet } from 'mongodb-memory-server';
 import { Test, TestingModule } from '@nestjs/testing';
 import { MemberRegistrationAggregate } from '../domain/member-registration.aggregate';
-import { MemberRegistrationCommands } from '../member-registration.commands';
-import { MemberRegistrationQueryModel } from '../infrastructure/member-registration-query.repo';
 import { MemberRegistrationQueries } from '../member-registration.queries';
 import {
     MemberRegistrationAggregateModel,
     MemberRegistrationAggregateRepo,
 } from '../infrastructure/member-registration-aggregate.repo';
-import { MongoAggregateRepo } from '@fizzbuds/ddd-toolkit';
+import { ICommandBus, MongoAggregateRepo } from '@fizzbuds/ddd-toolkit';
 import { LocalEventBusModule } from '../../local-event-bus/local-event-bus.module';
 import { getMongoToken, MongoModule } from '@golee/mongo-nest';
 import { MongoClient } from 'mongodb';
+import { COMMAND_BUS, CommandBusModule } from '../../command-bus/command-bus.module';
+import { CreateMemberCommand } from '../commands/create-member.command';
+import { DeleteMemberCommand } from '../commands/delete-member.command';
+import { MemberRegistrationQueryModel } from '../infrastructure/member-registration-query.repo';
 
 describe('Member Registration Component Test', () => {
     let module: TestingModule;
     let mongodb: MongoMemoryReplSet;
-    let commands: MemberRegistrationCommands;
+    let commandBus: ICommandBus;
     let queries: MemberRegistrationQueries;
     let aggregateRepo: MongoAggregateRepo<MemberRegistrationAggregate, MemberRegistrationAggregateModel>;
 
@@ -33,13 +35,11 @@ describe('Member Registration Component Test', () => {
 
         module = await Test.createTestingModule({
             providers: memberRegistrationProviders,
-            imports: [MongoModule.forRoot({ uri: mongodb.getUri('test') }), LocalEventBusModule],
+            imports: [MongoModule.forRoot({ uri: mongodb.getUri('test') }), LocalEventBusModule, CommandBusModule],
         }).compile();
 
-        commands = module.get<MemberRegistrationCommands>(MemberRegistrationCommands);
-        aggregateRepo = module.get<MongoAggregateRepo<MemberRegistrationAggregate, MemberRegistrationAggregateModel>>(
-            MemberRegistrationAggregateRepo,
-        );
+        commandBus = module.get(COMMAND_BUS);
+        aggregateRepo = module.get(MemberRegistrationAggregateRepo);
         await aggregateRepo.init();
         queries = module.get<MemberRegistrationQueries>(MemberRegistrationQueries);
     });
@@ -57,20 +57,21 @@ describe('Member Registration Component Test', () => {
     describe('Given a Member Registration', () => {
         let memberId: string;
         beforeEach(async () => {
-            memberId = await commands.createCmd('John Doe');
+            const _ = await commandBus.sendSync(new CreateMemberCommand({ name: 'John Doe' }));
+            memberId = _.memberId;
         });
 
         it('should be saved into aggregate model', async () => {
-            expect(await aggregateRepo.getById(memberId.toString())).not.toBeNull();
+            expect(await aggregateRepo.getById(memberId)).not.toBeNull();
         });
 
         describe('When deleting it', () => {
             beforeEach(async () => {
-                await commands.deleteCmd(memberId);
+                await commandBus.sendSync(new DeleteMemberCommand({ memberId }));
             });
 
             it('should be soft deleted into aggregate model', async () => {
-                expect(await aggregateRepo.getById(memberId.toString())).toMatchObject({ deleted: true });
+                expect(await aggregateRepo.getById(memberId)).toMatchObject({ deleted: true });
             });
 
             describe('And getting it from query model', () => {
@@ -82,6 +83,7 @@ describe('Member Registration Component Test', () => {
 
         describe('When getting a member from query model', () => {
             let member: MemberRegistrationQueryModel | null;
+
             beforeEach(async () => {
                 member = await queries.getMemberQuery(memberId);
             });

@@ -6,6 +6,7 @@ import { envValidationSchema } from './env-validation-schema';
 import { MemberRegistrationModule } from './member-registration/member-registration.module';
 import { MembershipFeesModule } from './membership-fees/membership-fees.module';
 import { MongoModule } from '@golee/mongo-nest';
+import { CommandBusModule } from './command-bus/command-bus.module';
 
 @Module({
     imports: [
@@ -30,6 +31,7 @@ import { MongoModule } from '@golee/mongo-nest';
                 uri: config.getOrThrow('MONGODB_URI'),
             }),
         }),
+        CommandBusModule,
         MemberRegistrationModule,
         MembershipFeesModule,
     ],

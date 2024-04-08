@@ -11,6 +11,6 @@ export class MemberRegistrationSerializer
     }
 
     public aggregateToModel(aggregate: MemberRegistrationAggregate): MemberRegistrationAggregateModel {
-        return { id: aggregate.id.toString(), name: aggregate['name'], deleted: aggregate.isDeleted() };
+        return { id: aggregate.id, name: aggregate['name'], deleted: aggregate.isDeleted() };
     }
 }

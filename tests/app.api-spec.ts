@@ -4,12 +4,12 @@ import * as request from 'supertest';
 import { AppModule } from '../src/app.module';
 import { MongoMemoryReplSet } from 'mongodb-memory-server';
 import { ConfigService } from '@nestjs/config';
-import { Connection } from 'mongoose';
-import { getConnectionToken } from '@nestjs/mongoose';
+import { MongoClient } from 'mongodb';
+import { getMongoToken } from '@golee/mongo-nest';
 
 describe('AppController (api)', () => {
     let mongodb: MongoMemoryReplSet;
-    let connection: Connection;
+    let mongoClient: MongoClient;
     let app: INestApplication;
 
     class ConfigServiceFake {
@@ -23,6 +23,7 @@ describe('AppController (api)', () => {
                     return '';
             }
         }
+
         getOrThrow(key: string) {
             return this.get(key);
         }
@@ -46,14 +47,11 @@ describe('AppController (api)', () => {
         app = moduleFixture.createNestApplication();
         await app.init();
 
-        connection = moduleFixture.get<Connection>(getConnectionToken());
+        mongoClient = moduleFixture.get(getMongoToken());
     });
 
     afterEach(async () => {
-        await connection.db.collection('member_registration_aggregate').deleteMany({});
-        await connection.db.collection('member_query_repo').deleteMany({});
-        await connection.db.collection('member_fees_query_repo').deleteMany({});
-        await connection.db.collection('membership_fees_aggregate').deleteMany({});
+        await mongoClient.db().dropDatabase();
     });
 
     afterAll(async () => {

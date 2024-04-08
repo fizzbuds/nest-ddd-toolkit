@@ -19,7 +19,7 @@ export class MemberRegistrationQueryRepo extends MongoQueryRepo<MemberRegistrati
     }
 
     public async getMember(id: string) {
-        return await this.collection.findOne({ id: id.toString(), deleted: false });
+        return await this.collection.findOne({ id, deleted: false });
     }
 
     public async save(queryModel: MemberRegistrationQueryModel, session?: ClientSession) {

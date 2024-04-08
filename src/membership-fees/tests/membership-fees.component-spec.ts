@@ -3,19 +3,22 @@ import { MongoMemoryReplSet } from 'mongodb-memory-server';
 import { Test, TestingModule } from '@nestjs/testing';
 import { MembershipFeesAggregate } from '../domain/membership-fees.aggregate';
 import { MembershipFeesSerializer } from '../infrastructure/membership-fees.serializer';
-import { MembershipFeesCommands } from '../membership-fees.commands';
 import {
     MembershipFeesAggregateModel,
     MembershipFeesAggregateRepo,
 } from '../infrastructure/membership-fees-aggregate.repo';
-import { MongoAggregateRepo } from '@fizzbuds/ddd-toolkit';
+import { ICommandBus, MongoAggregateRepo } from '@fizzbuds/ddd-toolkit';
 import { getMongoToken, MongoModule } from '@golee/mongo-nest';
 import { MongoClient } from 'mongodb';
+import { AddFeeCommand } from '../commands/add-fee.command';
+import { DeleteFeeCommand } from '../commands/delete-fee.command';
+import { CommandHandlers } from '../commands/handlers';
+import { COMMAND_BUS, CommandBusModule } from '../../command-bus/command-bus.module';
 
 describe('Membership Fees Component Test', () => {
     let module: TestingModule;
     let mongodb: MongoMemoryReplSet;
-    let commands: MembershipFeesCommands;
+    let commandBus: ICommandBus;
     let aggregateRepo: MongoAggregateRepo<MembershipFeesAggregate, MembershipFeesAggregateModel>;
 
     beforeAll(async () => {
@@ -29,7 +32,7 @@ describe('Membership Fees Component Test', () => {
 
         module = await Test.createTestingModule({
             providers: [
-                MembershipFeesCommands,
+                ...CommandHandlers,
                 {
                     provide: MembershipFeesAggregateRepo,
                     inject: [getMongoToken()],
@@ -42,14 +45,11 @@ describe('Membership Fees Component Test', () => {
                     },
                 },
             ],
-            imports: [MongoModule.forRoot({ uri: mongodb.getUri('test') })],
+            imports: [MongoModule.forRoot({ uri: mongodb.getUri('test') }), CommandBusModule],
         }).compile();
 
-        commands = module.get<MembershipFeesCommands>(MembershipFeesCommands);
-        aggregateRepo =
-            module.get<MongoAggregateRepo<MembershipFeesAggregate, MembershipFeesAggregateModel>>(
-                MembershipFeesAggregateRepo,
-            );
+        commandBus = module.get(COMMAND_BUS);
+        aggregateRepo = module.get(MembershipFeesAggregateRepo);
         await aggregateRepo.init();
     });
 
@@ -70,21 +70,22 @@ describe('Membership Fees Component Test', () => {
             let feeId: string;
 
             beforeEach(async () => {
-                feeId = await commands.addFeeCmd(memberId, 100);
+                const _ = await commandBus.sendSync(new AddFeeCommand({ memberId, amount: 100 }));
+                feeId = _.feeId;
             });
 
             it('should be saved into aggregate model', async () => {
-                expect(await aggregateRepo.getById(memberId.toString())).not.toBeNull();
+                expect(await aggregateRepo.getById(memberId)).not.toBeNull();
             });
 
             it('should add a fee', async () => {
-                expect(await aggregateRepo.getById(memberId.toString())).toMatchObject({
+                expect(await aggregateRepo.getById(memberId)).toMatchObject({
                     fees: [{ feeId: feeId, value: 100, deleted: false }],
                 });
             });
 
             it('should increase the credit amount', async () => {
-                expect((await aggregateRepo.getById(memberId.toString()))?.getCreditAmount()).toEqual(100);
+                expect((await aggregateRepo.getById(memberId))?.getCreditAmount()).toEqual(100);
             });
         });
 
@@ -92,22 +93,23 @@ describe('Membership Fees Component Test', () => {
             let feeId: string;
 
             beforeEach(async () => {
-                feeId = await commands.addFeeCmd(memberId, 100);
+                const _ = await commandBus.sendSync(new AddFeeCommand({ memberId, amount: 100 }));
+                feeId = _.feeId;
             });
 
             describe('When deleting it', () => {
                 beforeEach(async () => {
-                    await commands.deleteFeeCmd(memberId, feeId);
+                    await commandBus.sendSync(new DeleteFeeCommand({ memberId, feeId }));
                 });
 
                 it('should mark it as deleted', async () => {
-                    expect(await aggregateRepo.getById(memberId.toString())).toMatchObject({
+                    expect(await aggregateRepo.getById(memberId)).toMatchObject({
                         fees: [{ feeId: feeId, value: 100, deleted: true }],
                     });
                 });
 
                 it('should decrease the credit amount', async () => {
-                    expect((await aggregateRepo.getById(memberId.toString()))?.getCreditAmount()).toEqual(0);
+                    expect((await aggregateRepo.getById(memberId))?.getCreditAmount()).toEqual(0);
                 });
             });
         });
