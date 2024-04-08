@@ -4,6 +4,7 @@ import { AddFeeCommand } from '../commands/add-fee.command';
 import { DeleteFeeCommand } from '../commands/delete-fee.command';
 import { COMMAND_BUS } from '../../command-bus/command-bus.module';
 import { ICommandBus } from '@fizzbuds/ddd-toolkit';
+import { AddFeeDto } from './dto/add-fee.dto';
 
 @Controller('membership-fees')
 export class MembershipFeesController {
@@ -13,8 +14,8 @@ export class MembershipFeesController {
     ) {}
 
     @Post(':memberId')
-    public async addFee(@Param('memberId') memberId: string, @Body('amount') amount: number) {
-        const { feeId } = await this.commandBus.sendSync(new AddFeeCommand({ memberId, amount }));
+    public async addFee(@Param('memberId') memberId: string, @Body() body: AddFeeDto) {
+        const { feeId } = await this.commandBus.sendSync(new AddFeeCommand({ memberId, amount: body.amount }));
         return { feeId };
     }
 
