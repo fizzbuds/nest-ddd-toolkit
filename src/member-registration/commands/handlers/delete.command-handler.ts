@@ -1,4 +1,4 @@
-import { IAggregateRepo, ICommandBus, ICommandHandler } from '@fizzbuds/ddd-toolkit';
+import { IAggregateRepo, ICommandBus, ICommandHandler, LocalEventBus } from '@fizzbuds/ddd-toolkit';
 import { DeleteMemberCommand } from '../delete-member.command';
 import { Inject, NotFoundException } from '@nestjs/common';
 import { MemberRegistrationAggregateRepo } from '../../infrastructure/member-registration-aggregate.repo';
@@ -6,7 +6,6 @@ import { MemberRegistrationAggregate } from '../../domain/member-registration.ag
 import { MemberDeleted } from '../../events/member-deleted.event';
 import { COMMAND_BUS } from '../../../command-bus/command-bus.module';
 import { EVENT_BUS } from '../../../event-bus/event-bus.module';
-import { LocalEventBus } from '@fizzbuds/ddd-toolkit/dist/event-bus/local-event-bus';
 
 export class DeleteCommandHandler implements ICommandHandler<DeleteMemberCommand> {
     constructor(

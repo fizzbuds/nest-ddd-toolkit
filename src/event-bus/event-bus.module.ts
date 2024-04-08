@@ -1,5 +1,5 @@
 import { Global, Injectable, Logger, Module } from '@nestjs/common';
-import { LocalEventBus } from '@fizzbuds/ddd-toolkit/dist/event-bus/local-event-bus';
+import { LocalEventBus } from '@fizzbuds/ddd-toolkit';
 
 export const EVENT_BUS = 'EVENT_BUS';
 

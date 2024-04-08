@@ -1,9 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { IEventBus, IEventHandler } from '@fizzbuds/ddd-toolkit/dist/event-bus/event-bus.interface';
+import { ICommandBus, IEventBus, IEventHandler } from '@fizzbuds/ddd-toolkit';
 import { MemberDeleted } from '../../member-registration/events/member-deleted.event';
 import { DeleteAllFeeCommand } from '../commands/delete-all-fee.command';
 import { COMMAND_BUS } from '../../command-bus/command-bus.module';
-import { ICommandBus } from '@fizzbuds/ddd-toolkit';
 import { EVENT_BUS } from '../../event-bus/event-bus.module';
 
 @Injectable()
