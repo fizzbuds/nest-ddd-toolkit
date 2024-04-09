@@ -3,12 +3,11 @@ import 'jest';
 import { MongoMemoryReplSet } from 'mongodb-memory-server';
 import { Test, TestingModule } from '@nestjs/testing';
 import { MemberRegistrationAggregate } from '../domain/member-registration.aggregate';
-import { MemberRegistrationQueries } from '../member-registration.queries';
 import {
     MemberRegistrationAggregateModel,
     MemberRegistrationAggregateRepo,
 } from '../infrastructure/member-registration-aggregate.repo';
-import { ICommandBus, MongoAggregateRepo } from '@fizzbuds/ddd-toolkit';
+import { ICommandBus, IQueryBus, MongoAggregateRepo } from '@fizzbuds/ddd-toolkit';
 import { getMongoToken, MongoModule } from '@golee/mongo-nest';
 import { MongoClient } from 'mongodb';
 import { COMMAND_BUS, CommandBusModule } from '../../command-bus/command-bus.module';
@@ -16,12 +15,14 @@ import { CreateMemberCommand } from '../commands/create-member.command';
 import { DeleteMemberCommand } from '../commands/delete-member.command';
 import { MemberRegistrationQueryModel } from '../infrastructure/member-registration-query.repo';
 import { EventBusModule } from '../../event-bus/event-bus.module';
+import { MEMBER_REGISTRATION_QUERY_BUS } from '../infrastructure/member-registration.query-bus';
+import { GetMemberQuery } from '../queries/get-member.query';
 
 describe('Member Registration Component Test', () => {
     let module: TestingModule;
     let mongodb: MongoMemoryReplSet;
     let commandBus: ICommandBus;
-    let queries: MemberRegistrationQueries;
+    let queryBus: IQueryBus;
     let aggregateRepo: MongoAggregateRepo<MemberRegistrationAggregate, MemberRegistrationAggregateModel>;
 
     beforeAll(async () => {
@@ -41,7 +42,7 @@ describe('Member Registration Component Test', () => {
         commandBus = module.get(COMMAND_BUS);
         aggregateRepo = module.get(MemberRegistrationAggregateRepo);
         await aggregateRepo.init();
-        queries = module.get<MemberRegistrationQueries>(MemberRegistrationQueries);
+        queryBus = module.get(MEMBER_REGISTRATION_QUERY_BUS);
     });
 
     afterEach(async () => {
@@ -76,7 +77,7 @@ describe('Member Registration Component Test', () => {
 
             describe('And getting it from query model', () => {
                 it('should return null', async () => {
-                    expect(await queries.getMemberQuery(memberId)).toBe(null);
+                    expect(await queryBus.execute(new GetMemberQuery({ memberId }))).toBe(null);
                 });
             });
         });
@@ -85,7 +86,7 @@ describe('Member Registration Component Test', () => {
             let member: MemberRegistrationQueryModel | null;
 
             beforeEach(async () => {
-                member = await queries.getMemberQuery(memberId);
+                member = await queryBus.execute(new GetMemberQuery({ memberId }));
             });
 
             it('should return a member', () => {

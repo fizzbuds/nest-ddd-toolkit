@@ -1,16 +1,17 @@
 import { Body, Controller, Delete, Get, Inject, NotFoundException, Param, Post } from '@nestjs/common';
-import { MemberRegistrationQueries } from '../member-registration.queries';
 import { COMMAND_BUS } from '../../command-bus/command-bus.module';
 import { CreateMemberCommand } from '../commands/create-member.command';
 import { DeleteMemberCommand } from '../commands/delete-member.command';
-import { ICommandBus } from '@fizzbuds/ddd-toolkit';
+import { ICommandBus, IQueryBus } from '@fizzbuds/ddd-toolkit';
 import { CreateMemberDto } from './dto/create-member.dto';
+import { MEMBER_REGISTRATION_QUERY_BUS } from '../infrastructure/member-registration.query-bus';
+import { GetMemberQuery } from '../queries/get-member.query';
 
 @Controller('member-registrations')
 export class MemberRegistrationController {
     constructor(
         @Inject(COMMAND_BUS) private readonly commandBus: ICommandBus,
-        private readonly memberRegistrationQueries: MemberRegistrationQueries,
+        @Inject(MEMBER_REGISTRATION_QUERY_BUS) private readonly memberRegistrationQueryBus: IQueryBus,
     ) {}
 
     @Post('')
@@ -20,8 +21,8 @@ export class MemberRegistrationController {
     }
 
     @Get(':id')
-    public async get(@Param('id') id: string) {
-        const result = await this.memberRegistrationQueries.getMemberQuery(id);
+    public async get(@Param('id') memberId: string) {
+        const result = await this.memberRegistrationQueryBus.execute(new GetMemberQuery({ memberId }));
         if (!result) throw new NotFoundException();
         return result;
     }

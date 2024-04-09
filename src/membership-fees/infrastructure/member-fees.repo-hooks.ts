@@ -1,15 +1,16 @@
-import { IRepoHooks } from '@fizzbuds/ddd-toolkit';
-import { Injectable } from '@nestjs/common';
+import { IQueryBus, IRepoHooks } from '@fizzbuds/ddd-toolkit';
+import { Inject, Injectable } from '@nestjs/common';
 import { MemberFeesQueryModel, MemberFeesQueryRepo } from './member-fees-query.repo';
-import { MemberRegistrationQueries } from '../../member-registration/member-registration.queries';
 import { MembershipFeesAggregateModel } from './membership-fees-aggregate.repo';
 import { ClientSession } from 'mongodb';
+import { MEMBER_REGISTRATION_QUERY_BUS } from '../../member-registration/infrastructure/member-registration.query-bus';
+import { GetMemberQuery } from '../../member-registration/queries/get-member.query';
 
 @Injectable()
 export class MemberFeesRepoHooks implements IRepoHooks<MembershipFeesAggregateModel> {
     constructor(
         private readonly memberFeesQueryRepo: MemberFeesQueryRepo,
-        private readonly memberRegistrationQueries: MemberRegistrationQueries,
+        @Inject(MEMBER_REGISTRATION_QUERY_BUS) private readonly memberRegistrationQueryBus: IQueryBus,
     ) {}
 
     public async onSave(aggregateModel: MembershipFeesAggregateModel, session?: ClientSession) {
@@ -18,7 +19,9 @@ export class MemberFeesRepoHooks implements IRepoHooks<MembershipFeesAggregateMo
     }
 
     private async composeQueryModel(aggregateModel: MembershipFeesAggregateModel): Promise<MemberFeesQueryModel[]> {
-        const name = (await this.memberRegistrationQueries.getMemberQuery(aggregateModel.id))?.name ?? '';
+        const name =
+            (await this.memberRegistrationQueryBus.execute(new GetMemberQuery({ memberId: aggregateModel.id })))
+                ?.name ?? '';
 
         return aggregateModel.fees.map((fee) => {
             return {

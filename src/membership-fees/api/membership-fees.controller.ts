@@ -1,16 +1,17 @@
 import { Body, Controller, Delete, Get, Inject, Param, Post } from '@nestjs/common';
-import { MemberFeesQueries } from '../member-fees-queries.service';
 import { AddFeeCommand } from '../commands/add-fee.command';
 import { DeleteFeeCommand } from '../commands/delete-fee.command';
 import { COMMAND_BUS } from '../../command-bus/command-bus.module';
-import { ICommandBus } from '@fizzbuds/ddd-toolkit';
+import { ICommandBus, IQueryBus } from '@fizzbuds/ddd-toolkit';
 import { AddFeeDto } from './dto/add-fee.dto';
+import { MEMBERSHIP_FEES_QUERY_BUS } from '../infrastructure/membership-fees.query-bus';
+import { GetMembershipFeesQuery } from '../queries/get-membership-fees.query';
 
 @Controller('membership-fees')
 export class MembershipFeesController {
     constructor(
         @Inject(COMMAND_BUS) private readonly commandBus: ICommandBus,
-        private readonly membershipFeesQueries: MemberFeesQueries,
+        @Inject(MEMBERSHIP_FEES_QUERY_BUS) private readonly queryBus: IQueryBus,
     ) {}
 
     @Post(':memberId')
@@ -26,6 +27,6 @@ export class MembershipFeesController {
 
     @Get('/')
     public async getList() {
-        return await this.membershipFeesQueries.getMemberFees();
+        return await this.queryBus.execute(new GetMembershipFeesQuery({}));
     }
 }
