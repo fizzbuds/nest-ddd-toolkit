@@ -1,18 +1,19 @@
-import { Global, Injectable, Logger, Module } from '@nestjs/common';
+import { Global, Logger, Module } from '@nestjs/common';
 import { LocalCommandBus } from '@fizzbuds/ddd-toolkit';
 
 export const COMMAND_BUS = 'COMMAND_BUS';
 
-@Injectable()
-export class CommandBus extends LocalCommandBus {
-    constructor() {
-        super(new Logger(CommandBus.name));
-    }
-}
-
 @Global()
 @Module({
-    providers: [{ provide: COMMAND_BUS, useClass: CommandBus }],
+    providers: [
+        {
+            provide: COMMAND_BUS,
+            useFactory: () => {
+                const logger = new Logger('CommandBus');
+                return new LocalCommandBus(logger);
+            },
+        },
+    ],
     imports: [],
     exports: [COMMAND_BUS],
 })
