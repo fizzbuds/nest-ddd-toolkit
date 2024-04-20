@@ -1,14 +1,14 @@
-import { IAggregateRepo, ICommandBus, ICommandHandler } from '@fizzbuds/ddd-toolkit';
+import { IAggregateRepo, ICommandHandler } from '@fizzbuds/ddd-toolkit';
 import { AddFeeCommand } from '../add-fee.command';
 import { MembershipFeesAggregate } from '../../domain/membership-fees.aggregate';
 import { Inject } from '@nestjs/common';
 import { MembershipFeesAggregateRepo } from '../../infrastructure/membership-fees-aggregate.repo';
-import { COMMAND_BUS } from '../../../command-bus/command-bus.module';
+import { CommandBus } from '../../../command-bus/command-bus.module';
 
 export class AddFeeCommandHandler implements ICommandHandler<AddFeeCommand> {
     constructor(
         @Inject(MembershipFeesAggregateRepo) private readonly aggregateRepo: IAggregateRepo<MembershipFeesAggregate>,
-        @Inject(COMMAND_BUS) private readonly commandBus: ICommandBus,
+        private readonly commandBus: CommandBus,
     ) {
         this.commandBus.register(AddFeeCommand, this);
     }

@@ -1,8 +1,6 @@
 import { Global, Injectable, Logger, Module } from '@nestjs/common';
 import { LocalCommandBus } from '@fizzbuds/ddd-toolkit';
 
-export const COMMAND_BUS = 'COMMAND_BUS';
-
 @Injectable()
 export class CommandBus extends LocalCommandBus {
     constructor() {
@@ -12,8 +10,8 @@ export class CommandBus extends LocalCommandBus {
 
 @Global()
 @Module({
-    providers: [{ provide: COMMAND_BUS, useClass: CommandBus }],
+    providers: [CommandBus],
     imports: [],
-    exports: [COMMAND_BUS],
+    exports: [CommandBus],
 })
 export class CommandBusModule {}

@@ -10,7 +10,7 @@ import {
 import { ICommandBus, IQueryBus, MongoAggregateRepo } from '@fizzbuds/ddd-toolkit';
 import { getMongoToken, MongoModule } from '@golee/mongo-nest';
 import { MongoClient } from 'mongodb';
-import { COMMAND_BUS, CommandBusModule } from '../../command-bus/command-bus.module';
+import { CommandBus, CommandBusModule } from '../../command-bus/command-bus.module';
 import { CreateMemberCommand } from '../commands/create-member.command';
 import { DeleteMemberCommand } from '../commands/delete-member.command';
 import { MemberRegistrationQueryModel } from '../infrastructure/member-registration-query.repo';
@@ -39,7 +39,7 @@ describe('Member Registration Component Test', () => {
             imports: [MongoModule.forRoot({ uri: mongodb.getUri('test') }), EventBusModule, CommandBusModule],
         }).compile();
 
-        commandBus = module.get(COMMAND_BUS);
+        commandBus = module.get(CommandBus);
         aggregateRepo = module.get(MemberRegistrationAggregateRepo);
         await aggregateRepo.init();
         queryBus = module.get(MEMBER_REGISTRATION_QUERY_BUS);

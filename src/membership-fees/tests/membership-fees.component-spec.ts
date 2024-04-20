@@ -11,7 +11,7 @@ import { getMongoToken, MongoModule } from '@golee/mongo-nest';
 import { MongoClient } from 'mongodb';
 import { AddFeeCommand } from '../commands/add-fee.command';
 import { DeleteFeeCommand } from '../commands/delete-fee.command';
-import { COMMAND_BUS, CommandBusModule } from '../../command-bus/command-bus.module';
+import { CommandBus, CommandBusModule } from '../../command-bus/command-bus.module';
 import { MembershipFeesProviders } from '../membership-fees.module';
 import { EventBusModule } from '../../event-bus/event-bus.module';
 import { MEMBER_REGISTRATION_QUERY_BUS } from '../../member-registration/infrastructure/member-registration.query-bus';
@@ -42,7 +42,7 @@ describe('Membership Fees Component Test', () => {
             imports: [MongoModule.forRoot({ uri: mongodb.getUri('test') }), CommandBusModule, EventBusModule],
         }).compile();
 
-        commandBus = module.get(COMMAND_BUS);
+        commandBus = module.get(CommandBus);
         aggregateRepo = module.get(MembershipFeesAggregateRepo);
         await aggregateRepo.init();
     });
