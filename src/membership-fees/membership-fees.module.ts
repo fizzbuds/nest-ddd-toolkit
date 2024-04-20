@@ -7,7 +7,7 @@ import { MemberRegistrationModule } from '../member-registration/member-registra
 import { MemberDeletedPolicy } from './policies/member-deleted.policy';
 import { CommandHandlers } from './commands';
 import { MembershipFeesQueryBusProvider } from './infrastructure/membership-fees.query-bus';
-import { MembershipFeesQueryHandlers } from './queries/handlers';
+import { MembershipFeesQueryHandlers } from './queries';
 
 export const MembershipFeesProviders = [
     MemberFeesRepoHooks,

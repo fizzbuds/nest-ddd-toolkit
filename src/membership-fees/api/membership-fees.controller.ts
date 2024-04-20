@@ -2,10 +2,10 @@ import { Body, Controller, Delete, Get, Inject, Param, Post } from '@nestjs/comm
 import { IQueryBus } from '@fizzbuds/ddd-toolkit';
 import { AddFeeDto } from './dto/add-fee.dto';
 import { MEMBERSHIP_FEES_QUERY_BUS } from '../infrastructure/membership-fees.query-bus';
-import { GetMembershipFeesQuery } from '../queries/get-membership-fees.query';
 import { CommandBus } from '../../command-bus/command-bus.module';
 import { AddFeeCommand } from '../commands/add-fee.command-handler';
 import { DeleteFeeCommand } from '../commands/delete-fee.command-handler';
+import { GetMembershipFeesQuery } from '../queries/get-membership-fees.query-handler';
 
 @Controller('membership-fees')
 export class MembershipFeesController {
