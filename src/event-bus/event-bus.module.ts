@@ -1,19 +1,18 @@
-import { Global, Logger, Module } from '@nestjs/common';
+import { Global, Injectable, Logger, Module } from '@nestjs/common';
 import { LocalEventBus } from '@fizzbuds/ddd-toolkit';
 
 export const EVENT_BUS = 'EVENT_BUS';
 
+@Injectable()
+export class EventBus extends LocalEventBus {
+    constructor() {
+        super(new Logger(EventBus.name));
+    }
+}
+
 @Global()
 @Module({
-    providers: [
-        {
-            provide: EVENT_BUS,
-            useFactory: () => {
-                const logger = new Logger('EventBus');
-                return new LocalEventBus(logger);
-            },
-        },
-    ],
+    providers: [{ provide: EVENT_BUS, useClass: EventBus }],
     imports: [],
     exports: [EVENT_BUS],
 })
