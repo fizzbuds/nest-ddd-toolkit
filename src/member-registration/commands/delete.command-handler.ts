@@ -1,11 +1,18 @@
-import { IAggregateRepo, ICommandHandler } from '@fizzbuds/ddd-toolkit';
-import { DeleteMemberCommand } from '../delete-member.command';
+import { Command, IAggregateRepo, ICommandHandler } from '@fizzbuds/ddd-toolkit';
 import { Inject, NotFoundException } from '@nestjs/common';
-import { MemberRegistrationAggregateRepo } from '../../infrastructure/member-registration-aggregate.repo';
-import { MemberRegistrationAggregate } from '../../domain/member-registration.aggregate';
-import { MemberDeleted } from '../../events/member-deleted.event';
-import { CommandBus } from '../../../command-bus/command-bus.module';
-import { EventBus } from '../../../event-bus/event-bus.module';
+import { MemberRegistrationAggregateRepo } from '../infrastructure/member-registration-aggregate.repo';
+import { MemberRegistrationAggregate } from '../domain/member-registration.aggregate';
+import { MemberDeleted } from '../events/member-deleted.event';
+import { CommandBus } from '../../command-bus/command-bus.module';
+import { EventBus } from '../../event-bus/event-bus.module';
+
+type DeleteMemberCommandPayload = { memberId: string };
+
+export class DeleteMemberCommand extends Command<DeleteMemberCommandPayload> {
+    constructor(public readonly payload: DeleteMemberCommandPayload) {
+        super(payload);
+    }
+}
 
 export class DeleteCommandHandler implements ICommandHandler<DeleteMemberCommand> {
     constructor(

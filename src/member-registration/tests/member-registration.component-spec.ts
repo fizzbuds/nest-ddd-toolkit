@@ -11,12 +11,12 @@ import { ICommandBus, IQueryBus, MongoAggregateRepo } from '@fizzbuds/ddd-toolki
 import { getMongoToken, MongoModule } from '@golee/mongo-nest';
 import { MongoClient } from 'mongodb';
 import { CommandBus, CommandBusModule } from '../../command-bus/command-bus.module';
-import { CreateMemberCommand } from '../commands/create-member.command';
-import { DeleteMemberCommand } from '../commands/delete-member.command';
 import { MemberRegistrationQueryModel } from '../infrastructure/member-registration-query.repo';
 import { EventBusModule } from '../../event-bus/event-bus.module';
 import { MEMBER_REGISTRATION_QUERY_BUS } from '../infrastructure/member-registration.query-bus';
 import { GetMemberQuery } from '../queries/get-member.query';
+import { CreateMemberCommand } from '../commands/create.command-handler';
+import { DeleteMemberCommand } from '../commands/delete.command-handler';
 
 describe('Member Registration Component Test', () => {
     let module: TestingModule;

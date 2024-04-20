@@ -3,7 +3,7 @@ import { MemberRegistrationQueryRepo } from './infrastructure/member-registratio
 import { Module } from '@nestjs/common';
 import { MemberRegistrationController } from './api/member-registration.controller';
 import { MemberRegistrationRepoHooks } from './infrastructure/member-registration.repo-hooks';
-import { CommandHandlers } from './commands/handlers';
+import { CommandHandlers } from './commands';
 import {
     MEMBER_REGISTRATION_QUERY_BUS,
     MemberRegistrationQueryBusProvider,

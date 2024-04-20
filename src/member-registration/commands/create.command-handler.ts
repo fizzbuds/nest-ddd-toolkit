@@ -1,10 +1,17 @@
-import { IAggregateRepo, ICommandHandler } from '@fizzbuds/ddd-toolkit';
-import { CreateMemberCommand } from '../create-member.command';
+import { Command, IAggregateRepo, ICommandHandler } from '@fizzbuds/ddd-toolkit';
 import { Inject } from '@nestjs/common';
-import { MemberRegistrationAggregateRepo } from '../../infrastructure/member-registration-aggregate.repo';
-import { MemberRegistrationAggregate } from '../../domain/member-registration.aggregate';
+import { MemberRegistrationAggregateRepo } from '../infrastructure/member-registration-aggregate.repo';
+import { MemberRegistrationAggregate } from '../domain/member-registration.aggregate';
 import { v4 as uuidV4 } from 'uuid';
-import { CommandBus } from '../../../command-bus/command-bus.module';
+import { CommandBus } from '../../command-bus/command-bus.module';
+
+type CreateMemberCommandPayload = { name: string };
+
+export class CreateMemberCommand extends Command<CreateMemberCommandPayload, { memberId: string }> {
+    constructor(public readonly payload: CreateMemberCommandPayload) {
+        super(payload);
+    }
+}
 
 export class CreateCommandHandler implements ICommandHandler<CreateMemberCommand> {
     constructor(
