@@ -14,7 +14,7 @@ import { DeleteFeeCommand } from '../commands/delete-fee.command';
 import { CommandBus, CommandBusModule } from '../../command-bus/command-bus.module';
 import { MembershipFeesProviders } from '../membership-fees.module';
 import { EventBusModule } from '../../event-bus/event-bus.module';
-import { MEMBER_REGISTRATION_QUERY_BUS } from '../../member-registration/infrastructure/member-registration.query-bus';
+import { MemberRegistrationQueryBus } from '../../member-registration/infrastructure/member-registration.query-bus';
 
 describe('Membership Fees Component Test', () => {
     let module: TestingModule;
@@ -35,7 +35,7 @@ describe('Membership Fees Component Test', () => {
             providers: [
                 ...MembershipFeesProviders,
                 {
-                    provide: MEMBER_REGISTRATION_QUERY_BUS,
+                    provide: MemberRegistrationQueryBus,
                     useValue: { execute: jest.fn() },
                 },
             ],

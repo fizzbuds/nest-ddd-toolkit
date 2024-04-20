@@ -4,18 +4,16 @@ import { Module } from '@nestjs/common';
 import { MemberRegistrationController } from './api/member-registration.controller';
 import { MemberRegistrationRepoHooks } from './infrastructure/member-registration.repo-hooks';
 import { CommandHandlers } from './commands';
-import {
-    MEMBER_REGISTRATION_QUERY_BUS,
-    MemberRegistrationQueryBusProvider,
-} from './infrastructure/member-registration.query-bus';
+
 import { QueryHandlers } from './queries';
+import { MemberRegistrationQueryBus } from './infrastructure/member-registration.query-bus';
 
 export const MemberRegistrationProviders = [
     MemberRegistrationRepoHooks,
     MemberRegistrationAggregateRepo,
     MemberRegistrationQueryRepo,
     ...CommandHandlers,
-    MemberRegistrationQueryBusProvider,
+    MemberRegistrationQueryBus,
     ...QueryHandlers,
 ];
 
@@ -23,6 +21,6 @@ export const MemberRegistrationProviders = [
     imports: [],
     controllers: [MemberRegistrationController],
     providers: MemberRegistrationProviders,
-    exports: [MEMBER_REGISTRATION_QUERY_BUS],
+    exports: [MemberRegistrationQueryBus],
 })
 export class MemberRegistrationModule {}

@@ -1,17 +1,17 @@
 import { Body, Controller, Delete, Get, Inject, NotFoundException, Param, Post } from '@nestjs/common';
 import { IQueryBus } from '@fizzbuds/ddd-toolkit';
 import { CreateMemberDto } from './dto/create-member.dto';
-import { MEMBER_REGISTRATION_QUERY_BUS } from '../infrastructure/member-registration.query-bus';
 import { CommandBus } from '../../command-bus/command-bus.module';
 import { CreateMemberCommand } from '../commands/create.command-handler';
 import { DeleteMemberCommand } from '../commands/delete.command-handler';
 import { GetMemberQuery } from '../queries/get-member.query-handler';
+import { MemberRegistrationQueryBus } from '../infrastructure/member-registration.query-bus';
 
 @Controller('member-registrations')
 export class MemberRegistrationController {
     constructor(
         private readonly commandBus: CommandBus,
-        @Inject(MEMBER_REGISTRATION_QUERY_BUS) private readonly memberRegistrationQueryBus: IQueryBus,
+        @Inject(MemberRegistrationQueryBus) private readonly memberRegistrationQueryBus: IQueryBus,
     ) {}
 
     @Post('')
