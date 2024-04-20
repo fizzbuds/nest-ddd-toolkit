@@ -4,7 +4,8 @@ import { MemberFeesQueryModel, MemberFeesQueryRepo } from './member-fees-query.r
 import { MembershipFeesAggregateModel } from './membership-fees-aggregate.repo';
 import { ClientSession } from 'mongodb';
 import { MEMBER_REGISTRATION_QUERY_BUS } from '../../member-registration/infrastructure/member-registration.query-bus';
-import { GetMemberQuery } from '../../member-registration/queries/get-member.query';
+
+import { GetMemberQuery } from '../../member-registration/queries/get-member.query-handler';
 
 @Injectable()
 export class MemberFeesRepoHooks implements IRepoHooks<MembershipFeesAggregateModel> {

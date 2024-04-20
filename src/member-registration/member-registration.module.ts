@@ -8,7 +8,7 @@ import {
     MEMBER_REGISTRATION_QUERY_BUS,
     MemberRegistrationQueryBusProvider,
 } from './infrastructure/member-registration.query-bus';
-import { QueryHandlers } from './queries/handlers';
+import { QueryHandlers } from './queries';
 
 export const MemberRegistrationProviders = [
     MemberRegistrationRepoHooks,

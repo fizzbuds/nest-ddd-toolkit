@@ -2,10 +2,10 @@ import { Body, Controller, Delete, Get, Inject, NotFoundException, Param, Post }
 import { IQueryBus } from '@fizzbuds/ddd-toolkit';
 import { CreateMemberDto } from './dto/create-member.dto';
 import { MEMBER_REGISTRATION_QUERY_BUS } from '../infrastructure/member-registration.query-bus';
-import { GetMemberQuery } from '../queries/get-member.query';
 import { CommandBus } from '../../command-bus/command-bus.module';
 import { CreateMemberCommand } from '../commands/create.command-handler';
 import { DeleteMemberCommand } from '../commands/delete.command-handler';
+import { GetMemberQuery } from '../queries/get-member.query-handler';
 
 @Controller('member-registrations')
 export class MemberRegistrationController {
