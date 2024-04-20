@@ -1,9 +1,16 @@
-import { IAggregateRepo, ICommandHandler } from '@fizzbuds/ddd-toolkit';
-import { DeleteFeeCommand } from '../delete-fee.command';
+import { Command, IAggregateRepo, ICommandHandler } from '@fizzbuds/ddd-toolkit';
 import { Inject, NotFoundException } from '@nestjs/common';
-import { MembershipFeesAggregateRepo } from '../../infrastructure/membership-fees-aggregate.repo';
-import { MembershipFeesAggregate } from '../../domain/membership-fees.aggregate';
-import { CommandBus } from '../../../command-bus/command-bus.module';
+import { MembershipFeesAggregateRepo } from '../infrastructure/membership-fees-aggregate.repo';
+import { MembershipFeesAggregate } from '../domain/membership-fees.aggregate';
+import { CommandBus } from '../../command-bus/command-bus.module';
+
+export type DeleteFeeCommandPayload = { memberId: string; feeId: string };
+
+export class DeleteFeeCommand extends Command<DeleteFeeCommandPayload> {
+    constructor(public readonly payload: DeleteFeeCommandPayload) {
+        super(payload);
+    }
+}
 
 export class DeleteFeeCommandHandler implements ICommandHandler<DeleteFeeCommand> {
     constructor(

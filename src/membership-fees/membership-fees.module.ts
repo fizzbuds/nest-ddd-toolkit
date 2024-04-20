@@ -5,7 +5,7 @@ import { MembershipFeesController } from './api/membership-fees.controller';
 import { MemberFeesQueryRepo } from './infrastructure/member-fees-query.repo';
 import { MemberRegistrationModule } from '../member-registration/member-registration.module';
 import { MemberDeletedPolicy } from './policies/member-deleted.policy';
-import { CommandHandlers } from './commands/handlers';
+import { CommandHandlers } from './commands';
 import { MembershipFeesQueryBusProvider } from './infrastructure/membership-fees.query-bus';
 import { MembershipFeesQueryHandlers } from './queries/handlers';
 

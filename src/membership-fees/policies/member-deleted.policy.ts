@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { IEventHandler } from '@fizzbuds/ddd-toolkit';
 import { MemberDeleted } from '../../member-registration/events/member-deleted.event';
-import { DeleteAllFeeCommand } from '../commands/delete-all-fee.command';
 import { CommandBus } from '../../command-bus/command-bus.module';
 import { EventBus } from '../../event-bus/event-bus.module';
+import { DeleteAllFeeCommand } from '../commands/delete-all-fee.command-handler';
 
 @Injectable()
 export class MemberDeletedPolicy implements IEventHandler<MemberDeleted> {
