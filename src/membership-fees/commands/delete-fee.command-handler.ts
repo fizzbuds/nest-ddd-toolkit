@@ -1,7 +1,6 @@
-import { Command, IAggregateRepo, ICommandHandler } from '@fizzbuds/ddd-toolkit';
-import { Inject, NotFoundException } from '@nestjs/common';
+import { Command, ICommandHandler } from '@fizzbuds/ddd-toolkit';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { MembershipFeesAggregateRepo } from '../infrastructure/membership-fees-aggregate.repo';
-import { MembershipFeesAggregate } from '../domain/membership-fees.aggregate';
 import { CommandBus } from '../../command-bus/command-bus.module';
 
 export type DeleteFeeCommandPayload = { memberId: string; feeId: string };
@@ -12,11 +11,9 @@ export class DeleteFeeCommand extends Command<DeleteFeeCommandPayload> {
     }
 }
 
+@Injectable()
 export class DeleteFeeCommandHandler implements ICommandHandler<DeleteFeeCommand> {
-    constructor(
-        @Inject(MembershipFeesAggregateRepo) private readonly aggregateRepo: IAggregateRepo<MembershipFeesAggregate>,
-        private readonly commandBus: CommandBus,
-    ) {
+    constructor(private readonly aggregateRepo: MembershipFeesAggregateRepo, private readonly commandBus: CommandBus) {
         this.commandBus.register(DeleteFeeCommand, this);
     }
 
