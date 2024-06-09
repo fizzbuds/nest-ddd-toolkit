@@ -1,5 +1,5 @@
 import { ClientSession, Document, MongoClient } from 'mongodb';
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { MongoQueryRepo } from '@fizzbuds/ddd-toolkit';
 import { InjectMongo } from '@golee/mongo-nest';
 
@@ -12,9 +12,9 @@ export type MemberFeesQueryModel = {
 };
 
 @Injectable()
-export class MemberFeesQueryRepo extends MongoQueryRepo<MemberFeesQueryModel & Document> {
+export class MemberFeesQueryRepo extends MongoQueryRepo<MemberFeesQueryModel & Document> implements OnModuleInit {
     private static logger = new Logger(MemberFeesQueryRepo.name);
-    protected readonly indexes = [];
+    protected readonly indexes = [{ indexSpec: { deleted: 1 } }];
 
     constructor(@InjectMongo() mongoClient: MongoClient) {
         super(mongoClient, 'member_fees_query_repo', undefined, MemberFeesQueryRepo.logger);
@@ -37,5 +37,9 @@ export class MemberFeesQueryRepo extends MongoQueryRepo<MemberFeesQueryModel & D
             }),
             { session },
         );
+    }
+
+    async onModuleInit() {
+        await this.init();
     }
 }

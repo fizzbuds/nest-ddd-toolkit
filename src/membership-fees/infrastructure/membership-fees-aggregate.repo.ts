@@ -2,7 +2,7 @@ import { MemberFeesRepoHooks } from './member-fees.repo-hooks';
 import { MembershipFeesAggregate } from '../domain/membership-fees.aggregate';
 import { MembershipFeesSerializer } from './membership-fees.serializer';
 import { MongoAggregateRepo } from '@fizzbuds/ddd-toolkit';
-import { Logger } from '@nestjs/common';
+import { Logger, OnModuleInit } from '@nestjs/common';
 import { InjectMongo } from '@golee/mongo-nest';
 import { MongoClient } from 'mongodb';
 
@@ -12,10 +12,10 @@ export interface MembershipFeesAggregateModel {
     creditAmount: number;
 }
 
-export class MembershipFeesAggregateRepo extends MongoAggregateRepo<
-    MembershipFeesAggregate,
-    MembershipFeesAggregateModel
-> {
+export class MembershipFeesAggregateRepo
+    extends MongoAggregateRepo<MembershipFeesAggregate, MembershipFeesAggregateModel>
+    implements OnModuleInit
+{
     private static logger = new Logger(MembershipFeesAggregateRepo.name);
 
     constructor(@InjectMongo() mongoClient: MongoClient, memberFeesRepoHooks: MemberFeesRepoHooks) {
@@ -27,5 +27,9 @@ export class MembershipFeesAggregateRepo extends MongoAggregateRepo<
             memberFeesRepoHooks,
             MembershipFeesAggregateRepo.logger,
         );
+    }
+
+    async onModuleInit() {
+        await this.init();
     }
 }
