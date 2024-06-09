@@ -3,7 +3,7 @@ import { IQueryBus } from '@fizzbuds/ddd-toolkit';
 import { RegisterMemberDto } from './dto/register-member.dto';
 import { CommandBus } from '../../command-bus/command-bus.module';
 import { RegisterMemberCommand } from '../commands/register-member.command-handler';
-import { DeleteMemberCommand } from '../commands/delete.command-handler';
+import { DeleteMemberCommand } from '../commands/delete-member.command-handler';
 import { GetMemberQuery } from '../queries/get-member.query-handler';
 import { MemberRegistrationQueryBus } from '../infrastructure/member-registration.query-bus';
 

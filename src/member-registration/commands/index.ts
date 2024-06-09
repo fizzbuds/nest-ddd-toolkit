@@ -1,4 +1,4 @@
 import { RegisterMemberCommandHandler } from './register-member.command-handler';
-import { DeleteCommandHandler } from './delete.command-handler';
+import { DeleteMemberCommandHandler } from './delete-member.command-handler';
 
-export const CommandHandlers = [RegisterMemberCommandHandler, DeleteCommandHandler];
+export const CommandHandlers = [RegisterMemberCommandHandler, DeleteMemberCommandHandler];

@@ -14,7 +14,7 @@ import { CommandBus, CommandBusModule } from '../../command-bus/command-bus.modu
 import { MemberRegistrationQueryModel } from '../infrastructure/member-registration-query.repo';
 import { EventBusModule } from '../../event-bus/event-bus.module';
 import { RegisterMemberCommand } from '../commands/register-member.command-handler';
-import { DeleteMemberCommand } from '../commands/delete.command-handler';
+import { DeleteMemberCommand } from '../commands/delete-member.command-handler';
 import { GetMemberQuery } from '../queries/get-member.query-handler';
 import { MemberRegistrationQueryBus } from '../infrastructure/member-registration.query-bus';
 

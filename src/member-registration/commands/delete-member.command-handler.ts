@@ -14,7 +14,7 @@ export class DeleteMemberCommand extends Command<DeleteMemberCommandPayload> {
 }
 
 @Injectable()
-export class DeleteCommandHandler implements ICommandHandler<DeleteMemberCommand> {
+export class DeleteMemberCommandHandler implements ICommandHandler<DeleteMemberCommand> {
     constructor(
         private readonly aggregateRepo: MemberRegistrationAggregateRepo,
         private readonly eventBus: EventBus,
