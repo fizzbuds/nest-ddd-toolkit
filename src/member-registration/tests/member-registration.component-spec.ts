@@ -13,7 +13,7 @@ import { MongoClient } from 'mongodb';
 import { CommandBus, CommandBusModule } from '../../command-bus/command-bus.module';
 import { MemberRegistrationQueryModel } from '../infrastructure/member-registration-query.repo';
 import { EventBusModule } from '../../event-bus/event-bus.module';
-import { CreateMemberCommand } from '../commands/create.command-handler';
+import { RegisterMemberCommand } from '../commands/register-member.command-handler';
 import { DeleteMemberCommand } from '../commands/delete.command-handler';
 import { GetMemberQuery } from '../queries/get-member.query-handler';
 import { MemberRegistrationQueryBus } from '../infrastructure/member-registration.query-bus';
@@ -55,10 +55,23 @@ describe('Member Registration Component Test', () => {
         await mongodb.stop();
     });
 
+    describe('Register member', () => {
+        let memberId: string;
+        beforeEach(async () => {
+            const _ = await commandBus.sendSync(new RegisterMemberCommand({ name: 'John Doe' }));
+            memberId = _.memberId;
+        });
+
+        it('should register the member', async () => {
+            const member = await aggregateRepo.getById(memberId);
+            expect(member).toMatchObject({ name: 'John Doe' });
+        });
+    });
+
     describe('Given a Member Registration', () => {
         let memberId: string;
         beforeEach(async () => {
-            const _ = await commandBus.sendSync(new CreateMemberCommand({ name: 'John Doe' }));
+            const _ = await commandBus.sendSync(new RegisterMemberCommand({ name: 'John Doe' }));
             memberId = _.memberId;
         });
 

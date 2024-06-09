@@ -5,24 +5,22 @@ import { v4 as uuidV4 } from 'uuid';
 import { CommandBus } from '../../command-bus/command-bus.module';
 import { Injectable } from '@nestjs/common';
 
-type CreateMemberCommandPayload = { name: string };
-
-export class CreateMemberCommand extends Command<CreateMemberCommandPayload, { memberId: string }> {
-    constructor(public readonly payload: CreateMemberCommandPayload) {
+export class RegisterMemberCommand extends Command<{ name: string }, { memberId: string }> {
+    constructor(public readonly payload: { name: string }) {
         super(payload);
     }
 }
 
 @Injectable()
-export class CreateCommandHandler implements ICommandHandler<CreateMemberCommand> {
+export class RegisterMemberCommandHandler implements ICommandHandler<RegisterMemberCommand> {
     constructor(
         private readonly aggregateRepo: MemberRegistrationAggregateRepo,
         private readonly commandBus: CommandBus,
     ) {
-        this.commandBus.register(CreateMemberCommand, this);
+        this.commandBus.register(RegisterMemberCommand, this);
     }
 
-    async handle(command: CreateMemberCommand) {
+    async handle(command: RegisterMemberCommand) {
         const memberId = uuidV4();
 
         const memberRegistrationAggregate = MemberRegistrationAggregate.create(memberId, command.payload.name);
