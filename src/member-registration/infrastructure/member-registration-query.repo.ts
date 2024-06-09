@@ -1,5 +1,5 @@
 import { ClientSession, Document, MongoClient } from 'mongodb';
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { MongoQueryRepo } from '@fizzbuds/ddd-toolkit';
 import { InjectMongo } from '@golee/mongo-nest';
 
@@ -10,7 +10,10 @@ export interface MemberRegistrationQueryModel {
 }
 
 @Injectable()
-export class MemberRegistrationQueryRepo extends MongoQueryRepo<MemberRegistrationQueryModel & Document> {
+export class MemberRegistrationQueryRepo
+    extends MongoQueryRepo<MemberRegistrationQueryModel & Document>
+    implements OnModuleInit
+{
     private static logger = new Logger(MemberRegistrationQueryRepo.name);
     protected readonly indexes = [{ indexSpec: { name: 1 } }];
 
@@ -24,5 +27,9 @@ export class MemberRegistrationQueryRepo extends MongoQueryRepo<MemberRegistrati
 
     public async save(queryModel: MemberRegistrationQueryModel, session?: ClientSession) {
         await this.collection.updateOne({ id: queryModel.id }, { $set: queryModel }, { upsert: true, session });
+    }
+
+    async onModuleInit() {
+        await this.init();
     }
 }
