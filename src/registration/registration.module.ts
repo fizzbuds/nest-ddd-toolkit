@@ -1,7 +1,7 @@
 import { MemberAggregateRepo } from './infrastructure/member-aggregate.repo';
 import { MemberQueryRepo } from './infrastructure/member-query.repo';
 import { Module } from '@nestjs/common';
-import { MemberRegistrationController } from './api/member-registration.controller';
+import { MembersController } from './api/members.controller';
 import { MemberRepoHooks } from './infrastructure/member.repo-hooks';
 import { CommandHandlers } from './commands';
 
@@ -19,7 +19,7 @@ export const RegistrationProviders = [
 
 @Module({
     imports: [],
-    controllers: [MemberRegistrationController],
+    controllers: [MembersController],
     providers: RegistrationProviders,
     exports: [MemberQueryBus],
 })

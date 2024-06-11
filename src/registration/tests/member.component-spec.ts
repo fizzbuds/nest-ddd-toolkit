@@ -15,7 +15,7 @@ import { DeleteMemberCommand } from '../commands/delete-member.command-handler';
 import { GetMemberQuery } from '../queries/get-member.query-handler';
 import { MemberQueryBus } from '../infrastructure/member.query-bus';
 
-describe('Member Registration Component Test', () => {
+describe('Member Component Test', () => {
     let module: TestingModule;
     let mongodb: MongoMemoryReplSet;
     let commandBus: ICommandBus;
@@ -65,7 +65,7 @@ describe('Member Registration Component Test', () => {
         });
     });
 
-    describe('Given a Member Registration', () => {
+    describe('Given a registered member', () => {
         let memberId: string;
         beforeEach(async () => {
             const _ = await commandBus.sendSync(new RegisterMemberCommand({ name: 'John Doe' }));

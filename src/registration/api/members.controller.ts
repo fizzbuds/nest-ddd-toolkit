@@ -8,7 +8,7 @@ import { GetMemberQuery } from '../queries/get-member.query-handler';
 import { MemberQueryBus } from '../infrastructure/member.query-bus';
 
 @Controller('members')
-export class MemberRegistrationController {
+export class MembersController {
     constructor(
         private readonly commandBus: CommandBus,
         @Inject(MemberQueryBus) private readonly memberQueryBus: IQueryBus,
