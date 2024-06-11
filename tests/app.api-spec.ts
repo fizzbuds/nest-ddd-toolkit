@@ -60,36 +60,34 @@ describe('AppController (api)', () => {
     });
 
     async function createMember() {
-        const response = await request(app.getHttpServer()).post('/member-registrations/').send({ name: 'John Doe' });
+        const response = await request(app.getHttpServer()).post('/members/').send({ name: 'John Doe' });
         return response.body.id;
     }
 
-    describe('/member-registrations', () => {
-        describe('POST /member-registrations', () => {
+    describe('/members', () => {
+        describe('POST /members', () => {
             it('should create a new member', async () => {
-                const response = await request(app.getHttpServer())
-                    .post('/member-registrations/')
-                    .send({ name: 'John Doe' });
+                const response = await request(app.getHttpServer()).post('/members/').send({ name: 'John Doe' });
                 expect(response.body).toMatchObject({ id: expect.any(String) });
                 expect(response.statusCode).toBe(201);
             });
         });
 
-        describe('GET /member-registrations/:id', () => {
+        describe('GET /members/:id', () => {
             it('should return the member data', async () => {
                 const memberId = await createMember();
-                const response = await request(app.getHttpServer()).get(`/member-registrations/${memberId}`);
+                const response = await request(app.getHttpServer()).get(`/members/${memberId}`);
                 expect(response.body.name).toBe('John Doe');
                 expect(response.statusCode).toBe(200);
             });
         });
 
-        describe('DELETE /member-registrations/:id', () => {
+        describe('DELETE /members/:id', () => {
             it('should delete the member', async () => {
                 const memberId = await createMember();
-                const deleteResponse = await request(app.getHttpServer()).delete(`/member-registrations/${memberId}`);
+                const deleteResponse = await request(app.getHttpServer()).delete(`/members/${memberId}`);
                 expect(deleteResponse.statusCode).toBe(200);
-                const getResponse = await request(app.getHttpServer()).get(`/member-registrations/${memberId}`);
+                const getResponse = await request(app.getHttpServer()).get(`/members/${memberId}`);
                 expect(getResponse.statusCode).toBe(404);
             });
         });
@@ -130,7 +128,7 @@ describe('AppController (api)', () => {
 
             describe('When deleting the member', () => {
                 beforeEach(async () => {
-                    await request(app.getHttpServer()).delete(`/member-registrations/${memberId}`);
+                    await request(app.getHttpServer()).delete(`/members/${memberId}`);
                 });
 
                 it('should delete all fees', async () => {

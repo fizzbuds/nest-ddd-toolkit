@@ -12,7 +12,7 @@ import { MongoClient } from 'mongodb';
 import { CommandBus, CommandBusModule } from '../../command-bus/command-bus.module';
 import { MembershipFeesProviders } from '../membership-fees.module';
 import { EventBusModule } from '../../event-bus/event-bus.module';
-import { MemberRegistrationQueryBus } from '../../member-registration/infrastructure/member-registration.query-bus';
+import { MemberQueryBus } from '../../registration/infrastructure/member.query-bus';
 import { AddFeeCommand } from '../commands/add-fee.command-handler';
 import { DeleteFeeCommand } from '../commands/delete-fee.command-handler';
 
@@ -35,7 +35,7 @@ describe('Membership Fees Component Test', () => {
             providers: [
                 ...MembershipFeesProviders,
                 {
-                    provide: MemberRegistrationQueryBus,
+                    provide: MemberQueryBus,
                     useValue: { execute: jest.fn() },
                 },
             ],

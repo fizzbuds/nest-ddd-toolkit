@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { IEventHandler } from '@fizzbuds/ddd-toolkit';
-import { MemberDeleted } from '../../member-registration/events/member-deleted.event';
+import { MemberDeleted } from '../../registration/events/member-deleted.event';
 import { CommandBus } from '../../command-bus/command-bus.module';
 import { EventBus } from '../../event-bus/event-bus.module';
 import { DeleteAllFeeCommand } from '../commands/delete-all-fee.command-handler';

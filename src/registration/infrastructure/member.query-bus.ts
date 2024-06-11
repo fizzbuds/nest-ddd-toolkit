@@ -2,8 +2,8 @@ import { LocalQueryBus } from '@fizzbuds/ddd-toolkit';
 import { Injectable, Logger } from '@nestjs/common';
 
 @Injectable()
-export class MemberRegistrationQueryBus extends LocalQueryBus {
+export class MemberQueryBus extends LocalQueryBus {
     constructor() {
-        super(new Logger(MemberRegistrationQueryBus.name));
+        super(new Logger(MemberQueryBus.name));
     }
 }

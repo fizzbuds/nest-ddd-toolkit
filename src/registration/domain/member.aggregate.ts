@@ -1,8 +1,8 @@
-export class MemberRegistrationAggregate {
+export class MemberAggregate {
     constructor(readonly id: string, private readonly name: string, private deleted: boolean) {}
 
     public static create(id: string, name: string) {
-        return new MemberRegistrationAggregate(id, name, false);
+        return new MemberAggregate(id, name, false);
     }
 
     public delete() {

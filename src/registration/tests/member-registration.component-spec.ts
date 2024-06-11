@@ -1,29 +1,26 @@
-import { MemberRegistrationProviders } from '../member-registration.module';
+import { RegistrationProviders } from '../registration.module';
 import 'jest';
 import { MongoMemoryReplSet } from 'mongodb-memory-server';
 import { Test, TestingModule } from '@nestjs/testing';
-import { MemberRegistrationAggregate } from '../domain/member-registration.aggregate';
-import {
-    MemberRegistrationAggregateModel,
-    MemberRegistrationAggregateRepo,
-} from '../infrastructure/member-registration-aggregate.repo';
+import { MemberAggregate } from '../domain/member.aggregate';
+import { MemberAggregateModel, MemberAggregateRepo } from '../infrastructure/member-aggregate.repo';
 import { ICommandBus, IQueryBus, MongoAggregateRepo } from '@fizzbuds/ddd-toolkit';
 import { getMongoToken, MongoModule } from '@golee/mongo-nest';
 import { MongoClient } from 'mongodb';
 import { CommandBus, CommandBusModule } from '../../command-bus/command-bus.module';
-import { MemberRegistrationQueryModel } from '../infrastructure/member-registration-query.repo';
+import { MemberQueryModel } from '../infrastructure/member-query.repo';
 import { EventBusModule } from '../../event-bus/event-bus.module';
 import { RegisterMemberCommand } from '../commands/register-member.command-handler';
 import { DeleteMemberCommand } from '../commands/delete-member.command-handler';
 import { GetMemberQuery } from '../queries/get-member.query-handler';
-import { MemberRegistrationQueryBus } from '../infrastructure/member-registration.query-bus';
+import { MemberQueryBus } from '../infrastructure/member.query-bus';
 
 describe('Member Registration Component Test', () => {
     let module: TestingModule;
     let mongodb: MongoMemoryReplSet;
     let commandBus: ICommandBus;
     let queryBus: IQueryBus;
-    let aggregateRepo: MongoAggregateRepo<MemberRegistrationAggregate, MemberRegistrationAggregateModel>;
+    let aggregateRepo: MongoAggregateRepo<MemberAggregate, MemberAggregateModel>;
 
     beforeAll(async () => {
         mongodb = await MongoMemoryReplSet.create({
@@ -35,14 +32,14 @@ describe('Member Registration Component Test', () => {
         });
 
         module = await Test.createTestingModule({
-            providers: MemberRegistrationProviders,
+            providers: RegistrationProviders,
             imports: [MongoModule.forRoot({ uri: mongodb.getUri('test') }), EventBusModule, CommandBusModule],
         }).compile();
 
         commandBus = module.get(CommandBus);
-        aggregateRepo = module.get(MemberRegistrationAggregateRepo);
+        aggregateRepo = module.get(MemberAggregateRepo);
         await aggregateRepo.init();
-        queryBus = module.get(MemberRegistrationQueryBus);
+        queryBus = module.get(MemberQueryBus);
     });
 
     afterEach(async () => {
@@ -96,7 +93,7 @@ describe('Member Registration Component Test', () => {
         });
 
         describe('When getting a member from query model', () => {
-            let member: MemberRegistrationQueryModel | null;
+            let member: MemberQueryModel | null;
 
             beforeEach(async () => {
                 member = await queryBus.execute(new GetMemberQuery({ memberId }));

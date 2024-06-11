@@ -1,7 +1,3 @@
-## Refactoring with CQRS slides
-
-[Refactoring with CQRS (without events).pdf](./Refactoring%20with%20CQRS%20(without%20events).pdf)
-
 ## Installation
 
 ```bash

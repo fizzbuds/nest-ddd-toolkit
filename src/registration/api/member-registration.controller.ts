@@ -5,13 +5,13 @@ import { CommandBus } from '../../command-bus/command-bus.module';
 import { RegisterMemberCommand } from '../commands/register-member.command-handler';
 import { DeleteMemberCommand } from '../commands/delete-member.command-handler';
 import { GetMemberQuery } from '../queries/get-member.query-handler';
-import { MemberRegistrationQueryBus } from '../infrastructure/member-registration.query-bus';
+import { MemberQueryBus } from '../infrastructure/member.query-bus';
 
-@Controller('member-registrations')
+@Controller('members')
 export class MemberRegistrationController {
     constructor(
         private readonly commandBus: CommandBus,
-        @Inject(MemberRegistrationQueryBus) private readonly memberRegistrationQueryBus: IQueryBus,
+        @Inject(MemberQueryBus) private readonly memberQueryBus: IQueryBus,
     ) {}
 
     @Post('')
@@ -22,7 +22,7 @@ export class MemberRegistrationController {
 
     @Get(':id')
     public async get(@Param('id') memberId: string) {
-        const result = await this.memberRegistrationQueryBus.execute(new GetMemberQuery({ memberId }));
+        const result = await this.memberQueryBus.execute(new GetMemberQuery({ memberId }));
         if (!result) throw new NotFoundException();
         return result;
     }

@@ -1,6 +1,6 @@
 import { Command, ICommandHandler } from '@fizzbuds/ddd-toolkit';
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { MemberRegistrationAggregateRepo } from '../infrastructure/member-registration-aggregate.repo';
+import { MemberAggregateRepo } from '../infrastructure/member-aggregate.repo';
 import { MemberDeleted } from '../events/member-deleted.event';
 import { CommandBus } from '../../command-bus/command-bus.module';
 import { EventBus } from '../../event-bus/event-bus.module';
@@ -16,7 +16,7 @@ export class DeleteMemberCommand extends Command<DeleteMemberCommandPayload> {
 @Injectable()
 export class DeleteMemberCommandHandler implements ICommandHandler<DeleteMemberCommand> {
     constructor(
-        private readonly aggregateRepo: MemberRegistrationAggregateRepo,
+        private readonly aggregateRepo: MemberAggregateRepo,
         private readonly eventBus: EventBus,
         private readonly commandBus: CommandBus,
     ) {

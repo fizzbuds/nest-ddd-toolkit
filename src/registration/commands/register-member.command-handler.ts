@@ -1,6 +1,6 @@
 import { Command, ICommandHandler } from '@fizzbuds/ddd-toolkit';
-import { MemberRegistrationAggregateRepo } from '../infrastructure/member-registration-aggregate.repo';
-import { MemberRegistrationAggregate } from '../domain/member-registration.aggregate';
+import { MemberAggregateRepo } from '../infrastructure/member-aggregate.repo';
+import { MemberAggregate } from '../domain/member.aggregate';
 import { v4 as uuidV4 } from 'uuid';
 import { CommandBus } from '../../command-bus/command-bus.module';
 import { Injectable } from '@nestjs/common';
@@ -13,19 +13,16 @@ export class RegisterMemberCommand extends Command<{ name: string }, { memberId:
 
 @Injectable()
 export class RegisterMemberCommandHandler implements ICommandHandler<RegisterMemberCommand> {
-    constructor(
-        private readonly aggregateRepo: MemberRegistrationAggregateRepo,
-        private readonly commandBus: CommandBus,
-    ) {
+    constructor(private readonly aggregateRepo: MemberAggregateRepo, private readonly commandBus: CommandBus) {
         this.commandBus.register(RegisterMemberCommand, this);
     }
 
     async handle(command: RegisterMemberCommand) {
         const memberId = uuidV4();
 
-        const memberRegistrationAggregate = MemberRegistrationAggregate.create(memberId, command.payload.name);
+        const memberAggregate = MemberAggregate.create(memberId, command.payload.name);
 
-        await this.aggregateRepo.save(memberRegistrationAggregate);
+        await this.aggregateRepo.save(memberAggregate);
         return { memberId };
     }
 }
