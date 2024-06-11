@@ -94,31 +94,31 @@ describe('AppController (api)', () => {
     });
 
     // TODO add check of the creditAmount
-    describe('/membership-fees', () => {
+    describe('/member-fees', () => {
         let memberId: string;
         beforeEach(async () => {
             memberId = await createMember();
         });
 
-        describe('POST /membership-fees/:memberId/', () => {
+        describe('POST /member-fees/:memberId/', () => {
             it('should create a membership fee and return a feeId', async () => {
                 const response = await request(app.getHttpServer())
-                    .post(`/membership-fees/${memberId}/`)
+                    .post(`/member-fees/${memberId}/`)
                     .send({ amount: 100 });
                 expect(response.statusCode).toBe(201);
                 expect(response.body).toMatchObject({ feeId: expect.any(String) });
             });
         });
 
-        describe('GET /membership-fees/', () => {
+        describe('GET /member-fees/', () => {
             beforeEach(async () => {
-                await request(app.getHttpServer()).post(`/membership-fees/${memberId}/`).send({ amount: 100 });
-                await request(app.getHttpServer()).post(`/membership-fees/${memberId}/`).send({ amount: 200 });
-                await request(app.getHttpServer()).post(`/membership-fees/${memberId}/`).send({ amount: 300 });
+                await request(app.getHttpServer()).post(`/member-fees/${memberId}/`).send({ amount: 100 });
+                await request(app.getHttpServer()).post(`/member-fees/${memberId}/`).send({ amount: 200 });
+                await request(app.getHttpServer()).post(`/member-fees/${memberId}/`).send({ amount: 300 });
             });
 
             it('should return a list of membership fees', async () => {
-                const response = await request(app.getHttpServer()).get(`/membership-fees`);
+                const response = await request(app.getHttpServer()).get(`/member-fees`);
                 expect(response.body).toMatchObject([
                     { id: expect.any(String), memberId: memberId, name: 'John Doe', value: 100 },
                     { id: expect.any(String), memberId: memberId, name: 'John Doe', value: 200 },
@@ -132,31 +132,29 @@ describe('AppController (api)', () => {
                 });
 
                 it('should delete all fees', async () => {
-                    const response = await request(app.getHttpServer()).get(`/membership-fees`);
+                    const response = await request(app.getHttpServer()).get(`/member-fees`);
                     expect(response.body).toEqual([]);
                 });
             });
         });
 
-        describe('DELETE /membership-fees/:memberId/:feeId', () => {
+        describe('DELETE /member-fees/:memberId/:feeId', () => {
             let feeId: string;
 
             beforeEach(async () => {
-                const resp = await request(app.getHttpServer())
-                    .post(`/membership-fees/${memberId}/`)
-                    .send({ amount: 400 });
+                const resp = await request(app.getHttpServer()).post(`/member-fees/${memberId}/`).send({ amount: 400 });
                 feeId = resp.body.feeId;
             });
 
             it('should delete the fee', async () => {
-                const resp = await request(app.getHttpServer()).delete(`/membership-fees/${memberId}/${feeId}`);
+                const resp = await request(app.getHttpServer()).delete(`/member-fees/${memberId}/${feeId}`);
                 expect(resp.statusCode).toBe(200);
             });
 
             it('should remove the fee from the list', async () => {
-                await request(app.getHttpServer()).delete(`/membership-fees/${memberId}/${feeId}`);
+                await request(app.getHttpServer()).delete(`/member-fees/${memberId}/${feeId}`);
 
-                const response = await request(app.getHttpServer()).get(`/membership-fees`);
+                const response = await request(app.getHttpServer()).get(`/member-fees`);
                 expect(response.body).toEqual([]);
             });
         });

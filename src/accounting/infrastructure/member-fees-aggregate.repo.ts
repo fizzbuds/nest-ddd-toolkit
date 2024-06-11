@@ -1,31 +1,31 @@
 import { MemberFeesRepoHooks } from './member-fees.repo-hooks';
-import { MembershipFeesAggregate } from '../domain/membership-fees.aggregate';
-import { MembershipFeesSerializer } from './membership-fees.serializer';
+import { MemberFeesAggregate } from '../domain/member-fees.aggregate';
+import { MemberFeesSerializer } from './member-fees.serializer';
 import { MongoAggregateRepo } from '@fizzbuds/ddd-toolkit';
 import { Logger, OnModuleInit } from '@nestjs/common';
 import { InjectMongo } from '@golee/mongo-nest';
 import { MongoClient } from 'mongodb';
 
-export interface MembershipFeesAggregateModel {
+export interface MemberFeesAggregateModel {
     id: string;
     fees: { feeId: string; value: number; deleted: boolean }[];
     creditAmount: number;
 }
 
-export class MembershipFeesAggregateRepo
-    extends MongoAggregateRepo<MembershipFeesAggregate, MembershipFeesAggregateModel>
+export class MemberFeesAggregateRepo
+    extends MongoAggregateRepo<MemberFeesAggregate, MemberFeesAggregateModel>
     implements OnModuleInit
 {
-    private static logger = new Logger(MembershipFeesAggregateRepo.name);
+    private static logger = new Logger(MemberFeesAggregateRepo.name);
 
     constructor(@InjectMongo() mongoClient: MongoClient, memberFeesRepoHooks: MemberFeesRepoHooks) {
         super(
-            new MembershipFeesSerializer(),
+            new MemberFeesSerializer(),
             mongoClient,
-            'membership_fees_aggregate',
+            'member_fees_aggregate',
             undefined,
             memberFeesRepoHooks,
-            MembershipFeesAggregateRepo.logger,
+            MemberFeesAggregateRepo.logger,
         );
     }
 

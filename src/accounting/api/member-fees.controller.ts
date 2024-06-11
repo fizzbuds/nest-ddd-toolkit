@@ -3,12 +3,12 @@ import { AddFeeDto } from './dto/add-fee.dto';
 import { CommandBus } from '../../command-bus/command-bus.module';
 import { AddFeeCommand } from '../commands/add-fee.command-handler';
 import { DeleteFeeCommand } from '../commands/delete-fee.command-handler';
-import { GetMembershipFeesQuery } from '../queries/get-membership-fees.query-handler';
-import { MembershipFeesQueryBus } from '../infrastructure/membership-fees.query-bus';
+import { GetMembershipFeesQuery } from '../queries/get-member-fees.query-handler';
+import { MemberFeesQueryBus } from '../infrastructure/member-fees-query-bus.service';
 
-@Controller('membership-fees')
-export class MembershipFeesController {
-    constructor(private readonly commandBus: CommandBus, private readonly queryBus: MembershipFeesQueryBus) {}
+@Controller('member-fees')
+export class MemberFeesController {
+    constructor(private readonly commandBus: CommandBus, private readonly queryBus: MemberFeesQueryBus) {}
 
     @Post(':memberId')
     public async addFee(@Param('memberId') memberId: string, @Body() body: AddFeeDto) {

@@ -2,11 +2,11 @@ import { v4 as uuidV4 } from 'uuid';
 
 export type Fee = { feeId: string; value: number; deleted: boolean };
 
-export class MembershipFeesAggregate {
+export class MemberFeesAggregate {
     constructor(readonly id: string, private readonly fees: Fee[] = [], private creditAmount = 0) {}
 
     public static create(id: string) {
-        return new MembershipFeesAggregate(id);
+        return new MemberFeesAggregate(id);
     }
 
     public addFee(number: number) {

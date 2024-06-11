@@ -4,7 +4,7 @@ import { LoggerModule } from 'nestjs-pino';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { envValidationSchema } from './env-validation-schema';
 import { RegistrationModule } from './registration/registration.module';
-import { MembershipFeesModule } from './membership-fees/membership-fees.module';
+import { AccountingModule } from './accounting/accounting.module';
 import { MongoModule } from '@golee/mongo-nest';
 import { CommandBusModule } from './command-bus/command-bus.module';
 import { EventBusModule } from './event-bus/event-bus.module';
@@ -35,7 +35,7 @@ import { EventBusModule } from './event-bus/event-bus.module';
         CommandBusModule,
         EventBusModule,
         RegistrationModule,
-        MembershipFeesModule,
+        AccountingModule,
     ],
     controllers: [AppController],
     providers: [],

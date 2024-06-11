@@ -22,7 +22,7 @@ export class MemberAggregateRepo
         super(
             new MemberSerializer(),
             mongoClient,
-            'member_registration_aggregate',
+            'member_aggregate',
             undefined,
             memberRepoHooks,
             MemberAggregateRepo.logger,

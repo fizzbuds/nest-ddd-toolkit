@@ -1,26 +1,23 @@
 import 'jest';
 import { MongoMemoryReplSet } from 'mongodb-memory-server';
 import { Test, TestingModule } from '@nestjs/testing';
-import { MembershipFeesAggregate } from '../domain/membership-fees.aggregate';
-import {
-    MembershipFeesAggregateModel,
-    MembershipFeesAggregateRepo,
-} from '../infrastructure/membership-fees-aggregate.repo';
+import { MemberFeesAggregate } from '../domain/member-fees.aggregate';
+import { MemberFeesAggregateModel, MemberFeesAggregateRepo } from '../infrastructure/member-fees-aggregate.repo';
 import { ICommandBus, MongoAggregateRepo } from '@fizzbuds/ddd-toolkit';
 import { getMongoToken, MongoModule } from '@golee/mongo-nest';
 import { MongoClient } from 'mongodb';
 import { CommandBus, CommandBusModule } from '../../command-bus/command-bus.module';
-import { MembershipFeesProviders } from '../membership-fees.module';
+import { AccountingProviders } from '../accounting.module';
 import { EventBusModule } from '../../event-bus/event-bus.module';
 import { MemberQueryBus } from '../../registration/infrastructure/member.query-bus';
 import { AddFeeCommand } from '../commands/add-fee.command-handler';
 import { DeleteFeeCommand } from '../commands/delete-fee.command-handler';
 
-describe('Membership Fees Component Test', () => {
+describe('Member Fees Component Test', () => {
     let module: TestingModule;
     let mongodb: MongoMemoryReplSet;
     let commandBus: ICommandBus;
-    let aggregateRepo: MongoAggregateRepo<MembershipFeesAggregate, MembershipFeesAggregateModel>;
+    let aggregateRepo: MongoAggregateRepo<MemberFeesAggregate, MemberFeesAggregateModel>;
 
     beforeAll(async () => {
         mongodb = await MongoMemoryReplSet.create({
@@ -33,7 +30,7 @@ describe('Membership Fees Component Test', () => {
 
         module = await Test.createTestingModule({
             providers: [
-                ...MembershipFeesProviders,
+                ...AccountingProviders,
                 {
                     provide: MemberQueryBus,
                     useValue: { execute: jest.fn() },
@@ -43,7 +40,7 @@ describe('Membership Fees Component Test', () => {
         }).compile();
 
         commandBus = module.get(CommandBus);
-        aggregateRepo = module.get(MembershipFeesAggregateRepo);
+        aggregateRepo = module.get(MemberFeesAggregateRepo);
         await aggregateRepo.init();
     });
 
@@ -57,7 +54,7 @@ describe('Membership Fees Component Test', () => {
         await mongodb.stop();
     });
 
-    describe('Given a Membership Fees', () => {
+    describe('Given a Members Fees', () => {
         const memberId = 'foo-member-id';
 
         describe('When adding a fee', () => {
