@@ -11,6 +11,7 @@ import { DeleteAllFeeCommandHandler } from './commands/delete-all-fee.command-ha
 import { DeleteFeeCommandHandler } from './commands/delete-fee.command-handler';
 import { GetMemberFeesQueryHandler } from './queries/get-member-fees.query-handler';
 import { PayFeeCommandHandler } from './commands/pay-fee.command-handler';
+import { AccountingCommandBus } from './infrastructure/accounting.command-bus';
 
 export const AccountingProviders = [
     MemberFeesRepoHooks,
@@ -18,6 +19,7 @@ export const AccountingProviders = [
     FeesQueryRepo,
     MemberDeletedPolicy,
     MemberFeesQueryBus,
+    AccountingCommandBus,
     ...[GetMemberFeesQueryHandler],
     ...[AddFeeCommandHandler, DeleteAllFeeCommandHandler, DeleteFeeCommandHandler, PayFeeCommandHandler],
 ];

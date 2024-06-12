@@ -5,7 +5,6 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { MemberAggregateRepo } from '../infrastructure/member.aggregate-repo';
 import { getMongoToken, MongoModule } from '@golee/mongo-nest';
 import { MongoClient } from 'mongodb';
-import { CommandBusModule } from '../../command-bus/command-bus.module';
 import { EventBusModule } from '../../event-bus/event-bus.module';
 import { MembersService } from '../members.service';
 
@@ -25,7 +24,7 @@ describe('Member Component Test', () => {
 
         module = await Test.createTestingModule({
             providers: RegistrationProviders,
-            imports: [MongoModule.forRoot({ uri: mongodb.getUri('test') }), EventBusModule, CommandBusModule],
+            imports: [MongoModule.forRoot({ uri: mongodb.getUri('test') }), EventBusModule],
         }).compile();
 
         membersService = module.get(MembersService);

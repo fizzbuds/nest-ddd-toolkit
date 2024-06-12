@@ -6,7 +6,6 @@ import { envValidationSchema } from './env-validation-schema';
 import { RegistrationModule } from './registration/registration.module';
 import { AccountingModule } from './accounting/accounting.module';
 import { MongoModule } from '@golee/mongo-nest';
-import { CommandBusModule } from './command-bus/command-bus.module';
 import { EventBusModule } from './event-bus/event-bus.module';
 
 @Module({
@@ -32,7 +31,6 @@ import { EventBusModule } from './event-bus/event-bus.module';
                 uri: config.getOrThrow('MONGODB_URI'),
             }),
         }),
-        CommandBusModule,
         EventBusModule,
         RegistrationModule,
         AccountingModule,
