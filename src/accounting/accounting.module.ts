@@ -5,7 +5,7 @@ import { MemberFeesController } from './api/member-fees.controller';
 import { RegistrationModule } from '../registration/registration.module';
 import { MemberDeletedPolicy } from './policies/member-deleted.policy';
 import { MemberFeesQueryBus } from './infrastructure/member-fees.query-bus';
-import { FeesQueryRepo } from './infrastructure/fees.query-repo';
+import { FeesQueryRepo } from './read-models/fees.query-repo';
 import { AddFeeCommandHandler } from './commands/add-fee.command-handler';
 import { DeleteAllFeeCommandHandler } from './commands/delete-all-fee.command-handler';
 import { DeleteFeeCommandHandler } from './commands/delete-fee.command-handler';
