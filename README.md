@@ -4,18 +4,17 @@
 $ pnpm install
 ```
 
-## Local MongoDB
+## MongoDB in memory
 
 ```bash
-$ docker run --name mongodb -p 27017:27017 -d mongo
+$ pnpm exec ts-node mongo-memory-repl-set.ts
 ``` 
 
 ## Running the app
 
-Make sure docker is running and the local MongoDB is up and running.
+Make sure MongoDB is up and running.
 
 ```bash
-# development
 $ pnpm run start
 
 # watch mode
