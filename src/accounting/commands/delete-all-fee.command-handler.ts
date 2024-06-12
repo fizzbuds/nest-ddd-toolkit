@@ -22,7 +22,7 @@ export class DeleteAllFeeCommandHandler implements ICommandHandler<DeleteAllFeeC
 
     async handle({ payload }: DeleteAllFeeCommand) {
         const memberFeesAggregate = await this.aggregateRepo.getById(payload.memberId);
-        if (!memberFeesAggregate) throw new Error('Member fees aggregate not found');
+        if (!memberFeesAggregate) return;
 
         memberFeesAggregate.deleteAllFees();
 
