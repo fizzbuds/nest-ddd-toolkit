@@ -18,14 +18,7 @@ export class MemberAggregateRepo
     private static logger = new Logger(MemberAggregateRepo.name);
 
     constructor(@InjectMongo() mongoClient: MongoClient) {
-        super(
-            new MemberSerializer(),
-            mongoClient,
-            'members_write_model',
-            undefined,
-            undefined,
-            MemberAggregateRepo.logger,
-        );
+        super(new MemberSerializer(), mongoClient, 'members', undefined, undefined, MemberAggregateRepo.logger);
     }
 
     async onModuleInit() {
