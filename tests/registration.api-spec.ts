@@ -6,11 +6,7 @@ import { MongoMemoryReplSet } from 'mongodb-memory-server';
 import { ConfigService } from '@nestjs/config';
 import { MongoClient } from 'mongodb';
 import { getMongoToken } from '@golee/mongo-nest';
-
-export async function createMember(app: INestApplication) {
-    const response = await request(app.getHttpServer()).post('/members/').send({ name: 'John Doe' });
-    return response.body.id;
-}
+import { createMember } from './utils';
 
 describe('Registration (api)', () => {
     let mongodb: MongoMemoryReplSet;

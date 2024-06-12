@@ -7,7 +7,7 @@ import { MembersService } from '../../registration/members.service';
 
 export type CreditAmountQueryModel = {
     memberId: string;
-    name: string;
+    memberName: string;
     creditAmount: number;
     deleted: boolean;
 };
@@ -27,6 +27,10 @@ export class CreditAmountQueryRepo extends MongoQueryRepo<CreditAmountQueryModel
 
     public async getCreditAmounts(deleted = false) {
         return this.collection.find({ deleted }).toArray();
+    }
+
+    public async save(data: CreditAmountQueryModel) {
+        await this.collection.updateOne({ memberId: data.memberId }, { $set: data }, { upsert: true });
     }
 
     public async onMemberFeesSave(aggregateModel: MemberFeesAggregateModel, session?: ClientSession) {

@@ -4,6 +4,7 @@ import { MemberAggregate } from './domain/member.aggregate';
 import { MemberAggregateRepo } from './infrastructure/member.aggregate-repo';
 import { MemberDeleted } from './events/member-deleted.event';
 import { EventBus } from '../event-bus/event-bus.module';
+import { MemberRegistered } from './events/member-registered.event';
 
 @Injectable()
 export class MembersService {
@@ -14,6 +15,8 @@ export class MembersService {
         const memberAggregate = MemberAggregate.create(memberId, name);
 
         await this.memberAggregateRepo.save(memberAggregate);
+
+        await this.eventBus.publishAndWaitForHandlers(new MemberRegistered({ memberId, memberName: name }));
         return { memberId };
     }
 
