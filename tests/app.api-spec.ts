@@ -87,6 +87,7 @@ describe('AppController (api)', () => {
                 const memberId = await createMember();
                 const deleteResponse = await request(app.getHttpServer()).delete(`/members/${memberId}`);
                 expect(deleteResponse.statusCode).toBe(200);
+
                 const getResponse = await request(app.getHttpServer()).get(`/members/${memberId}`);
                 expect(getResponse.statusCode).toBe(404);
             });
