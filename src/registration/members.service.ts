@@ -26,4 +26,11 @@ export class MembersService {
 
         await this.eventBus.publishAndWaitForHandlers(new MemberDeleted({ memberId: member.id }));
     }
+
+    public async getMember(memberId: string) {
+        const member = await this.memberAggregateRepo.getById(memberId);
+        if (!member || member.isDeleted()) return null;
+
+        return { id: member.id, name: member.name };
+    }
 }

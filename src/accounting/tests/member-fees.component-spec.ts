@@ -1,4 +1,3 @@
-import 'jest';
 import { MongoMemoryReplSet } from 'mongodb-memory-server';
 import { Test, TestingModule } from '@nestjs/testing';
 import { MemberFeesAggregate } from '../domain/member-fees.aggregate';
@@ -9,9 +8,9 @@ import { MongoClient } from 'mongodb';
 import { CommandBus, CommandBusModule } from '../../command-bus/command-bus.module';
 import { AccountingProviders } from '../accounting.module';
 import { EventBusModule } from '../../event-bus/event-bus.module';
-import { MemberQueryBus } from '../../registration/infrastructure/member.query-bus';
 import { AddFeeCommand } from '../commands/add-fee.command-handler';
 import { DeleteFeeCommand } from '../commands/delete-fee.command-handler';
+import { MembersService } from '../../registration/members.service';
 
 describe('Member Fees Component Test', () => {
     let module: TestingModule;
@@ -32,8 +31,8 @@ describe('Member Fees Component Test', () => {
             providers: [
                 ...AccountingProviders,
                 {
-                    provide: MemberQueryBus,
-                    useValue: { execute: jest.fn() },
+                    provide: MembersService,
+                    useValue: { getMember: jest.fn() },
                 },
             ],
             imports: [MongoModule.forRoot({ uri: mongodb.getUri('test') }), CommandBusModule, EventBusModule],

@@ -2,23 +2,17 @@ import { RegistrationProviders } from '../registration.module';
 import 'jest';
 import { MongoMemoryReplSet } from 'mongodb-memory-server';
 import { Test, TestingModule } from '@nestjs/testing';
-import { MemberAggregate } from '../domain/member.aggregate';
-import { MemberAggregateModel, MemberAggregateRepo } from '../infrastructure/member.aggregate-repo';
-import { IQueryBus, MongoAggregateRepo } from '@fizzbuds/ddd-toolkit';
+import { MemberAggregateRepo } from '../infrastructure/member.aggregate-repo';
 import { getMongoToken, MongoModule } from '@golee/mongo-nest';
 import { MongoClient } from 'mongodb';
 import { CommandBusModule } from '../../command-bus/command-bus.module';
 import { EventBusModule } from '../../event-bus/event-bus.module';
-import { GetMemberQuery } from '../queries/get-member.query-handler';
-import { MemberQueryBus } from '../infrastructure/member.query-bus';
 import { MembersService } from '../members.service';
 
 describe('Member Component Test', () => {
     let module: TestingModule;
     let mongodb: MongoMemoryReplSet;
     let membersService: MembersService;
-    let queryBus: IQueryBus;
-    let aggregateRepo: MongoAggregateRepo<MemberAggregate, MemberAggregateModel>;
 
     beforeAll(async () => {
         mongodb = await MongoMemoryReplSet.create({
@@ -35,9 +29,7 @@ describe('Member Component Test', () => {
         }).compile();
 
         membersService = module.get(MembersService);
-        aggregateRepo = module.get(MemberAggregateRepo);
-        await aggregateRepo.init();
-        queryBus = module.get(MemberQueryBus);
+        await module.get(MemberAggregateRepo).init();
     });
 
     afterEach(async () => {
@@ -54,8 +46,7 @@ describe('Member Component Test', () => {
         it('should register the member', async () => {
             const { memberId } = await membersService.registerMember('John Doe');
 
-            const member = await aggregateRepo.getById(memberId);
-            expect(member).toMatchObject({ name: 'John Doe' });
+            expect(await membersService.getMember(memberId)).toMatchObject({ name: 'John Doe' });
         });
     });
 
@@ -66,16 +57,10 @@ describe('Member Component Test', () => {
             memberId = _.memberId;
         });
 
-        it('should be soft deleted into aggregate model', async () => {
+        it('should be deleted', async () => {
             await membersService.deleteMember(memberId);
 
-            expect(await aggregateRepo.getById(memberId)).toMatchObject({ deleted: true });
-        });
-
-        it('should be deleted into read model', async () => {
-            await membersService.deleteMember(memberId);
-
-            expect(await queryBus.execute(new GetMemberQuery({ memberId }))).toBe(null);
+            expect(await membersService.getMember(memberId)).toBeNull();
         });
     });
 });

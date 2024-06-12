@@ -1,16 +1,10 @@
-import { Body, Controller, Delete, Get, Inject, NotFoundException, Param, Post } from '@nestjs/common';
-import { IQueryBus } from '@fizzbuds/ddd-toolkit';
+import { Body, Controller, Delete, Get, NotFoundException, Param, Post } from '@nestjs/common';
 import { RegisterMemberDto } from './dto/register-member.dto';
-import { GetMemberQuery } from '../queries/get-member.query-handler';
-import { MemberQueryBus } from '../infrastructure/member.query-bus';
 import { MembersService } from '../members.service';
 
 @Controller('members')
 export class MembersController {
-    constructor(
-        private readonly membersService: MembersService,
-        @Inject(MemberQueryBus) private readonly memberQueryBus: IQueryBus,
-    ) {}
+    constructor(private readonly membersService: MembersService) {}
 
     @Post('')
     public async register(@Body() body: RegisterMemberDto) {
@@ -20,9 +14,9 @@ export class MembersController {
 
     @Get(':id')
     public async get(@Param('id') memberId: string) {
-        const result = await this.memberQueryBus.execute(new GetMemberQuery({ memberId }));
-        if (!result) throw new NotFoundException();
-        return result;
+        const member = await this.membersService.getMember(memberId);
+        if (!member) throw new NotFoundException();
+        return member;
     }
 
     @Delete(':id')
