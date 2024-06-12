@@ -11,10 +11,8 @@ export class MemberRegisteredEventHandler implements IEventHandler<MemberRegiste
     }
 
     public async handle({ payload }: MemberRegistered): Promise<void> {
-        await this.creditAmountQueryRepo.save({
+        await this.creditAmountQueryRepo.onMemberRegistered({
             memberName: payload.memberName,
-            creditAmount: 0,
-            deleted: false,
             memberId: payload.memberId,
         });
     }

@@ -11,9 +11,6 @@ export class MemberDeletedEventHandler implements IEventHandler<MemberDeleted> {
     }
 
     public async handle({ payload }: MemberDeleted): Promise<void> {
-        await this.creditAmountQueryRepo['collection'].updateOne(
-            { memberId: payload.memberId },
-            { $set: { deleted: true } },
-        );
+        await this.creditAmountQueryRepo.onMemberDeleted(payload.memberId);
     }
 }

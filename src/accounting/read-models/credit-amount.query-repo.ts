@@ -3,7 +3,6 @@ import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { MongoQueryRepo } from '@fizzbuds/ddd-toolkit';
 import { InjectMongo } from '@golee/mongo-nest';
 import { MemberFeesAggregateModel } from '../infrastructure/member-fees.aggregate-repo';
-import { MembersService } from '../../registration/members.service';
 
 export type CreditAmountQueryModel = {
     memberId: string;
@@ -17,20 +16,18 @@ export class CreditAmountQueryRepo extends MongoQueryRepo<CreditAmountQueryModel
     private static logger = new Logger(CreditAmountQueryRepo.name);
     protected readonly indexes = [{ indexSpec: { memberId: 1 } }];
 
-    constructor(@InjectMongo() mongoClient: MongoClient, private readonly membersService: MembersService) {
-        super(mongoClient, 'credit_amount_read_model', undefined, CreditAmountQueryRepo.logger);
+    constructor(@InjectMongo() mongoClient: MongoClient) {
+        super(mongoClient, 'credit_amounts_read_model', undefined, CreditAmountQueryRepo.logger);
     }
 
     async onModuleInit() {
         await this.init();
     }
 
-    public async getCreditAmounts(deleted = false) {
-        return this.collection.find({ deleted }).toArray();
-    }
+    public async onMemberRegistered({ memberName, memberId }: { memberName: string; memberId: string }) {
+        const queryModel: CreditAmountQueryModel = { memberId, memberName, creditAmount: 0, deleted: false };
 
-    public async save(data: CreditAmountQueryModel) {
-        await this.collection.updateOne({ memberId: data.memberId }, { $set: data }, { upsert: true });
+        await this.collection.updateOne({ memberId }, { $set: queryModel }, { upsert: true });
     }
 
     public async onMemberFeesSave(aggregateModel: MemberFeesAggregateModel, session?: ClientSession) {
@@ -50,5 +47,13 @@ export class CreditAmountQueryRepo extends MongoQueryRepo<CreditAmountQueryModel
             memberId: aggregateModel.id,
             creditAmount: aggregateModel.creditAmount,
         };
+    }
+
+    public async onMemberDeleted(memberId: string) {
+        await this.collection.updateOne({ memberId }, { $set: { deleted: true } });
+    }
+
+    public async getCreditAmounts(deleted = false) {
+        return this.collection.find({ deleted }).toArray();
     }
 }
