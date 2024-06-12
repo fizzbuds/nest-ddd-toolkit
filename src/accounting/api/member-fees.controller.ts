@@ -5,6 +5,7 @@ import { AddFeeCommand } from '../commands/add-fee.command-handler';
 import { DeleteFeeCommand } from '../commands/delete-fee.command-handler';
 import { GetMembershipFeesQuery } from '../queries/get-member-fees.query-handler';
 import { MemberFeesQueryBus } from '../infrastructure/member-fees.query-bus';
+import { PayFeeCommand } from '../commands/pay-fee.command-handler';
 
 @Controller('member-fees')
 export class MemberFeesController {
@@ -19,6 +20,11 @@ export class MemberFeesController {
     @Delete(':memberId/:feeId')
     public async deleteFee(@Param('memberId') memberId: string, @Param('feeId') feeId: string) {
         await this.commandBus.sendSync(new DeleteFeeCommand({ memberId, feeId }));
+    }
+
+    @Post(':memberId/:feeId/pay')
+    public async payFee(@Param('memberId') memberId: string, @Param('feeId') feeId: string) {
+        await this.commandBus.sendSync(new PayFeeCommand({ memberId, feeId }));
     }
 
     @Get('/')

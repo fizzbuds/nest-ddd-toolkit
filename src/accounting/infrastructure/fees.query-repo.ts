@@ -8,6 +8,7 @@ export type FeesQueryModel = {
     memberId: string;
     name: string;
     value: number;
+    paid: boolean;
     deleted: boolean;
 };
 

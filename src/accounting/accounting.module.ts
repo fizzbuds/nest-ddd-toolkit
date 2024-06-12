@@ -10,6 +10,7 @@ import { AddFeeCommandHandler } from './commands/add-fee.command-handler';
 import { DeleteAllFeeCommandHandler } from './commands/delete-all-fee.command-handler';
 import { DeleteFeeCommandHandler } from './commands/delete-fee.command-handler';
 import { GetMemberFeesQueryHandler } from './queries/get-member-fees.query-handler';
+import { PayFeeCommandHandler } from './commands/pay-fee.command-handler';
 
 export const AccountingProviders = [
     MemberFeesRepoHooks,
@@ -18,7 +19,7 @@ export const AccountingProviders = [
     MemberDeletedPolicy,
     MemberFeesQueryBus,
     ...[GetMemberFeesQueryHandler],
-    ...[AddFeeCommandHandler, DeleteAllFeeCommandHandler, DeleteFeeCommandHandler],
+    ...[AddFeeCommandHandler, DeleteAllFeeCommandHandler, DeleteFeeCommandHandler, PayFeeCommandHandler],
 ];
 
 @Module({

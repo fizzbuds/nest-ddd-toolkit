@@ -159,5 +159,26 @@ describe('AppController (api)', () => {
                 expect(response.body).toEqual([]);
             });
         });
+
+        describe('POST /member-fees/:memberId/:feeId/pay', () => {
+            let feeId: string;
+
+            beforeEach(async () => {
+                const resp = await request(app.getHttpServer()).post(`/member-fees/${memberId}/`).send({ amount: 400 });
+                feeId = resp.body.feeId;
+            });
+
+            it('should pay the fee', async () => {
+                const resp = await request(app.getHttpServer()).post(`/member-fees/${memberId}/${feeId}/pay`);
+                expect(resp.statusCode).toBe(201);
+            });
+
+            it('should remove the fee from the list', async () => {
+                await request(app.getHttpServer()).post(`/member-fees/${memberId}/${feeId}/pay`);
+
+                const response = await request(app.getHttpServer()).get(`/member-fees`);
+                expect(response.body).toEqual([expect.objectContaining({ paid: true })]);
+            });
+        });
     });
 });

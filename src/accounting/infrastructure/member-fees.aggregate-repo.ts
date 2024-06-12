@@ -8,7 +8,7 @@ import { MongoClient } from 'mongodb';
 
 export interface MemberFeesAggregateModel {
     id: string;
-    fees: { feeId: string; value: number; deleted: boolean }[];
+    fees: { feeId: string; value: number; deleted: boolean; paid: boolean }[];
     creditAmount: number;
 }
 

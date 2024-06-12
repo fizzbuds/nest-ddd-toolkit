@@ -24,6 +24,7 @@ export class MemberFeesRepoHooks implements IRepoHooks<MemberFeesAggregateModel>
                 id: fee.feeId,
                 value: fee.value,
                 name,
+                paid: fee.paid,
                 deleted: fee.deleted,
             };
         });

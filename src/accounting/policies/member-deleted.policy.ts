@@ -12,6 +12,6 @@ export class MemberDeletedPolicy implements IEventHandler<MemberDeleted> {
     }
 
     public async handle(event: MemberDeleted): Promise<void> {
-        return this.commandBus.sendSync(new DeleteAllFeeCommand({ memberId: event.payload.memberId }));
+        return await this.commandBus.sendSync(new DeleteAllFeeCommand({ memberId: event.payload.memberId }));
     }
 }

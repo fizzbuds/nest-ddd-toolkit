@@ -24,6 +24,7 @@ describe('MemberFeesAggregate', () => {
             beforeEach(() => {
                 feeId = memberFeesAggregate.addFee(123);
             });
+
             describe('When deleting it', () => {
                 it('should mark it as deleted', () => {
                     memberFeesAggregate.deleteFee(feeId);
@@ -32,6 +33,19 @@ describe('MemberFeesAggregate', () => {
                 });
                 it('should decrease the credit amount', () => {
                     memberFeesAggregate.deleteFee(feeId);
+
+                    expect(memberFeesAggregate.getCreditAmount()).toBe(0);
+                });
+            });
+
+            describe('When pay it', () => {
+                it('should mark it as paid', () => {
+                    memberFeesAggregate.payFee(feeId);
+
+                    expect(memberFeesAggregate.getFee(feeId).paid).toBeTruthy();
+                });
+                it('should decrease the credit amount', () => {
+                    memberFeesAggregate.payFee(feeId);
 
                     expect(memberFeesAggregate.getCreditAmount()).toBe(0);
                 });

@@ -32,4 +32,11 @@ export class MemberFeesAggregate {
         this.feesEntity.deleteAll();
         this.creditAmount = 0;
     }
+
+    public payFee(feeId: string) {
+        this.feesEntity.pay(feeId);
+
+        const fee = this.getFee(feeId);
+        this.creditAmount -= fee.value;
+    }
 }

@@ -12,6 +12,7 @@ import { AddFeeCommand } from '../commands/add-fee.command-handler';
 import { DeleteFeeCommand } from '../commands/delete-fee.command-handler';
 import { MembersService } from '../../registration/members.service';
 import { DeleteAllFeeCommand } from '../commands/delete-all-fee.command-handler';
+import { PayFeeCommand } from '../commands/pay-fee.command-handler';
 
 describe('Member Fees Component Test', () => {
     let module: TestingModule;
@@ -79,6 +80,22 @@ describe('Member Fees Component Test', () => {
 
             expect(await aggregateRepo.getById(memberId)).toMatchObject({
                 feesEntity: { fees: [{ feeId, value: 100, deleted: true }] },
+            });
+        });
+    });
+
+    describe('Pay Fee', () => {
+        let feeId: string;
+        beforeEach(async () => {
+            const _ = await commandBus.sendSync(new AddFeeCommand({ memberId, amount: 100 }));
+            feeId = _.feeId;
+        });
+
+        it('should pay fee', async () => {
+            await commandBus.sendSync(new PayFeeCommand({ memberId, feeId }));
+
+            expect(await aggregateRepo.getById(memberId)).toMatchObject({
+                feesEntity: { fees: [{ feeId, value: 100, deleted: false, paid: true }] },
             });
         });
     });
