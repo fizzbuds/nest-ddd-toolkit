@@ -36,4 +36,14 @@ export class MembersService {
 
         return { id: member.id, name: member.name };
     }
+
+    public async renameMember(memberId: string, newName: string) {
+        const member = await this.memberAggregateRepo.getById(memberId);
+        if (!member) throw new NotFoundException('Member not found');
+
+        member.rename(newName);
+        await this.memberAggregateRepo.save(member);
+
+        return { id: member.id, name: member.name };
+    }
 }

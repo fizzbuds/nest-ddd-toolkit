@@ -49,14 +49,20 @@ describe('Member Component Test', () => {
         });
     });
 
-    describe(`Delete member`, () => {
-        let memberId: string;
-        beforeEach(async () => {
-            const _ = await membersService.registerMember('John Doe');
-            memberId = _.memberId;
-        });
+    describe('Rename member', () => {
+        it('should rename the member', async () => {
+            const { memberId } = await membersService.registerMember('John Doe');
 
-        it('should be deleted', async () => {
+            await membersService.renameMember(memberId, 'Jane Doe');
+
+            expect(await membersService.getMember(memberId)).toMatchObject({ name: 'Jane Doe' });
+        });
+    });
+
+    describe(`Delete member`, () => {
+        it('should delete the member', async () => {
+            const { memberId } = await membersService.registerMember('John Doe');
+
             await membersService.deleteMember(memberId);
 
             expect(await membersService.getMember(memberId)).toBeNull();

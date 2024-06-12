@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, NotFoundException, Param, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, NotFoundException, Param, Post, Put } from '@nestjs/common';
 import { RegisterMemberDto } from './dto/register-member.dto';
 import { MembersService } from '../members.service';
 
@@ -17,6 +17,11 @@ export class MembersController {
         const member = await this.membersService.getMember(memberId);
         if (!member) throw new NotFoundException();
         return member;
+    }
+
+    @Put(':id')
+    public async rename(@Param('id') memberId: string, @Body() body: { name: string }) {
+        return await this.membersService.renameMember(memberId, body.name);
     }
 
     @Delete(':id')

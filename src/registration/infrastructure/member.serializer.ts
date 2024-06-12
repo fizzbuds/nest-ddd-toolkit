@@ -9,6 +9,6 @@ export class MemberSerializer implements ISerializer<MemberAggregate, MemberAggr
     }
 
     public aggregateToModel(aggregate: MemberAggregate): MemberAggregateModel {
-        return { id: aggregate.id, name: aggregate['name'], deleted: aggregate.isDeleted() };
+        return { id: aggregate.id, name: aggregate.name, deleted: aggregate.isDeleted() };
     }
 }
