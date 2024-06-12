@@ -1,6 +1,6 @@
 import { MemberAggregate } from '../domain/member.aggregate';
 
-import { MemberAggregateModel } from './member-aggregate.repo';
+import { MemberAggregateModel } from './member.aggregate-repo';
 import { ISerializer } from '@fizzbuds/ddd-toolkit';
 
 export class MemberSerializer implements ISerializer<MemberAggregate, MemberAggregateModel> {

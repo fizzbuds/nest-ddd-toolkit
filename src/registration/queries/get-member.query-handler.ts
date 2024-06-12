@@ -1,5 +1,5 @@
 import { IQueryHandler, Query } from '@fizzbuds/ddd-toolkit';
-import { MemberQueryModel, MemberQueryRepo } from '../infrastructure/member-query.repo';
+import { MemberQueryModel, MemberQueryRepo } from '../infrastructure/member.query-repo';
 import { Injectable } from '@nestjs/common';
 import { MemberQueryBus } from '../infrastructure/member.query-bus';
 

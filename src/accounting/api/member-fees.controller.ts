@@ -4,7 +4,7 @@ import { CommandBus } from '../../command-bus/command-bus.module';
 import { AddFeeCommand } from '../commands/add-fee.command-handler';
 import { DeleteFeeCommand } from '../commands/delete-fee.command-handler';
 import { GetMembershipFeesQuery } from '../queries/get-member-fees.query-handler';
-import { MemberFeesQueryBus } from '../infrastructure/member-fees-query-bus.service';
+import { MemberFeesQueryBus } from '../infrastructure/member-fees.query-bus';
 
 @Controller('member-fees')
 export class MemberFeesController {

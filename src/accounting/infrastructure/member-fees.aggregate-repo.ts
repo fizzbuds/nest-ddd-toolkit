@@ -1,4 +1,4 @@
-import { MemberFeesRepoHooks } from './member-fees-repo-hook.service';
+import { MemberFeesRepoHooks } from './member-fees.repo-hook';
 import { MemberFeesAggregate } from '../domain/member-fees.aggregate';
 import { MemberFeesSerializer } from './member-fees.serializer';
 import { MongoAggregateRepo } from '@fizzbuds/ddd-toolkit';

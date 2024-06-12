@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { MemberQueryModel, MemberQueryRepo } from './member-query.repo';
+import { MemberQueryModel, MemberQueryRepo } from './member.query-repo';
 import { IRepoHooks } from '@fizzbuds/ddd-toolkit';
-import { MemberAggregateModel } from './member-aggregate.repo';
+import { MemberAggregateModel } from './member.aggregate-repo';
 import { ClientSession } from 'mongodb';
 
 @Injectable()

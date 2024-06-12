@@ -1,6 +1,6 @@
 import { Command, ICommandHandler } from '@fizzbuds/ddd-toolkit';
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { MemberFeesAggregateRepo } from '../infrastructure/member-fees-aggregate.repo';
+import { MemberFeesAggregateRepo } from '../infrastructure/member-fees.aggregate-repo';
 import { CommandBus } from '../../command-bus/command-bus.module';
 
 export type DeleteFeeCommandPayload = { memberId: string; feeId: string };

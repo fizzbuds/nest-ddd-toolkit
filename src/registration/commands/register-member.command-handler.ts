@@ -1,5 +1,5 @@
 import { Command, ICommandHandler } from '@fizzbuds/ddd-toolkit';
-import { MemberAggregateRepo } from '../infrastructure/member-aggregate.repo';
+import { MemberAggregateRepo } from '../infrastructure/member.aggregate-repo';
 import { MemberAggregate } from '../domain/member.aggregate';
 import { v4 as uuidV4 } from 'uuid';
 import { CommandBus } from '../../command-bus/command-bus.module';

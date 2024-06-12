@@ -2,7 +2,7 @@ import 'jest';
 import { MongoMemoryReplSet } from 'mongodb-memory-server';
 import { Test, TestingModule } from '@nestjs/testing';
 import { MemberFeesAggregate } from '../domain/member-fees.aggregate';
-import { MemberFeesAggregateModel, MemberFeesAggregateRepo } from '../infrastructure/member-fees-aggregate.repo';
+import { MemberFeesAggregateModel, MemberFeesAggregateRepo } from '../infrastructure/member-fees.aggregate-repo';
 import { ICommandBus, MongoAggregateRepo } from '@fizzbuds/ddd-toolkit';
 import { getMongoToken, MongoModule } from '@golee/mongo-nest';
 import { MongoClient } from 'mongodb';

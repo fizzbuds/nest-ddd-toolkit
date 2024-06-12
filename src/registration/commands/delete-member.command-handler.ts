@@ -1,6 +1,6 @@
 import { Command, ICommandHandler } from '@fizzbuds/ddd-toolkit';
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { MemberAggregateRepo } from '../infrastructure/member-aggregate.repo';
+import { MemberAggregateRepo } from '../infrastructure/member.aggregate-repo';
 import { MemberDeleted } from '../events/member-deleted.event';
 import { CommandBus } from '../../command-bus/command-bus.module';
 import { EventBus } from '../../event-bus/event-bus.module';

@@ -1,10 +1,10 @@
 import { IRepoHooks } from '@fizzbuds/ddd-toolkit';
 import { Injectable } from '@nestjs/common';
-import { MemberFeesAggregateModel } from './member-fees-aggregate.repo';
+import { MemberFeesAggregateModel } from './member-fees.aggregate-repo';
 import { ClientSession } from 'mongodb';
 import { GetMemberQuery } from '../../registration/queries/get-member.query-handler';
 import { MemberQueryBus } from '../../registration/infrastructure/member.query-bus';
-import { FeesQueryModel, FeesQueryRepo } from './fees-query.repo';
+import { FeesQueryModel, FeesQueryRepo } from './fees.query-repo';
 
 @Injectable()
 export class MemberFeesRepoHooks implements IRepoHooks<MemberFeesAggregateModel> {

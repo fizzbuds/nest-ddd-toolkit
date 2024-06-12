@@ -1,5 +1,5 @@
 import { MemberFeesAggregate } from '../domain/member-fees.aggregate';
-import { MemberFeesAggregateModel } from './member-fees-aggregate.repo';
+import { MemberFeesAggregateModel } from './member-fees.aggregate-repo';
 import { ISerializer } from '@fizzbuds/ddd-toolkit';
 
 export class MemberFeesSerializer implements ISerializer<MemberFeesAggregate, MemberFeesAggregateModel> {
