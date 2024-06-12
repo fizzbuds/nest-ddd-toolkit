@@ -13,4 +13,6 @@ import { MongoMemoryReplSet } from 'mongodb-memory-server';
 
     await mongodb.waitUntilRunning();
     console.log('mongodb is running on', mongodb.getUri());
+
+    console.log('\nCTRL+C to stop the server');
 })();

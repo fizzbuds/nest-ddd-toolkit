@@ -87,9 +87,9 @@ describe('Accounting (api)', () => {
             it('should return a list of membership fees', async () => {
                 const response = await request(app.getHttpServer()).get(`/member-fees`);
                 expect(response.body).toMatchObject([
-                    { id: expect.any(String), memberId: memberId, name: 'John Doe', value: 100 },
-                    { id: expect.any(String), memberId: memberId, name: 'John Doe', value: 200 },
-                    { id: expect.any(String), memberId: memberId, name: 'John Doe', value: 300 },
+                    { id: expect.any(String), memberId: memberId, value: 100 },
+                    { id: expect.any(String), memberId: memberId, value: 200 },
+                    { id: expect.any(String), memberId: memberId, value: 300 },
                 ]);
             });
 
