@@ -6,6 +6,4 @@
 
 tasks:
   - init: pnpm install
-    command: (pnpm exec ts-node mongo-memory-repl-set.ts &) && pnpm run start
-
 
