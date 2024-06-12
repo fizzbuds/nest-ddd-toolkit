@@ -8,11 +8,12 @@ export class AppController {
 
     @Get()
     getHello(@Req() req: Request) {
-        return `Hello from ${this.config.getOrThrow('ENV_NAME')} env`;
+        return `nest-ddd-toolkit example\n
+                Hello from ${this.config.getOrThrow('ENV_NAME')} env`;
     }
 
     @Get('/health')
     health() {
-        return 'ok';
+        return;
     }
 }
