@@ -1,5 +1,5 @@
 import { Command, ICommandHandler } from '@fizzbuds/ddd-toolkit';
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { MemberFeesAggregateRepo } from '../infrastructure/member-fees.aggregate-repo';
 import { AccountingCommandBus } from '../infrastructure/accounting.command-bus';
 
@@ -22,7 +22,7 @@ export class PayFeeCommandHandler implements ICommandHandler<PayFeeCommand> {
 
     async handle({ payload }: PayFeeCommand) {
         const memberFeesAggregate = await this.aggregateRepo.getById(payload.memberId);
-        if (!memberFeesAggregate) throw new Error('Member fees aggregate not found');
+        if (!memberFeesAggregate) throw new NotFoundException('Member fees aggregate not found');
 
         memberFeesAggregate.payFee(payload.feeId);
 

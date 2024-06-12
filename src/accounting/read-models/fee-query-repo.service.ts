@@ -4,7 +4,7 @@ import { MongoQueryRepo } from '@fizzbuds/ddd-toolkit';
 import { InjectMongo } from '@golee/mongo-nest';
 import { MemberFeesAggregateModel } from '../infrastructure/member-fees.aggregate-repo';
 
-export type FeesQueryModel = {
+export type FeeQueryModel = {
     id: string;
     memberId: string;
     value: number;
@@ -13,20 +13,16 @@ export type FeesQueryModel = {
 };
 
 @Injectable()
-export class FeesQueryRepo extends MongoQueryRepo<FeesQueryModel & Document> implements OnModuleInit {
-    private static logger = new Logger(FeesQueryRepo.name);
+export class FeeQueryRepo extends MongoQueryRepo<FeeQueryModel & Document> implements OnModuleInit {
+    private static logger = new Logger(FeeQueryRepo.name);
     protected readonly indexes = [{ indexSpec: { deleted: 1 } }];
 
     constructor(@InjectMongo() mongoClient: MongoClient) {
-        super(mongoClient, 'fees_read_model', undefined, FeesQueryRepo.logger);
+        super(mongoClient, 'fees_read_model', undefined, FeeQueryRepo.logger);
     }
 
     async onModuleInit() {
         await this.init();
-    }
-
-    public async getFees(deleted = false) {
-        return this.collection.find({ deleted }).toArray();
     }
 
     public async onMemberFeesSave(aggregateModel: MemberFeesAggregateModel, session?: ClientSession) {
@@ -47,7 +43,7 @@ export class FeesQueryRepo extends MongoQueryRepo<FeesQueryModel & Document> imp
         );
     }
 
-    private async composeQueryModel(aggregateModel: MemberFeesAggregateModel): Promise<FeesQueryModel[]> {
+    private async composeQueryModel(aggregateModel: MemberFeesAggregateModel): Promise<FeeQueryModel[]> {
         return aggregateModel.fees.map((fee) => {
             return {
                 memberId: aggregateModel.id,
@@ -57,5 +53,9 @@ export class FeesQueryRepo extends MongoQueryRepo<FeesQueryModel & Document> imp
                 deleted: fee.deleted,
             };
         });
+    }
+
+    public async getFees(deleted = false) {
+        return this.collection.find({ deleted }).toArray();
     }
 }

@@ -9,6 +9,7 @@ export class MemberFeesAggregate {
 
     public addFee(number: number) {
         const { feeId } = this.feesEntity.add(number);
+
         this.creditAmount += number;
         return feeId;
     }

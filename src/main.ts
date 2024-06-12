@@ -11,8 +11,8 @@ async function bootstrap() {
     app.useGlobalPipes(new ValidationPipe());
 
     const openApiConfig = new DocumentBuilder()
-        .setTitle('Nest scaffolding')
-        .setDescription('Example API description')
+        .setTitle('ddd-toolkit-nest')
+        .setDescription('Example API for ddd-toolkit-nest')
         .setVersion('1.0')
         .build();
     const openApiDocument = SwaggerModule.createDocument(app, openApiConfig);

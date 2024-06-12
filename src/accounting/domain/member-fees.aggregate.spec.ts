@@ -7,12 +7,11 @@ describe('MemberFeesAggregate', () => {
         beforeEach(() => {
             memberFeesAggregate = MemberFeesAggregate.create(uuidV4());
         });
-        describe('When adding a fee', () => {
-            beforeEach(() => {
-                memberFeesAggregate.addFee(100);
-            });
 
+        describe('When adding a fee', () => {
             it('should increase the credit amount', () => {
+                memberFeesAggregate.addFee(100);
+
                 expect(memberFeesAggregate).toMatchObject({
                     creditAmount: 100,
                 });

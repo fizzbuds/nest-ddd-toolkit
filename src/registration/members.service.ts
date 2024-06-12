@@ -22,7 +22,7 @@ export class MembersService {
 
     public async deleteMember(memberId: string) {
         const member = await this.memberAggregateRepo.getById(memberId);
-        if (!member) throw new NotFoundException();
+        if (!member) throw new NotFoundException('Member not found');
 
         member.delete();
         await this.memberAggregateRepo.save(member);

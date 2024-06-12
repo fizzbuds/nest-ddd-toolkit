@@ -5,7 +5,7 @@ import { MemberFeesController } from './api/member-fees.controller';
 import { RegistrationModule } from '../registration/registration.module';
 import { MemberDeletedPolicy } from './policies/member-deleted.policy';
 import { AccountingQueryBus } from './infrastructure/accounting.query-bus';
-import { FeesQueryRepo } from './read-models/fees.query-repo';
+import { FeeQueryRepo } from './read-models/fee-query-repo.service';
 import { AddFeeCommandHandler } from './commands/add-fee.command-handler';
 import { DeleteAllFeeCommandHandler } from './commands/delete-all-fee.command-handler';
 import { DeleteFeeCommandHandler } from './commands/delete-fee.command-handler';
@@ -22,7 +22,7 @@ import { GetCreditAmountsQueryHandler } from './queries/get-credit-amounts.query
 export const AccountingProviders = [
     MemberFeesRepoHooks,
     MemberFeesAggregateRepo,
-    FeesQueryRepo,
+    FeeQueryRepo,
     MemberDeletedPolicy,
     AccountingQueryBus,
     CreditAmountQueryRepo,

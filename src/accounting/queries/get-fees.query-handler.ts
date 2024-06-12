@@ -1,11 +1,11 @@
 import { IQueryHandler, Query } from '@fizzbuds/ddd-toolkit';
 import { AccountingQueryBus } from '../infrastructure/accounting.query-bus';
 import { Injectable } from '@nestjs/common';
-import { FeesQueryModel, FeesQueryRepo } from '../read-models/fees.query-repo';
+import { FeeQueryModel, FeeQueryRepo } from '../read-models/fee-query-repo.service';
 
 type GetMembershipFeesQueryPayload = Record<string, never>;
 
-export class GetFeesQuery extends Query<GetMembershipFeesQueryPayload, FeesQueryModel[]> {
+export class GetFeesQuery extends Query<GetMembershipFeesQueryPayload, FeeQueryModel[]> {
     constructor(payload: GetMembershipFeesQueryPayload) {
         super(payload);
     }
@@ -13,7 +13,7 @@ export class GetFeesQuery extends Query<GetMembershipFeesQueryPayload, FeesQuery
 
 @Injectable()
 export class GetFeesQueryHandler implements IQueryHandler<GetFeesQuery> {
-    constructor(private readonly membershipFeesQueryRepo: FeesQueryRepo, queryBus: AccountingQueryBus) {
+    constructor(private readonly membershipFeesQueryRepo: FeeQueryRepo, queryBus: AccountingQueryBus) {
         queryBus.register(GetFeesQuery, this);
     }
 
