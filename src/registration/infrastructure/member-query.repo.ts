@@ -15,7 +15,7 @@ export class MemberQueryRepo extends MongoQueryRepo<MemberQueryModel & Document>
     protected readonly indexes = [{ indexSpec: { name: 1 } }];
 
     constructor(@InjectMongo() mongoClient: MongoClient) {
-        super(mongoClient, 'member_query_repo', undefined, MemberQueryRepo.logger);
+        super(mongoClient, 'members_read_model', undefined, MemberQueryRepo.logger);
     }
 
     public async getMember(id: string) {

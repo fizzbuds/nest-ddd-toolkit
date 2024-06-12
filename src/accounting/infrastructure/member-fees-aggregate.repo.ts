@@ -1,4 +1,4 @@
-import { MemberFeesRepoHooks } from './member-fees.repo-hooks';
+import { MemberFeesRepoHooks } from './member-fees-repo-hook.service';
 import { MemberFeesAggregate } from '../domain/member-fees.aggregate';
 import { MemberFeesSerializer } from './member-fees.serializer';
 import { MongoAggregateRepo } from '@fizzbuds/ddd-toolkit';
@@ -22,7 +22,7 @@ export class MemberFeesAggregateRepo
         super(
             new MemberFeesSerializer(),
             mongoClient,
-            'member_fees_aggregate',
+            'member_fees_write_model',
             undefined,
             memberFeesRepoHooks,
             MemberFeesAggregateRepo.logger,

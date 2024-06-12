@@ -3,7 +3,7 @@ import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { MongoQueryRepo } from '@fizzbuds/ddd-toolkit';
 import { InjectMongo } from '@golee/mongo-nest';
 
-export type MemberFeesQueryModel = {
+export type FeesQueryModel = {
     id: string;
     memberId: string;
     name: string;
@@ -12,19 +12,19 @@ export type MemberFeesQueryModel = {
 };
 
 @Injectable()
-export class MemberFeesQueryRepo extends MongoQueryRepo<MemberFeesQueryModel & Document> implements OnModuleInit {
-    private static logger = new Logger(MemberFeesQueryRepo.name);
+export class FeesQueryRepo extends MongoQueryRepo<FeesQueryModel & Document> implements OnModuleInit {
+    private static logger = new Logger(FeesQueryRepo.name);
     protected readonly indexes = [{ indexSpec: { deleted: 1 } }];
 
     constructor(@InjectMongo() mongoClient: MongoClient) {
-        super(mongoClient, 'member_fees_query_repo', undefined, MemberFeesQueryRepo.logger);
+        super(mongoClient, 'fees_read_model', undefined, FeesQueryRepo.logger);
     }
 
     public async getFees(deleted = false) {
         return this.collection.find({ deleted }).toArray();
     }
 
-    public async save(queryModel: MemberFeesQueryModel[], session?: ClientSession) {
+    public async save(queryModel: FeesQueryModel[], session?: ClientSession) {
         await this.collection.bulkWrite(
             queryModel.map((qm) => {
                 return {
