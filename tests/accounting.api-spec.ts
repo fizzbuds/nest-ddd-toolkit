@@ -6,13 +6,26 @@ import { MongoMemoryReplSet } from 'mongodb-memory-server';
 import { ConfigService } from '@nestjs/config';
 import { MongoClient } from 'mongodb';
 import { getMongoToken } from '@golee/mongo-nest';
+import { createMember } from './api-utils';
+import { MemberFeesAggregateRepo } from '../src/accounting/infrastructure/member-fees.aggregate-repo';
 
-import { createMember } from './utils';
+async function addMemberFee(app: INestApplication, memberId: string, amount: number): Promise<request.Response> {
+    return request(app.getHttpServer()).post(`/accounting/members/${memberId}/`).send({ amount });
+}
+
+async function deleteMemberFee(app: INestApplication<any>, memberId: string, feeId: any) {
+    return request(app.getHttpServer()).delete(`/accounting/members/${memberId}/${feeId}`);
+}
+
+async function payMemberFee(app: INestApplication<any>, memberId: string, feeId: any) {
+    return request(app.getHttpServer()).post(`/accounting/members/${memberId}/${feeId}/pay`);
+}
 
 describe('Accounting (api)', () => {
     let mongodb: MongoMemoryReplSet;
     let mongoClient: MongoClient;
     let app: INestApplication;
+    let memberFeesAggregateRepo: MemberFeesAggregateRepo;
 
     class ConfigServiceFake {
         get(key: string) {
@@ -50,6 +63,7 @@ describe('Accounting (api)', () => {
         await app.init();
 
         mongoClient = moduleFixture.get(getMongoToken());
+        memberFeesAggregateRepo = moduleFixture.get(MemberFeesAggregateRepo);
     });
 
     afterEach(async () => {
@@ -61,94 +75,142 @@ describe('Accounting (api)', () => {
         await mongodb.stop();
     });
 
-    // TODO add check of the creditAmount
+    let memberId: string;
+    beforeEach(async () => {
+        memberId = await createMember(app);
+    });
+
     describe('/accounting', () => {
-        let memberId1: string;
+        describe('/members (aggregate commands)', () => {
+            describe('POST /accounting/members/:memberId', () => {
+                it('should create a membership fee and return a feeId', async () => {
+                    const response = await addMemberFee(app, memberId, 100);
 
-        beforeEach(async () => {
-            memberId1 = await createMember(app);
-        });
-
-        describe('POST /accounting/members/:memberId', () => {
-            it('should create a membership fee and return a feeId', async () => {
-                const response = await request(app.getHttpServer())
-                    .post(`/accounting/members/${memberId1}/`)
-                    .send({ amount: 100 });
-                expect(response.statusCode).toBe(201);
-                expect(response.body).toMatchObject({ feeId: expect.any(String) });
-            });
-        });
-
-        describe('GET /accounting/fees', () => {
-            beforeEach(async () => {
-                await request(app.getHttpServer()).post(`/accounting/members/${memberId1}/`).send({ amount: 100 });
-                await request(app.getHttpServer()).post(`/accounting/members/${memberId1}/`).send({ amount: 200 });
-                await request(app.getHttpServer()).post(`/accounting/members/${memberId1}/`).send({ amount: 300 });
-            });
-
-            it('should return a list of membership fees', async () => {
-                const response = await request(app.getHttpServer()).get(`/accounting/fees`);
-                expect(response.body).toMatchObject([
-                    { id: expect.any(String), memberId: memberId1, value: 100 },
-                    { id: expect.any(String), memberId: memberId1, value: 200 },
-                    { id: expect.any(String), memberId: memberId1, value: 300 },
-                ]);
-            });
-
-            describe('When deleting the member', () => {
-                beforeEach(async () => {
-                    await request(app.getHttpServer()).delete(`/members/${memberId1}`);
+                    expect(response.statusCode).toBe(201);
+                    expect(response.body).toMatchObject({ feeId: expect.any(String) });
                 });
 
-                it('should delete all fees', async () => {
+                it('should create a membership fee with a value', async () => {
+                    const response = await addMemberFee(app, memberId, 100);
+                    const feeId = response.body.feeId;
+
+                    const memberFeesAggregate = await memberFeesAggregateRepo.getById(memberId);
+                    expect(memberFeesAggregate?.getFee(feeId).value).toEqual(100);
+                });
+            });
+
+            describe('DELETE /accounting/members/:memberId/:feeId', () => {
+                it('should soft delete the fee', async () => {
+                    const feeId = (await addMemberFee(app, memberId, 100)).body.feeId;
+
+                    const response = await deleteMemberFee(app, memberId, feeId);
+
+                    expect(response.statusCode).toBe(200);
+                    const memberFeesAggregate = await memberFeesAggregateRepo.getById(memberId);
+                    expect(memberFeesAggregate?.getFee(feeId).deleted).toBeTruthy();
+                });
+
+                it('should decrease creditAmount', async () => {
+                    const feeId = (await addMemberFee(app, memberId, 100)).body.feeId;
+
+                    await deleteMemberFee(app, memberId, feeId);
+
+                    const memberFeesAggregate = await memberFeesAggregateRepo.getById(memberId);
+                    expect(memberFeesAggregate?.getCreditAmount()).toEqual(0);
+                });
+            });
+
+            describe('POST /accounting/members/:memberId/:feeId/pay', () => {
+                it('should mark the fee as paid', async () => {
+                    const feeId = (await addMemberFee(app, memberId, 100)).body.feeId;
+                    const response = await payMemberFee(app, memberId, feeId);
+
+                    expect(response.statusCode).toBe(202);
+                    const memberFeesAggregate = await memberFeesAggregateRepo.getById(memberId);
+                    expect(memberFeesAggregate?.getFee(feeId).paid).toBeTruthy();
+                });
+
+                it('should decrease creditAmount', async () => {
+                    const feeId = (await addMemberFee(app, memberId, 100)).body.feeId;
+
+                    await payMemberFee(app, memberId, feeId);
+
+                    const memberFeesAggregate = await memberFeesAggregateRepo.getById(memberId);
+                    expect(memberFeesAggregate?.getCreditAmount()).toEqual(0);
+                });
+            });
+        });
+
+        describe('/fees (read model handlers and queries)', () => {
+            describe('GET /accounting/fees', () => {
+                it('should return a list of membership fees', async () => {
+                    await addMemberFee(app, memberId, 100);
+                    await addMemberFee(app, memberId, 200);
+                    await addMemberFee(app, memberId, 300);
+
                     const response = await request(app.getHttpServer()).get(`/accounting/fees`);
-                    expect(response.body).toEqual([]);
+
+                    expect(response.body).toMatchObject([
+                        { id: expect.any(String), memberId: memberId, value: 100 },
+                        { id: expect.any(String), memberId: memberId, value: 200 },
+                        { id: expect.any(String), memberId: memberId, value: 300 },
+                    ]);
+                });
+
+                // FIXME here we're still testing fees read model under a different condition
+                describe('DELETE /accounting/members/:memberId/:feeId', () => {
+                    it('should remove the fee from the list', async () => {
+                        let response = await addMemberFee(app, memberId, 100);
+                        const feeId = response.body.feeId;
+
+                        await request(app.getHttpServer()).delete(`/accounting/members/${memberId}/${feeId}`);
+
+                        response = await request(app.getHttpServer()).get(`/accounting/fees`);
+                        expect(response.body).toEqual([]);
+                    });
                 });
             });
         });
 
-        describe('DELETE /accounting/members/:memberId/:feeId', () => {
-            let feeId: string;
+        describe('/credit-amounts (read model handlers and queries)', () => {
+            describe('GET /accounting/credit-amounts', () => {
+                describe('Given a member with no fees', () => {
+                    it('should return a credit amount document with name and 0 creditAmount', async () => {
+                        const response = await request(app.getHttpServer()).get(`/accounting/credit-amounts`);
+                        expect(response.body).toEqual([
+                            expect.objectContaining({ memberName: 'John Doe', creditAmount: 0 }),
+                        ]);
+                    });
+                });
 
-            beforeEach(async () => {
-                const resp = await request(app.getHttpServer())
-                    .post(`/accounting/members/${memberId1}/`)
-                    .send({ amount: 400 });
-                feeId = resp.body.feeId;
+                describe('Given a member with some fees', () => {
+                    it('should return a credit amount document with name and 0 creditAmount', async () => {
+                        await addMemberFee(app, memberId, 100);
+
+                        const response = await request(app.getHttpServer()).get(`/accounting/credit-amounts`);
+                        expect(response.body).toEqual([
+                            expect.objectContaining({ memberName: 'John Doe', creditAmount: 100 }),
+                        ]);
+                    });
+                });
             });
+        });
+    });
 
-            it('should delete the fee', async () => {
-                const resp = await request(app.getHttpServer()).delete(`/accounting/members/${memberId1}/${feeId}`);
-                expect(resp.statusCode).toBe(200);
-            });
+    describe('Delete Member (policy)', () => {
+        describe('When deleting the member', () => {
+            it('should delete all fees', async () => {
+                await addMemberFee(app, memberId, 100);
+                await addMemberFee(app, memberId, 200);
+                await addMemberFee(app, memberId, 300);
 
-            it('should remove the fee from the list', async () => {
-                await request(app.getHttpServer()).delete(`/accounting/members/${memberId1}/${feeId}`);
+                await request(app.getHttpServer()).delete(`/members/${memberId}`);
 
+                // FIXME don't know whether this should be done using the read model or the aggregate
+                // probably it's a good acceptance test but not sure whether it works in our steps
                 const response = await request(app.getHttpServer()).get(`/accounting/fees`);
+
                 expect(response.body).toEqual([]);
-            });
-        });
-
-        describe('GET /accounting/credit-amounts', () => {
-            describe('Given a member with no fees', () => {
-                it('should return a credit amount document with name and 0 creditAmount', async () => {
-                    const response = await request(app.getHttpServer()).get(`/accounting/credit-amounts`);
-                    expect(response.body).toEqual([
-                        expect.objectContaining({ memberName: 'John Doe', creditAmount: 0 }),
-                    ]);
-                });
-            });
-
-            describe('Given a member with some fees', () => {
-                it('should return a credit amount document with name and 0 creditAmount', async () => {
-                    await request(app.getHttpServer()).post(`/accounting/members/${memberId1}/`).send({ amount: 100 });
-
-                    const response = await request(app.getHttpServer()).get(`/accounting/credit-amounts`);
-                    expect(response.body).toEqual([
-                        expect.objectContaining({ memberName: 'John Doe', creditAmount: 100 }),
-                    ]);
-                });
             });
         });
     });

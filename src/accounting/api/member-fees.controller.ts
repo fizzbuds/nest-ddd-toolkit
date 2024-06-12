@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Param, Post } from '@nestjs/common';
+import { Body, Controller, Delete, HttpCode, HttpStatus, Param, Post } from '@nestjs/common';
 import { AddFeeDto } from './dto/add-fee.dto';
 import { AddFeeCommand } from '../commands/add-fee.command-handler';
 import { DeleteFeeCommand } from '../commands/delete-fee.command-handler';
@@ -23,6 +23,7 @@ export class MemberFeesController {
     }
 
     @Post(':memberId/:feeId/pay')
+    @HttpCode(HttpStatus.ACCEPTED)
     public async payFee(@Param('memberId') memberId: string, @Param('feeId') feeId: string) {
         await this.accountingCommandBus.sendSync(new PayFeeCommand({ memberId, feeId }));
     }

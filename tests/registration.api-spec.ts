@@ -6,7 +6,7 @@ import { MongoMemoryReplSet } from 'mongodb-memory-server';
 import { ConfigService } from '@nestjs/config';
 import { MongoClient } from 'mongodb';
 import { getMongoToken } from '@golee/mongo-nest';
-import { createMember } from './utils';
+import { createMember } from './api-utils';
 
 describe('Registration (api)', () => {
     let mongodb: MongoMemoryReplSet;
