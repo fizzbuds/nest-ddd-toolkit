@@ -1,4 +1,4 @@
-import { Command, ICommandHandler } from '@fizzbuds/ddd-toolkit';
+import { Command, ICommandHandler, WithVersion } from '@fizzbuds/ddd-toolkit';
 import { MemberFeesAggregate } from '../domain/member-fees.aggregate';
 import { Injectable } from '@nestjs/common';
 import { CommandBus } from '../../command-bus/command-bus.module';
@@ -18,21 +18,19 @@ export class AddFeeCommandHandler implements ICommandHandler<AddFeeCommand> {
         this.commandBus.register(AddFeeCommand, this);
     }
 
-    async handle({ payload }: AddFeeCommand) {
-        const { memberId, amount } = payload;
+    public async handle({ payload }: AddFeeCommand) {
+        const memberFeesAggregate = await this.getOrCreateAggregate(payload.memberId);
+        const feeId = memberFeesAggregate.addFee(payload.amount);
 
-        const memberFeesAggregate = await this.aggregateRepo.getById(memberId);
-        let feeId: string;
-
-        if (!memberFeesAggregate) {
-            const memberFeesAggregate = MemberFeesAggregate.create(memberId);
-            feeId = memberFeesAggregate.addFee(amount);
-            await this.aggregateRepo.save(memberFeesAggregate);
-            return { feeId };
-        }
-
-        feeId = memberFeesAggregate.addFee(amount);
         await this.aggregateRepo.save(memberFeesAggregate);
         return { feeId };
+    }
+
+    private async getOrCreateAggregate(memberId: string): Promise<WithVersion<MemberFeesAggregate>> {
+        const memberFeeAggregate = await this.aggregateRepo.getById(memberId);
+        if (memberFeeAggregate) return memberFeeAggregate;
+
+        await this.aggregateRepo.save(MemberFeesAggregate.create(memberId));
+        return this.getOrCreateAggregate(memberId);
     }
 }

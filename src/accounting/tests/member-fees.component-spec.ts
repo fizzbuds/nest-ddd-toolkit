@@ -11,6 +11,7 @@ import { EventBusModule } from '../../event-bus/event-bus.module';
 import { AddFeeCommand } from '../commands/add-fee.command-handler';
 import { DeleteFeeCommand } from '../commands/delete-fee.command-handler';
 import { MembersService } from '../../registration/members.service';
+import { DeleteAllFeeCommand } from '../commands/delete-all-fee.command-handler';
 
 describe('Member Fees Component Test', () => {
     let module: TestingModule;
@@ -38,9 +39,10 @@ describe('Member Fees Component Test', () => {
             imports: [MongoModule.forRoot({ uri: mongodb.getUri('test') }), CommandBusModule, EventBusModule],
         }).compile();
 
+        await module.get(MemberFeesAggregateRepo).init();
+
         commandBus = module.get(CommandBus);
         aggregateRepo = module.get(MemberFeesAggregateRepo);
-        await aggregateRepo.init();
     });
 
     afterEach(async () => {
@@ -53,54 +55,53 @@ describe('Member Fees Component Test', () => {
         await mongodb.stop();
     });
 
-    describe('Given a Members Fees', () => {
-        const memberId = 'foo-member-id';
+    const memberId = 'foo-member-id';
 
-        describe('When adding a fee', () => {
-            let feeId: string;
+    describe('Add Fee', () => {
+        it('should add a fee', async () => {
+            const { feeId } = await commandBus.sendSync(new AddFeeCommand({ memberId, amount: 100 }));
 
-            beforeEach(async () => {
-                const _ = await commandBus.sendSync(new AddFeeCommand({ memberId, amount: 100 }));
-                feeId = _.feeId;
-            });
-
-            it('should be saved into aggregate model', async () => {
-                expect(await aggregateRepo.getById(memberId)).not.toBeNull();
-            });
-
-            it('should add a fee', async () => {
-                expect(await aggregateRepo.getById(memberId)).toMatchObject({
-                    fees: [{ feeId: feeId, value: 100, deleted: false }],
-                });
-            });
-
-            it('should increase the credit amount', async () => {
-                expect((await aggregateRepo.getById(memberId))?.getCreditAmount()).toEqual(100);
+            expect(await aggregateRepo.getById(memberId)).toMatchObject({
+                feesEntity: { fees: [{ feeId, value: 100, deleted: false }] },
             });
         });
+    });
 
-        describe('Given a fee', () => {
-            let feeId: string;
+    describe('Delete Fee', () => {
+        let feeId: string;
+        beforeEach(async () => {
+            const _ = await commandBus.sendSync(new AddFeeCommand({ memberId, amount: 100 }));
+            feeId = _.feeId;
+        });
 
-            beforeEach(async () => {
-                const _ = await commandBus.sendSync(new AddFeeCommand({ memberId, amount: 100 }));
-                feeId = _.feeId;
+        it('should delete fee', async () => {
+            await commandBus.sendSync(new DeleteFeeCommand({ memberId, feeId }));
+
+            expect(await aggregateRepo.getById(memberId)).toMatchObject({
+                feesEntity: { fees: [{ feeId, value: 100, deleted: true }] },
             });
+        });
+    });
 
-            describe('When deleting it', () => {
-                beforeEach(async () => {
-                    await commandBus.sendSync(new DeleteFeeCommand({ memberId, feeId }));
-                });
+    describe('Delete All Fee', () => {
+        beforeEach(async () => {
+            await commandBus.sendSync(new AddFeeCommand({ memberId, amount: 100 }));
+            await commandBus.sendSync(new AddFeeCommand({ memberId, amount: 200 }));
+        });
 
-                it('should mark it as deleted', async () => {
-                    expect(await aggregateRepo.getById(memberId)).toMatchObject({
-                        fees: [{ feeId: feeId, value: 100, deleted: true }],
-                    });
-                });
+        it('should delete all fees', async () => {
+            await commandBus.sendSync(new DeleteAllFeeCommand({ memberId }));
 
-                it('should decrease the credit amount', async () => {
-                    expect((await aggregateRepo.getById(memberId))?.getCreditAmount()).toEqual(0);
-                });
+            expect(await aggregateRepo.getById(memberId)).toMatchObject({
+                feesEntity: {
+                    fees: [
+                        expect.objectContaining({ value: 100, deleted: true }),
+                        expect.objectContaining({
+                            value: 200,
+                            deleted: true,
+                        }),
+                    ],
+                },
             });
         });
     });

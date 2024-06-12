@@ -14,7 +14,6 @@ describe('MemberFeesAggregate', () => {
 
             it('should increase the credit amount', () => {
                 expect(memberFeesAggregate).toMatchObject({
-                    fees: expect.anything(),
                     creditAmount: 100,
                 });
             });

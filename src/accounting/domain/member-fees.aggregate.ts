@@ -1,32 +1,27 @@
-import { v4 as uuidV4 } from 'uuid';
-
-export type Fee = { feeId: string; value: number; deleted: boolean };
+import { FeesEntity } from './fees.entity';
 
 export class MemberFeesAggregate {
-    constructor(readonly id: string, private readonly fees: Fee[] = [], private creditAmount = 0) {}
+    constructor(readonly id: string, private readonly feesEntity = new FeesEntity(), private creditAmount = 0) {}
 
     public static create(id: string) {
         return new MemberFeesAggregate(id);
     }
 
     public addFee(number: number) {
-        const feeId = uuidV4();
-        this.fees.push({ feeId: feeId, value: number, deleted: false });
+        const { feeId } = this.feesEntity.add(number);
         this.creditAmount += number;
         return feeId;
     }
 
     public deleteFee(feeId: string) {
-        const fee = this.getFee(feeId);
-        fee.deleted = true;
+        this.feesEntity.delete(feeId);
 
+        const fee = this.getFee(feeId);
         this.creditAmount -= fee.value;
     }
 
-    public getFee(feeId: string): Fee {
-        const result = this.fees.find(({ feeId }) => feeId === feeId);
-        if (!result) throw new Error(`Cannot find fee with id: ${feeId}`);
-        return result;
+    public getFee(feeId: string) {
+        return this.feesEntity.get(feeId);
     }
 
     public getCreditAmount(): number {
@@ -34,9 +29,7 @@ export class MemberFeesAggregate {
     }
 
     public deleteAllFees() {
-        this.fees.forEach((fee) => {
-            fee.deleted = true;
-        });
+        this.feesEntity.deleteAll();
         this.creditAmount = 0;
     }
 }

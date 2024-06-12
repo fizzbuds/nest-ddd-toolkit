@@ -25,6 +25,7 @@ export class FeesQueryRepo extends MongoQueryRepo<FeesQueryModel & Document> imp
     }
 
     public async save(queryModel: FeesQueryModel[], session?: ClientSession) {
+        if (!queryModel.length) return;
         await this.collection.bulkWrite(
             queryModel.map((qm) => {
                 return {

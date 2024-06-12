@@ -4,19 +4,21 @@ import { Module } from '@nestjs/common';
 import { MemberFeesController } from './api/member-fees.controller';
 import { RegistrationModule } from '../registration/registration.module';
 import { MemberDeletedPolicy } from './policies/member-deleted.policy';
-import { MemberFeesCommandHandlers } from './commands';
 import { MemberFeesQueryBus } from './infrastructure/member-fees.query-bus';
-import { MemberFeesQueryHandlers } from './queries';
 import { FeesQueryRepo } from './infrastructure/fees.query-repo';
+import { AddFeeCommandHandler } from './commands/add-fee.command-handler';
+import { DeleteAllFeeCommandHandler } from './commands/delete-all-fee.command-handler';
+import { DeleteFeeCommandHandler } from './commands/delete-fee.command-handler';
+import { GetMemberFeesQueryHandler } from './queries/get-member-fees.query-handler';
 
 export const AccountingProviders = [
     MemberFeesRepoHooks,
     MemberFeesAggregateRepo,
     FeesQueryRepo,
     MemberDeletedPolicy,
-    ...MemberFeesCommandHandlers,
     MemberFeesQueryBus,
-    ...MemberFeesQueryHandlers,
+    ...[GetMemberFeesQueryHandler],
+    ...[AddFeeCommandHandler, DeleteAllFeeCommandHandler, DeleteFeeCommandHandler],
 ];
 
 @Module({

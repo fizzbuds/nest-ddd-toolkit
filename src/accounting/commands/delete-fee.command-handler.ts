@@ -1,5 +1,5 @@
 import { Command, ICommandHandler } from '@fizzbuds/ddd-toolkit';
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { MemberFeesAggregateRepo } from '../infrastructure/member-fees.aggregate-repo';
 import { CommandBus } from '../../command-bus/command-bus.module';
 
@@ -18,12 +18,10 @@ export class DeleteFeeCommandHandler implements ICommandHandler<DeleteFeeCommand
     }
 
     async handle({ payload }: DeleteFeeCommand) {
-        const { memberId, feeId } = payload;
+        const memberFeesAggregate = await this.aggregateRepo.getById(payload.memberId);
+        if (!memberFeesAggregate) throw new Error('Member fees aggregate not found');
 
-        const memberFeesAggregate = await this.aggregateRepo.getById(memberId);
-        if (!memberFeesAggregate) throw new NotFoundException();
-
-        memberFeesAggregate.deleteFee(feeId);
+        memberFeesAggregate.deleteFee(payload.feeId);
 
         await this.aggregateRepo.save(memberFeesAggregate);
     }
