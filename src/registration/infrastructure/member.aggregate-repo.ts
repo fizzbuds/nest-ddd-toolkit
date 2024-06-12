@@ -1,4 +1,3 @@
-import { MemberRepoHooks } from './member.repo-hooks';
 import { MemberAggregate } from '../domain/member.aggregate';
 import { MemberSerializer } from './member.serializer';
 import { MongoAggregateRepo } from '@fizzbuds/ddd-toolkit';
@@ -18,13 +17,13 @@ export class MemberAggregateRepo
 {
     private static logger = new Logger(MemberAggregateRepo.name);
 
-    constructor(@InjectMongo() mongoClient: MongoClient, memberRepoHooks: MemberRepoHooks) {
+    constructor(@InjectMongo() mongoClient: MongoClient) {
         super(
             new MemberSerializer(),
             mongoClient,
             'members_write_model',
             undefined,
-            memberRepoHooks,
+            undefined,
             MemberAggregateRepo.logger,
         );
     }
