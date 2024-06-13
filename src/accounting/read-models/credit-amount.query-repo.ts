@@ -1,8 +1,7 @@
-import { ClientSession, Document, MongoClient } from 'mongodb';
+import { Document, MongoClient } from 'mongodb';
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { MongoQueryRepo } from '@fizzbuds/ddd-toolkit';
 import { InjectMongo } from '@golee/mongo-nest';
-import { MemberFeesAggregateModel } from '../infrastructure/member-fees.aggregate-repo';
 
 export type CreditAmountQueryModel = {
     memberId: string;
@@ -24,40 +23,7 @@ export class CreditAmountQueryRepo extends MongoQueryRepo<CreditAmountQueryModel
         await this.init();
     }
 
-    public async onMemberRegistered({ memberName, memberId }: { memberName: string; memberId: string }) {
-        const queryModel: CreditAmountQueryModel = { memberId, memberName, creditAmount: 0, deleted: false };
-
-        await this.collection.updateOne({ memberId }, { $set: queryModel }, { upsert: true });
-    }
-
-    public async onMemberRenamed({ memberName, memberId }: { memberName: string; memberId: string }) {
-        await this.collection.updateOne({ memberId }, { $set: { memberName } }, { upsert: true });
-    }
-
-    public async onMemberFeesSave(aggregateModel: MemberFeesAggregateModel, session?: ClientSession) {
-        const queryModel = await this.composeQueryModel(aggregateModel);
-
-        await this.collection.updateOne(
-            { memberId: queryModel.memberId },
-            { $set: queryModel },
-            { upsert: true, session },
-        );
-    }
-
-    public async onMemberDeleted(memberId: string) {
-        await this.collection.updateOne({ memberId }, { $set: { deleted: true } });
-    }
-
     public async getCreditAmounts(deleted = false) {
         return this.collection.find({ deleted }, { projection: { _id: 0 } }).toArray();
-    }
-
-    private async composeQueryModel(
-        aggregateModel: MemberFeesAggregateModel,
-    ): Promise<Partial<CreditAmountQueryModel>> {
-        return {
-            memberId: aggregateModel.id,
-            creditAmount: aggregateModel.creditAmount,
-        };
     }
 }

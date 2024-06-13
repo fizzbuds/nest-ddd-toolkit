@@ -10,7 +10,5 @@ export class MemberDeletedEventHandler implements IEventHandler<MemberDeleted> {
         eventBus.subscribe(MemberDeleted, this);
     }
 
-    public async handle({ payload }: MemberDeleted): Promise<void> {
-        await this.creditAmountQueryRepo.onMemberDeleted(payload.memberId);
-    }
+    public async handle({ payload }: MemberDeleted): Promise<void> {}
 }

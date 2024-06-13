@@ -10,10 +10,5 @@ export class MemberRenamedEventHandler implements IEventHandler<MemberRenamed> {
         eventBus.subscribe(MemberRenamed, this);
     }
 
-    public async handle({ payload }: MemberRenamed): Promise<void> {
-        await this.creditAmountQueryRepo.onMemberRenamed({
-            memberId: payload.memberId,
-            memberName: payload.memberName,
-        });
-    }
+    public async handle({ payload }: MemberRenamed): Promise<void> {}
 }
