@@ -1,7 +1,7 @@
 import { IQueryHandler, Query } from '@fizzbuds/ddd-toolkit';
 import { AccountingQueryBus } from '../infrastructure/accounting.query-bus';
 import { Injectable } from '@nestjs/common';
-import { FeeQueryModel, FeeQueryRepo } from '../read-models/fee-query-repo.service';
+import { FeeQueryModel, FeeQueryRepo } from '../read-models/fee.query-repo';
 
 type GetMembershipFeesQueryPayload = Record<string, never>;
 

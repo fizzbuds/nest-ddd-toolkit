@@ -2,7 +2,7 @@ import { IRepoHooks } from '@fizzbuds/ddd-toolkit';
 import { Injectable } from '@nestjs/common';
 import { MemberFeesAggregateModel } from './member-fees.aggregate-repo';
 import { ClientSession } from 'mongodb';
-import { FeeQueryRepo } from '../read-models/fee-query-repo.service';
+import { FeeQueryRepo } from '../read-models/fee.query-repo';
 import { CreditAmountQueryRepo } from '../read-models/credit-amount.query-repo';
 
 @Injectable()
