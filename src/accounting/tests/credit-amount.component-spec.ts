@@ -62,7 +62,7 @@ describe('Credit Amount Component Test', () => {
     const memberId = 'foo-member-id';
 
     describe('On MemberRegistered event ', () => {
-        it('credit amount read model should contain the member', async () => {
+        it('get credit amounts query should should return member credit amount', async () => {
             await eventBus.publishAndWaitForHandlers(new MemberRegistered({ memberId, memberName: 'Nina Jolt' }));
 
             expect(await accountingQueryBus.execute(new GetCreditAmountsQuery({}))).toEqual([
@@ -81,7 +81,7 @@ describe('Credit Amount Component Test', () => {
             await eventBus.publishAndWaitForHandlers(new MemberRegistered({ memberId, memberName: 'Nina Jolt' }));
         });
 
-        it('credit amount be increased', async () => {
+        it('get credit amounts query should return increased credit amount', async () => {
             await accountingCommandBus.sendSync(new AddFeeCommand({ memberId, amount: 100 }));
 
             expect(await accountingQueryBus.execute(new GetCreditAmountsQuery({}))).toEqual([
@@ -100,7 +100,7 @@ describe('Credit Amount Component Test', () => {
             feeId = _.feeId;
         });
 
-        it('credit amount be decreased', async () => {
+        it('get credit amounts query should return decreased credit amount', async () => {
             await accountingCommandBus.sendSync(new PayFeeCommand({ memberId, feeId }));
 
             expect(await accountingQueryBus.execute(new GetCreditAmountsQuery({}))).toEqual([
@@ -116,7 +116,7 @@ describe('Credit Amount Component Test', () => {
             await eventBus.publishAndWaitForHandlers(new MemberRegistered({ memberId, memberName: 'Nina Jolt' }));
         });
 
-        it('credit amount read model should update the member name', async () => {
+        it('get credit amounts query should return the updated member name', async () => {
             await eventBus.publishAndWaitForHandlers(new MemberRenamed({ memberId, memberName: 'Luna Jett' }));
 
             expect(await accountingQueryBus.execute(new GetCreditAmountsQuery({}))).toEqual([
@@ -135,7 +135,7 @@ describe('Credit Amount Component Test', () => {
             await eventBus.publishAndWaitForHandlers(new MemberRegistered({ memberId, memberName: 'Nina Jolt' }));
         });
 
-        it('credit amount read model should update the member name', async () => {
+        it('get credit amounts query should return nothing', async () => {
             await eventBus.publishAndWaitForHandlers(new MemberDeleted({ memberId }));
 
             expect(await accountingQueryBus.execute(new GetCreditAmountsQuery({}))).toEqual([]);
