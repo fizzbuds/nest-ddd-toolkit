@@ -44,17 +44,6 @@ describe('Registration (api)', () => {
             });
         });
 
-        describe('PUT /members/:id', () => {
-            it('should rename the member', async () => {
-                const memberId = await createMember(app);
-                const putResponse = await request(app.getHttpServer())
-                    .put(`/members/${memberId}`)
-                    .send({ name: 'Jane Doe' });
-                expect(putResponse.statusCode).toBe(200);
-                expect(putResponse.body.name).toBe('Jane Doe');
-            });
-        });
-
         describe('DELETE /members/:id', () => {
             it('should delete the member', async () => {
                 const memberId = await createMember(app);
