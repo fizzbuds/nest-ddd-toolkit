@@ -42,6 +42,7 @@ describe('Accounting (api)', () => {
     });
 
     let memberId: string;
+
     beforeEach(async () => {
         memberId = await createMember(app);
     });
@@ -109,29 +110,35 @@ describe('Accounting (api)', () => {
 
         describe('/accounting/fees (read model handlers and queries)', () => {
             describe('GET /accounting/fees', () => {
-                it('should return a list of membership fees', async () => {
-                    await addMemberFee(app, memberId, 100);
-                    await addMemberFee(app, memberId, 200);
-                    await addMemberFee(app, memberId, 300);
-
-                    const response = await request(app.getHttpServer()).get(`/accounting/fees`);
-
-                    expect(response.body).toMatchObject([
-                        { id: expect.any(String), memberId: memberId, value: 100 },
-                        { id: expect.any(String), memberId: memberId, value: 200 },
-                        { id: expect.any(String), memberId: memberId, value: 300 },
-                    ]);
+                describe('Given a member with no fees', () => {
+                    it('should return no fees', async () => {
+                        const response = await request(app.getHttpServer()).get(`/accounting/fees`);
+                        expect(response.body).toEqual([]);
+                    });
                 });
 
-                // FIXME here we're still testing fees read model under a different condition
-                describe('DELETE /accounting/members/:memberId/fees/:feeId', () => {
-                    it('should remove the fee from the list', async () => {
-                        let response = await addMemberFee(app, memberId, 100);
-                        const feeId = response.body.feeId;
+                describe('Given a member with some fees', () => {
+                    it('should return some fees', async () => {
+                        await addMemberFee(app, memberId, 100);
 
-                        await deleteMemberFee(app, memberId, feeId);
+                        const response = await request(app.getHttpServer()).get(`/accounting/fees`);
+                        expect(response.body).toEqual([
+                            expect.objectContaining({
+                                deleted: false,
+                                memberId,
+                                paid: false,
+                                value: 100,
+                            }),
+                        ]);
+                    });
+                });
 
-                        response = await request(app.getHttpServer()).get(`/accounting/fees`);
+                describe('Given a deleted member with some fees', () => {
+                    it('should return no fees', async () => {
+                        await addMemberFee(app, memberId, 100);
+                        await request(app.getHttpServer()).delete(`/members/${memberId}`);
+
+                        const response = await request(app.getHttpServer()).get(`/accounting/fees`);
                         expect(response.body).toEqual([]);
                     });
                 });
