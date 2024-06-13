@@ -12,13 +12,7 @@ import { DeleteFeeCommandHandler } from './commands/delete-fee.command-handler';
 import { GetFeesQueryHandler } from './queries/get-fees.query-handler';
 import { PayFeeCommandHandler } from './commands/pay-fee.command-handler';
 import { AccountingCommandBus } from './infrastructure/accounting.command-bus';
-import { CreditAmountQueryRepo } from './read-models/credit-amount.query-repo';
-import { MemberRegisteredEventHandler } from './read-models/member-registered.event-handler';
-import { MemberDeletedEventHandler } from './read-models/member-deleted.event-handler';
 import { FeesController } from './api/fees.controller';
-import { CreditAmountController } from './api/credit-amount.controller';
-import { GetCreditAmountsQueryHandler } from './queries/get-credit-amounts.query-handler';
-import { MemberRenamedEventHandler } from './read-models/member-renamed.event-handler';
 
 export const AccountingProviders = [
     MemberFeesRepoHooks,
@@ -26,15 +20,13 @@ export const AccountingProviders = [
     FeeQueryRepo,
     MemberDeletedPolicy,
     AccountingQueryBus,
-    CreditAmountQueryRepo,
     AccountingCommandBus,
-    ...[GetFeesQueryHandler, GetCreditAmountsQueryHandler],
+    ...[GetFeesQueryHandler],
     ...[AddFeeCommandHandler, DeleteAllFeeCommandHandler, DeleteFeeCommandHandler, PayFeeCommandHandler],
-    ...[MemberRegisteredEventHandler, MemberDeletedEventHandler, MemberRenamedEventHandler],
 ];
 
 @Module({
-    controllers: [MemberFeesController, FeesController, CreditAmountController],
+    controllers: [MemberFeesController, FeesController],
     providers: AccountingProviders,
     imports: [RegistrationModule],
 })

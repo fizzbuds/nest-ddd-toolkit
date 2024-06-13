@@ -144,52 +144,6 @@ describe('Accounting (api)', () => {
                 });
             });
         });
-
-        describe('/credit-amounts (read model handlers and queries)', () => {
-            describe('GET /accounting/credit-amounts', () => {
-                describe('Given a member with no fees', () => {
-                    it('should return a credit amount document with name and 0 creditAmount', async () => {
-                        const response = await request(app.getHttpServer()).get(`/accounting/credit-amounts`);
-                        expect(response.body).toEqual([
-                            expect.objectContaining({ memberName: 'John Doe', creditAmount: 0 }),
-                        ]);
-                    });
-                });
-
-                describe('Given a member with some fees', () => {
-                    it('should return name and right creditAmount', async () => {
-                        await addMemberFee(app, memberId, 100);
-
-                        const response = await request(app.getHttpServer()).get(`/accounting/credit-amounts`);
-                        expect(response.body).toEqual([
-                            expect.objectContaining({ memberName: 'John Doe', creditAmount: 100 }),
-                        ]);
-                    });
-                });
-
-                describe('Given a renamed member with some fees', () => {
-                    it('should return right name and creditAmount', async () => {
-                        await addMemberFee(app, memberId, 100);
-                        await request(app.getHttpServer()).put(`/members/${memberId}`).send({ name: 'Jane Doe' });
-
-                        const response = await request(app.getHttpServer()).get(`/accounting/credit-amounts`);
-                        expect(response.body).toEqual([
-                            expect.objectContaining({ memberName: 'Jane Doe', creditAmount: 100 }),
-                        ]);
-                    });
-                });
-
-                describe('Given a deleted member with some fees', () => {
-                    it('should return nothing', async () => {
-                        await addMemberFee(app, memberId, 100);
-                        await request(app.getHttpServer()).delete(`/members/${memberId}`);
-
-                        const response = await request(app.getHttpServer()).get(`/accounting/credit-amounts`);
-                        expect(response.body).toEqual([]);
-                    });
-                });
-            });
-        });
     });
 
     describe('Delete Member (policy)', () => {

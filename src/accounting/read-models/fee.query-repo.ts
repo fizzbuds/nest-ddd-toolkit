@@ -25,37 +25,9 @@ export class FeeQueryRepo extends MongoQueryRepo<FeeQueryModel & Document> imple
         await this.init();
     }
 
-    public async onMemberFeesSave(aggregateModel: MemberFeesAggregateModel, session?: ClientSession) {
-        const queryModel = await this.composeQueryModel(aggregateModel);
-        if (!queryModel.length) return;
-
-        await this.collection.bulkWrite(
-            queryModel.map((qm) => {
-                return {
-                    updateOne: {
-                        filter: { id: qm.id },
-                        update: { $set: { ...qm } },
-                        upsert: true,
-                    },
-                };
-            }),
-            { session },
-        );
-    }
+    public async onMemberFeesSave(memberFeesAggregateModel: MemberFeesAggregateModel, session?: ClientSession) {}
 
     public async getFees(deleted = false) {
         return this.collection.find({ deleted }, { projection: { _id: 0 } }).toArray();
-    }
-
-    private async composeQueryModel(aggregateModel: MemberFeesAggregateModel): Promise<FeeQueryModel[]> {
-        return aggregateModel.fees.map((fee) => {
-            return {
-                memberId: aggregateModel.id,
-                id: fee.feeId,
-                value: fee.value,
-                paid: fee.paid,
-                deleted: fee.deleted,
-            };
-        });
     }
 }
