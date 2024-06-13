@@ -43,6 +43,10 @@ export class FeeQueryRepo extends MongoQueryRepo<FeeQueryModel & Document> imple
         );
     }
 
+    public async getFees(deleted = false) {
+        return this.collection.find({ deleted }, { projection: { _id: 0 } }).toArray();
+    }
+
     private async composeQueryModel(aggregateModel: MemberFeesAggregateModel): Promise<FeeQueryModel[]> {
         return aggregateModel.fees.map((fee) => {
             return {
@@ -53,9 +57,5 @@ export class FeeQueryRepo extends MongoQueryRepo<FeeQueryModel & Document> imple
                 deleted: fee.deleted,
             };
         });
-    }
-
-    public async getFees(deleted = false) {
-        return this.collection.find({ deleted }).toArray();
     }
 }

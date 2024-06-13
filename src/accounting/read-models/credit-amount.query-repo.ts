@@ -49,7 +49,7 @@ export class CreditAmountQueryRepo extends MongoQueryRepo<CreditAmountQueryModel
     }
 
     public async getCreditAmounts(deleted = false) {
-        return this.collection.find({ deleted }).toArray();
+        return this.collection.find({ deleted }, { projection: { _id: 0 } }).toArray();
     }
 
     private async composeQueryModel(
