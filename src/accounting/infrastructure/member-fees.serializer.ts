@@ -9,7 +9,7 @@ export class MemberFeesSerializer implements ISerializer<MemberFeesAggregate, Me
             return { feeId: fee.feeId, value: fee.value, deleted: fee.deleted, paid: fee.paid };
         });
 
-        return new MemberFeesAggregate(aggregateModel.id, new FeesEntity(fees), aggregateModel.creditAmount);
+        return new MemberFeesAggregate(aggregateModel.id, new FeesEntity(fees));
     }
 
     public aggregateToModel(aggregate: MemberFeesAggregate): MemberFeesAggregateModel {
@@ -17,6 +17,6 @@ export class MemberFeesSerializer implements ISerializer<MemberFeesAggregate, Me
             return { feeId: fee.feeId, value: fee.value, deleted: fee.deleted, paid: fee.paid };
         });
 
-        return { id: aggregate.id, fees, creditAmount: aggregate['creditAmount'] };
+        return { id: aggregate.id, fees };
     }
 }

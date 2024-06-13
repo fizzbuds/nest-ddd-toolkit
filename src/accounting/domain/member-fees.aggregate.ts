@@ -1,7 +1,7 @@
 import { FeesEntity } from './fees.entity';
 
 export class MemberFeesAggregate {
-    constructor(readonly id: string, private readonly feesEntity = new FeesEntity(), private creditAmount = 0) {}
+    constructor(readonly id: string, private readonly feesEntity = new FeesEntity()) {}
 
     public static create(id: string) {
         return new MemberFeesAggregate(id);
@@ -10,34 +10,18 @@ export class MemberFeesAggregate {
     public addFee(number: number) {
         const { feeId } = this.feesEntity.add(number);
 
-        this.creditAmount += number;
         return feeId;
     }
 
     public deleteFee(feeId: string) {
         this.feesEntity.delete(feeId);
-
-        const fee = this.getFee(feeId);
-        this.creditAmount -= fee.value;
     }
 
     public getFee(feeId: string) {
         return this.feesEntity.get(feeId);
     }
 
-    public getCreditAmount(): number {
-        return this.creditAmount;
-    }
-
-    public deleteAllFees() {
-        this.feesEntity.deleteAll();
-        this.creditAmount = 0;
-    }
-
     public payFee(feeId: string) {
         this.feesEntity.pay(feeId);
-
-        const fee = this.getFee(feeId);
-        this.creditAmount -= fee.value;
     }
 }

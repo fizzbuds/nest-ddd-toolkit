@@ -6,11 +6,9 @@ import { MongoAggregateRepo } from '@fizzbuds/ddd-toolkit';
 import { getMongoToken, MongoModule } from '@golee/mongo-nest';
 import { MongoClient } from 'mongodb';
 import { AccountingProviders } from '../accounting.module';
-import { EventBusModule } from '../../event-bus/event-bus.module';
 import { AddFeeCommand } from '../commands/add-fee.command-handler';
 import { DeleteFeeCommand } from '../commands/delete-fee.command-handler';
 import { MembersService } from '../../registration/members.service';
-import { DeleteAllFeeCommand } from '../commands/delete-all-fee.command-handler';
 import { PayFeeCommand } from '../commands/pay-fee.command-handler';
 import { AccountingCommandBus } from '../infrastructure/accounting.command-bus';
 
@@ -37,7 +35,7 @@ describe('Member Fees Component Test', () => {
                     useValue: { getMember: jest.fn() },
                 },
             ],
-            imports: [MongoModule.forRoot({ uri: mongodb.getUri('test') }), EventBusModule],
+            imports: [MongoModule.forRoot({ uri: mongodb.getUri('test') })],
         }).compile();
 
         await module.get(MemberFeesAggregateRepo).init();
@@ -96,29 +94,6 @@ describe('Member Fees Component Test', () => {
 
             expect(await aggregateRepo.getById(memberId)).toMatchObject({
                 feesEntity: { fees: [{ feeId, value: 100, deleted: false, paid: true }] },
-            });
-        });
-    });
-
-    describe('Delete All Fee', () => {
-        beforeEach(async () => {
-            await accountingCommandBus.sendSync(new AddFeeCommand({ memberId, amount: 100 }));
-            await accountingCommandBus.sendSync(new AddFeeCommand({ memberId, amount: 200 }));
-        });
-
-        it('should delete all fees', async () => {
-            await accountingCommandBus.sendSync(new DeleteAllFeeCommand({ memberId }));
-
-            expect(await aggregateRepo.getById(memberId)).toMatchObject({
-                feesEntity: {
-                    fees: [
-                        expect.objectContaining({ value: 100, deleted: true }),
-                        expect.objectContaining({
-                            value: 200,
-                            deleted: true,
-                        }),
-                    ],
-                },
             });
         });
     });

@@ -8,16 +8,6 @@ describe('MemberFeesAggregate', () => {
             memberFeesAggregate = MemberFeesAggregate.create(uuidV4());
         });
 
-        describe('When adding a fee', () => {
-            it('should increase the credit amount', () => {
-                memberFeesAggregate.addFee(100);
-
-                expect(memberFeesAggregate).toMatchObject({
-                    creditAmount: 100,
-                });
-            });
-        });
-
         describe('Given a fee', () => {
             let feeId: string;
             beforeEach(() => {
@@ -30,11 +20,6 @@ describe('MemberFeesAggregate', () => {
 
                     expect(memberFeesAggregate.getFee(feeId).deleted).toBeTruthy();
                 });
-                it('should decrease the credit amount', () => {
-                    memberFeesAggregate.deleteFee(feeId);
-
-                    expect(memberFeesAggregate.getCreditAmount()).toBe(0);
-                });
             });
 
             describe('When pay it', () => {
@@ -42,11 +27,6 @@ describe('MemberFeesAggregate', () => {
                     memberFeesAggregate.payFee(feeId);
 
                     expect(memberFeesAggregate.getFee(feeId).paid).toBeTruthy();
-                });
-                it('should decrease the credit amount', () => {
-                    memberFeesAggregate.payFee(feeId);
-
-                    expect(memberFeesAggregate.getCreditAmount()).toBe(0);
                 });
             });
         });
