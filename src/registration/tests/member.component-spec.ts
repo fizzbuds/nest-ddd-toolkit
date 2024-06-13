@@ -9,6 +9,7 @@ import { EventBus, EventBusModule } from '../../event-bus/event-bus.module';
 import { MembersService } from '../members.service';
 import { MemberDeleted } from '../events/member-deleted.event';
 import { MemberRegistered } from '../events/member-registered.event';
+import { MemberRenamed } from '../events/member-renamed.event';
 
 describe('Member Component Test', () => {
     let module: TestingModule;
@@ -71,6 +72,17 @@ describe('Member Component Test', () => {
             await membersService.renameMember(memberId, 'Jane Doe');
 
             expect(await membersService.getMember(memberId)).toMatchObject({ name: 'Jane Doe' });
+        });
+
+        it('should publish member renamed event', async () => {
+            const { memberId } = await membersService.registerMember('John Doe');
+
+            await membersService.renameMember(memberId, 'Jane Doe');
+
+            expect(eventBus.publishAndWaitForHandlers).toHaveBeenCalledWith({
+                name: MemberRenamed.name,
+                payload: { memberId, memberName: 'Jane Doe' },
+            });
         });
     });
 

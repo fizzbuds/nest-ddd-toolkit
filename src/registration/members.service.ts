@@ -5,6 +5,7 @@ import { MemberAggregateRepo } from './infrastructure/member.aggregate-repo';
 import { MemberDeleted } from './events/member-deleted.event';
 import { EventBus } from '../event-bus/event-bus.module';
 import { MemberRegistered } from './events/member-registered.event';
+import { MemberRenamed } from './events/member-renamed.event';
 
 @Injectable()
 export class MembersService {
@@ -44,6 +45,7 @@ export class MembersService {
         member.rename(newName);
         await this.memberAggregateRepo.save(member);
 
+        await this.eventBus.publishAndWaitForHandlers(new MemberRenamed({ memberId: member.id, memberName: newName }));
         return { id: member.id, name: member.name };
     }
 }

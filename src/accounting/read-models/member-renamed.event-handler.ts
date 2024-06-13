@@ -1,17 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { EventBus } from '../../event-bus/event-bus.module';
 import { IEventHandler } from '@fizzbuds/ddd-toolkit';
-import { MemberRegistered } from '../../registration/events/member-registered.event';
 import { CreditAmountQueryRepo } from './credit-amount.query-repo';
+import { MemberRenamed } from '../../registration/events/member-renamed.event';
 
 @Injectable()
-export class MemberRegisteredEventHandler implements IEventHandler<MemberRegistered> {
+export class MemberRenamedEventHandler implements IEventHandler<MemberRenamed> {
     constructor(eventBus: EventBus, private readonly creditAmountQueryRepo: CreditAmountQueryRepo) {
-        eventBus.subscribe(MemberRegistered, this);
+        eventBus.subscribe(MemberRenamed, this);
     }
 
-    public async handle({ payload }: MemberRegistered): Promise<void> {
-        await this.creditAmountQueryRepo.onMemberRegistered({
+    public async handle({ payload }: MemberRenamed): Promise<void> {
+        await this.creditAmountQueryRepo.onMemberRenamed({
             memberId: payload.memberId,
             memberName: payload.memberName,
         });

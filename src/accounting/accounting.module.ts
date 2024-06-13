@@ -18,6 +18,7 @@ import { MemberDeletedEventHandler } from './read-models/member-deleted.event-ha
 import { FeesController } from './api/fees.controller';
 import { CreditAmountController } from './api/credit-amount.controller';
 import { GetCreditAmountsQueryHandler } from './queries/get-credit-amounts.query-handler';
+import { MemberRenamedEventHandler } from './read-models/member-renamed.event-handler';
 
 export const AccountingProviders = [
     MemberFeesRepoHooks,
@@ -29,7 +30,7 @@ export const AccountingProviders = [
     AccountingCommandBus,
     ...[GetFeesQueryHandler, GetCreditAmountsQueryHandler],
     ...[AddFeeCommandHandler, DeleteAllFeeCommandHandler, DeleteFeeCommandHandler, PayFeeCommandHandler],
-    ...[MemberRegisteredEventHandler, MemberDeletedEventHandler],
+    ...[MemberRegisteredEventHandler, MemberDeletedEventHandler, MemberRenamedEventHandler],
 ];
 
 @Module({

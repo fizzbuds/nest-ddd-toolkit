@@ -30,6 +30,10 @@ export class CreditAmountQueryRepo extends MongoQueryRepo<CreditAmountQueryModel
         await this.collection.updateOne({ memberId }, { $set: queryModel }, { upsert: true });
     }
 
+    public async onMemberRenamed({ memberName, memberId }: { memberName: string; memberId: string }) {
+        await this.collection.updateOne({ memberId }, { $set: { memberName } }, { upsert: true });
+    }
+
     public async onMemberFeesSave(aggregateModel: MemberFeesAggregateModel, session?: ClientSession) {
         const queryModel = await this.composeQueryModel(aggregateModel);
 
@@ -40,6 +44,14 @@ export class CreditAmountQueryRepo extends MongoQueryRepo<CreditAmountQueryModel
         );
     }
 
+    public async onMemberDeleted(memberId: string) {
+        await this.collection.updateOne({ memberId }, { $set: { deleted: true } });
+    }
+
+    public async getCreditAmounts(deleted = false) {
+        return this.collection.find({ deleted }).toArray();
+    }
+
     private async composeQueryModel(
         aggregateModel: MemberFeesAggregateModel,
     ): Promise<Partial<CreditAmountQueryModel>> {
@@ -47,13 +59,5 @@ export class CreditAmountQueryRepo extends MongoQueryRepo<CreditAmountQueryModel
             memberId: aggregateModel.id,
             creditAmount: aggregateModel.creditAmount,
         };
-    }
-
-    public async onMemberDeleted(memberId: string) {
-        await this.collection.updateOne({ memberId }, { $set: { deleted: true } });
-    }
-
-    public async getCreditAmounts(deleted = false) {
-        return this.collection.find({ deleted }).toArray();
     }
 }
