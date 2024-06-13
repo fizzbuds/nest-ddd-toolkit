@@ -26,7 +26,7 @@ describe('Accounting (api)', () => {
 
     beforeAll(async () => {
         mongodb = await setupMongoMemoryReplSet();
-        app = await setupNestApp();
+        app = await setupNestApp(mongodb);
 
         mongoClient = app.get(getMongoToken());
         memberFeesAggregateRepo = app.get(MemberFeesAggregateRepo);
