@@ -7,15 +7,15 @@ import { createMember, setupMongoMemoryReplSet, setupNestApp } from './api-utils
 import { MemberFeesAggregateRepo } from '../src/accounting/infrastructure/member-fees.aggregate-repo';
 
 async function addMemberFee(app: INestApplication, memberId: string, amount: number): Promise<request.Response> {
-    return request(app.getHttpServer()).post(`/accounting/members/${memberId}/`).send({ amount });
+    return request(app.getHttpServer()).post(`/accounting/members/${memberId}/fees`).send({ amount });
 }
 
 async function deleteMemberFee(app: INestApplication<any>, memberId: string, feeId: any) {
-    return request(app.getHttpServer()).delete(`/accounting/members/${memberId}/${feeId}`);
+    return request(app.getHttpServer()).delete(`/accounting/members/${memberId}/fees/${feeId}`);
 }
 
 async function payMemberFee(app: INestApplication<any>, memberId: string, feeId: any) {
-    return request(app.getHttpServer()).post(`/accounting/members/${memberId}/${feeId}/pay`);
+    return request(app.getHttpServer()).post(`/accounting/members/${memberId}/fees/${feeId}/pay`);
 }
 
 describe('Accounting (api)', () => {
@@ -47,8 +47,8 @@ describe('Accounting (api)', () => {
     });
 
     describe('/accounting', () => {
-        describe('/members (aggregate commands)', () => {
-            describe('POST /accounting/members/:memberId', () => {
+        describe('/members/:memberId/fees (aggregate commands)', () => {
+            describe('POST /accounting/members/:memberId/fees', () => {
                 it('should create a membership fee and return a feeId', async () => {
                     const response = await addMemberFee(app, memberId, 100);
 
@@ -65,7 +65,7 @@ describe('Accounting (api)', () => {
                 });
             });
 
-            describe('DELETE /accounting/members/:memberId/:feeId', () => {
+            describe('DELETE /accounting/members/:memberId/fees/:feeId', () => {
                 it('should soft delete the fee', async () => {
                     const feeId = (await addMemberFee(app, memberId, 100)).body.feeId;
 
@@ -86,7 +86,7 @@ describe('Accounting (api)', () => {
                 });
             });
 
-            describe('POST /accounting/members/:memberId/:feeId/pay', () => {
+            describe('POST /accounting/members/:memberId/fees/:feeId/pay', () => {
                 it('should mark the fee as paid', async () => {
                     const feeId = (await addMemberFee(app, memberId, 100)).body.feeId;
                     const response = await payMemberFee(app, memberId, feeId);
@@ -107,7 +107,7 @@ describe('Accounting (api)', () => {
             });
         });
 
-        describe('/fees (read model handlers and queries)', () => {
+        describe('/accounting/fees (read model handlers and queries)', () => {
             describe('GET /accounting/fees', () => {
                 it('should return a list of membership fees', async () => {
                     await addMemberFee(app, memberId, 100);
@@ -124,12 +124,12 @@ describe('Accounting (api)', () => {
                 });
 
                 // FIXME here we're still testing fees read model under a different condition
-                describe('DELETE /accounting/members/:memberId/:feeId', () => {
+                describe('DELETE /accounting/members/:memberId/fees/:feeId', () => {
                     it('should remove the fee from the list', async () => {
                         let response = await addMemberFee(app, memberId, 100);
                         const feeId = response.body.feeId;
 
-                        await request(app.getHttpServer()).delete(`/accounting/members/${memberId}/${feeId}`);
+                        await deleteMemberFee(app, memberId, feeId);
 
                         response = await request(app.getHttpServer()).get(`/accounting/fees`);
                         expect(response.body).toEqual([]);
