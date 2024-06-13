@@ -1,11 +1,9 @@
-import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
-import { AppModule } from '../src/app.module';
 import { MongoMemoryReplSet } from 'mongodb-memory-server';
 import { MongoClient } from 'mongodb';
 import { getMongoToken } from '@golee/mongo-nest';
-import { createMember } from './api-utils';
+import { createMember, setupMongoMemoryReplSet, setupNestApp } from './api-utils';
 
 describe('Registration (api)', () => {
     let mongodb: MongoMemoryReplSet;
@@ -13,21 +11,10 @@ describe('Registration (api)', () => {
     let app: INestApplication;
 
     beforeAll(async () => {
-        mongodb = await MongoMemoryReplSet.create({
-            replSet: {
-                count: 1,
-                dbName: 'test',
-                storageEngine: 'wiredTiger',
-            },
-        });
-        const moduleFixture: TestingModule = await Test.createTestingModule({
-            imports: [AppModule],
-        }).compile();
+        mongodb = await setupMongoMemoryReplSet();
+        app = await setupNestApp();
 
-        app = moduleFixture.createNestApplication();
-        await app.init();
-
-        mongoClient = moduleFixture.get(getMongoToken());
+        mongoClient = app.get(getMongoToken());
     });
 
     afterEach(async () => {

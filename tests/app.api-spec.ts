@@ -1,22 +1,29 @@
-import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
-import { AppModule } from '../src/app.module';
+import { setupMongoMemoryReplSet, setupNestApp } from './api-utils';
+import { getMongoToken } from '@golee/mongo-nest';
+import { MongoMemoryReplSet } from 'mongodb-memory-server';
+import { MongoClient } from 'mongodb';
 
 describe('AppController (api)', () => {
     let app: INestApplication;
+    let mongodb: MongoMemoryReplSet;
+    let mongoClient: MongoClient;
 
     beforeAll(async () => {
-        const moduleFixture: TestingModule = await Test.createTestingModule({
-            imports: [AppModule],
-        }).compile();
+        mongodb = await setupMongoMemoryReplSet();
+        app = await setupNestApp();
 
-        app = moduleFixture.createNestApplication();
-        await app.init();
+        mongoClient = app.get(getMongoToken());
+    });
+
+    afterEach(async () => {
+        await mongoClient.db().dropDatabase();
     });
 
     afterAll(async () => {
         await app.close();
+        await mongodb.stop();
     });
 
     describe('/health', () => {
