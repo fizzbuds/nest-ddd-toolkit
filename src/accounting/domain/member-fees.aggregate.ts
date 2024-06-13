@@ -29,11 +29,6 @@ export class MemberFeesAggregate {
         return this.creditAmount;
     }
 
-    public deleteAllFees() {
-        this.feesEntity.deleteAll();
-        this.creditAmount = 0;
-    }
-
     public payFee(feeId: string) {
         this.feesEntity.pay(feeId);
 

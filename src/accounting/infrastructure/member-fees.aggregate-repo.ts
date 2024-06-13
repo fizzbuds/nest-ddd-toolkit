@@ -1,4 +1,3 @@
-import { MemberFeesRepoHooks } from './member-fees.repo-hook';
 import { MemberFeesAggregate } from '../domain/member-fees.aggregate';
 import { MemberFeesSerializer } from './member-fees.serializer';
 import { MongoAggregateRepo } from '@fizzbuds/ddd-toolkit';
@@ -18,13 +17,13 @@ export class MemberFeesAggregateRepo
 {
     private static logger = new Logger(MemberFeesAggregateRepo.name);
 
-    constructor(@InjectMongo() mongoClient: MongoClient, memberFeesRepoHooks: MemberFeesRepoHooks) {
+    constructor(@InjectMongo() mongoClient: MongoClient) {
         super(
             new MemberFeesSerializer(),
             mongoClient,
             'member_fees_write_model',
             undefined,
-            memberFeesRepoHooks,
+            undefined,
             MemberFeesAggregateRepo.logger,
         );
     }

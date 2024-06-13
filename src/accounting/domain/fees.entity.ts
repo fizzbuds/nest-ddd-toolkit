@@ -24,12 +24,6 @@ export class FeesEntity {
         return fee;
     }
 
-    public deleteAll() {
-        this.fees.forEach((fee) => {
-            fee.deleted = true;
-        });
-    }
-
     public pay(feeId: string) {
         const index = this.fees.findIndex(({ feeId: id }) => id === feeId);
         if (index === -1) throw new Error(`Cannot find fee with given id: ${feeId}`);
