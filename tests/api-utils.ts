@@ -20,12 +20,13 @@ export const setupNestApp = async (mongodb: MongoMemoryReplSet) => {
         MONGODB_URI: mongodb.getUri(),
         LOG_LEVEL: 'debug',
     };
+    const FakeConfigService = { get: (key: string) => fakeConfig[key], getOrThrow: (key: string) => fakeConfig[key] };
 
     const moduleFixture: TestingModule = await Test.createTestingModule({
         imports: [AppModule],
     })
         .overrideProvider(ConfigService)
-        .useValue({ get: (key: string) => fakeConfig[key], getOrThrow: (key: string) => fakeConfig[key] })
+        .useValue(FakeConfigService)
         .compile();
 
     const app = moduleFixture.createNestApplication();
