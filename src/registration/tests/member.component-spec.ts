@@ -5,12 +5,15 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { MemberAggregateRepo } from '../infrastructure/member.aggregate-repo';
 import { getMongoToken, MongoModule } from '@golee/mongo-nest';
 import { MongoClient } from 'mongodb';
+import { EventBus, EventBusModule } from '../../event-bus/event-bus.module';
 import { MembersService } from '../members.service';
+import { MemberDeleted } from '../events/member-deleted.event';
 
 describe('Member Component Test', () => {
     let module: TestingModule;
     let mongodb: MongoMemoryReplSet;
     let membersService: MembersService;
+    let eventBus: EventBus;
 
     beforeAll(async () => {
         mongodb = await MongoMemoryReplSet.create({
@@ -23,11 +26,14 @@ describe('Member Component Test', () => {
 
         module = await Test.createTestingModule({
             providers: RegistrationProviders,
-            imports: [MongoModule.forRoot({ uri: mongodb.getUri('test') })],
+            imports: [MongoModule.forRoot({ uri: mongodb.getUri('test') }), EventBusModule],
         }).compile();
 
         membersService = module.get(MembersService);
+        eventBus = module.get(EventBus);
         await module.get(MemberAggregateRepo).init();
+
+        jest.spyOn(eventBus, 'publishAndWaitForHandlers');
     });
 
     afterEach(async () => {
@@ -65,6 +71,17 @@ describe('Member Component Test', () => {
             await membersService.deleteMember(memberId);
 
             expect(await membersService.getMember(memberId)).toBeNull();
+        });
+
+        it('should publish member deleted event', async () => {
+            const { memberId } = await membersService.registerMember('John Doe');
+
+            await membersService.deleteMember(memberId);
+
+            expect(eventBus.publishAndWaitForHandlers).toHaveBeenCalledWith({
+                name: MemberDeleted.name,
+                payload: { memberId },
+            });
         });
     });
 });

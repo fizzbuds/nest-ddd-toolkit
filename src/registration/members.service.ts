@@ -2,10 +2,11 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { v4 as uuidV4 } from 'uuid';
 import { MemberAggregate } from './domain/member.aggregate';
 import { MemberAggregateRepo } from './infrastructure/member.aggregate-repo';
+import { EventBus } from '../event-bus/event-bus.module';
 
 @Injectable()
 export class MembersService {
-    constructor(private readonly memberAggregateRepo: MemberAggregateRepo) {}
+    constructor(private readonly memberAggregateRepo: MemberAggregateRepo, private readonly eventBus: EventBus) {}
 
     public async registerMember(name: string) {
         const memberId = uuidV4();

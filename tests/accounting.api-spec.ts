@@ -118,8 +118,6 @@ describe('Accounting (api)', () => {
 
                 await request(app.getHttpServer()).delete(`/members/${memberId}`);
 
-                // FIXME don't know whether this should be done using the read model or the aggregate
-                // probably it's a good acceptance test but not sure whether it works in our steps
                 // const response = await request(app.getHttpServer()).get(`/accounting/fees`);
                 //
                 // expect(response.body).toEqual([]);
