@@ -1,3 +1,11 @@
+## Run the environment without installing
+
+1. Fork the repository
+2. Register to [gitpod.io](https://gitpod.io/)
+3. Give access to your GitHub account
+4. Create a New Workspace on gitpod selecting the forked repo
+5. Open vscode in browser or connect to your IDE
+
 ## Installation
 
 ```bash
