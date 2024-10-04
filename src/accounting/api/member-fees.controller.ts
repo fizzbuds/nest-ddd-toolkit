@@ -3,7 +3,7 @@ import { AddFeeDto } from './dto/add-fee.dto';
 import { AddFeeCommand } from '../commands/add-fee.command-handler';
 import { DeleteFeeCommand } from '../commands/delete-fee.command-handler';
 import { PayFeeCommand } from '../commands/pay-fee.command-handler';
-import { AccountingCommandBus } from '../infrastructure/accounting.command-bus';
+import { AccountingCommandBus } from '../@infra/accounting.command-bus';
 
 @Controller('accounting/members/:memberId/fees')
 export class MemberFeesController {

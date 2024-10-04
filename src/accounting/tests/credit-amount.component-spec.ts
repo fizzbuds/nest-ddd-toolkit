@@ -1,13 +1,13 @@
 import { MongoMemoryReplSet } from 'mongodb-memory-server';
 import { Test, TestingModule } from '@nestjs/testing';
-import { MemberFeesAggregateRepo } from '../infrastructure/member-fees.aggregate-repo';
+import { MemberFeesAggregateRepo } from '../@infra/member-fees.aggregate-repo';
 import { getMongoToken, MongoModule } from '@golee/mongo-nest';
 import { MongoClient } from 'mongodb';
 import { AccountingProviders } from '../accounting.module';
-import { EventBus, EventBusModule } from '../../event-bus/event-bus.module';
+import { EventBus, EventBusModule } from '../../@infra/event-bus/event-bus.module';
 import { MembersService } from '../../registration/members.service';
-import { AccountingCommandBus } from '../infrastructure/accounting.command-bus';
-import { AccountingQueryBus } from '../infrastructure/accounting.query-bus';
+import { AccountingCommandBus } from '../@infra/accounting.command-bus';
+import { AccountingQueryBus } from '../@infra/accounting.query-bus';
 import { MemberRegistered } from '../../registration/events/member-registered.event';
 import { GetCreditAmountsQuery } from '../queries/get-credit-amounts.query-handler';
 import { MemberRenamed } from '../../registration/events/member-renamed.event';

@@ -1,8 +1,8 @@
 import { Command, ICommandHandler, WithVersion } from '@fizzbuds/ddd-toolkit';
 import { MemberFeesAggregate } from '../domain/member-fees.aggregate';
 import { Injectable } from '@nestjs/common';
-import { MemberFeesAggregateRepo } from '../infrastructure/member-fees.aggregate-repo';
-import { AccountingCommandBus } from '../infrastructure/accounting.command-bus';
+import { MemberFeesAggregateRepo } from '../@infra/member-fees.aggregate-repo';
+import { AccountingCommandBus } from '../@infra/accounting.command-bus';
 
 type AddFeeCommandPayload = { memberId: string; amount: number };
 

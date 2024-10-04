@@ -1,5 +1,5 @@
 import { IQueryHandler, Query } from '@fizzbuds/ddd-toolkit';
-import { AccountingQueryBus } from '../infrastructure/accounting.query-bus';
+import { AccountingQueryBus } from '../@infra/accounting.query-bus';
 import { Injectable } from '@nestjs/common';
 import { CreditAmountQueryModel, CreditAmountQueryRepo } from '../read-models/credit-amount.query-repo';
 

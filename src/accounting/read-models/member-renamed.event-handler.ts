@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { EventBus } from '../../event-bus/event-bus.module';
+import { EventBus } from '../../@infra/event-bus/event-bus.module';
 import { IEventHandler } from '@fizzbuds/ddd-toolkit';
 import { CreditAmountQueryRepo } from './credit-amount.query-repo';
 import { MemberRenamed } from '../../registration/events/member-renamed.event';

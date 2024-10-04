@@ -1,5 +1,5 @@
 import { Controller, Get } from '@nestjs/common';
-import { AccountingQueryBus } from '../infrastructure/accounting.query-bus';
+import { AccountingQueryBus } from '../@infra/accounting.query-bus';
 import { GetCreditAmountsQuery } from '../queries/get-credit-amounts.query-handler';
 
 @Controller('accounting/credit-amounts')

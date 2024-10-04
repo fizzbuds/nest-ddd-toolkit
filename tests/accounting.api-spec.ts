@@ -4,7 +4,7 @@ import { MongoMemoryReplSet } from 'mongodb-memory-server';
 import { MongoClient } from 'mongodb';
 import { getMongoToken } from '@golee/mongo-nest';
 import { createMember, setupMongoMemoryReplSet, setupNestApp } from './api-utils';
-import { MemberFeesAggregateRepo } from '../src/accounting/infrastructure/member-fees.aggregate-repo';
+import { MemberFeesAggregateRepo } from '../src/accounting/@infra/member-fees.aggregate-repo';
 
 async function addMemberFee(app: INestApplication, memberId: string, amount: number): Promise<request.Response> {
     return request(app.getHttpServer()).post(`/accounting/members/${memberId}/fees`).send({ amount });

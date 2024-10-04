@@ -1,6 +1,6 @@
 import { Controller, Get } from '@nestjs/common';
 import { GetFeesQuery } from '../queries/get-fees.query-handler';
-import { AccountingQueryBus } from '../infrastructure/accounting.query-bus';
+import { AccountingQueryBus } from '../@infra/accounting.query-bus';
 
 @Controller('accounting/fees')
 export class FeesController {

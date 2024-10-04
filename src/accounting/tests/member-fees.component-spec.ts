@@ -1,18 +1,18 @@
 import { MongoMemoryReplSet } from 'mongodb-memory-server';
 import { Test, TestingModule } from '@nestjs/testing';
 import { MemberFeesAggregate } from '../domain/member-fees.aggregate';
-import { MemberFeesAggregateModel, MemberFeesAggregateRepo } from '../infrastructure/member-fees.aggregate-repo';
+import { MemberFeesAggregateModel, MemberFeesAggregateRepo } from '../@infra/member-fees.aggregate-repo';
 import { MongoAggregateRepo } from '@fizzbuds/ddd-toolkit';
 import { getMongoToken, MongoModule } from '@golee/mongo-nest';
 import { MongoClient } from 'mongodb';
 import { AccountingProviders } from '../accounting.module';
-import { EventBusModule } from '../../event-bus/event-bus.module';
+import { EventBusModule } from '../../@infra/event-bus/event-bus.module';
 import { AddFeeCommand } from '../commands/add-fee.command-handler';
 import { DeleteFeeCommand } from '../commands/delete-fee.command-handler';
 import { MembersService } from '../../registration/members.service';
 import { DeleteAllFeeCommand } from '../commands/delete-all-fee.command-handler';
 import { PayFeeCommand } from '../commands/pay-fee.command-handler';
-import { AccountingCommandBus } from '../infrastructure/accounting.command-bus';
+import { AccountingCommandBus } from '../@infra/accounting.command-bus';
 
 describe('Member Fees Component Test', () => {
     let module: TestingModule;

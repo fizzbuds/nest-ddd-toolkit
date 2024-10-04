@@ -1,4 +1,4 @@
-import { MemberAggregateRepo } from './infrastructure/member.aggregate-repo';
+import { MemberAggregateRepo } from './@infra/member.aggregate-repo';
 import { Module } from '@nestjs/common';
 import { MembersController } from './api/members.controller';
 import { MembersService } from './members.service';

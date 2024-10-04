@@ -2,7 +2,7 @@ import { ClientSession, Document, MongoClient } from 'mongodb';
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { MongoQueryRepo } from '@fizzbuds/ddd-toolkit';
 import { InjectMongo } from '@golee/mongo-nest';
-import { MemberFeesAggregateModel } from '../infrastructure/member-fees.aggregate-repo';
+import { MemberFeesAggregateModel } from '../@infra/member-fees.aggregate-repo';
 
 export type CreditAmountQueryModel = {
     memberId: string;

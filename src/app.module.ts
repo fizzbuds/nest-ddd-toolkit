@@ -6,7 +6,7 @@ import { envValidationSchema } from './env-validation-schema';
 import { RegistrationModule } from './registration/registration.module';
 import { AccountingModule } from './accounting/accounting.module';
 import { MongoModule } from '@golee/mongo-nest';
-import { EventBusModule } from './event-bus/event-bus.module';
+import { EventBusModule } from './@infra/event-bus/event-bus.module';
 
 @Module({
     imports: [
