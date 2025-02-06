@@ -1,0 +1,21 @@
+meta {
+  name: Add fee
+  type: http
+  seq: 5
+}
+
+post {
+  url: http://localhost:3000/accounting/members/:id/fees
+  body: json
+  auth: none
+}
+
+params:path {
+  id: 3dec2f5f-d683-4b99-9f87-768115339c7f
+}
+
+body:json {
+  {
+    "amount": 100
+  }
+}

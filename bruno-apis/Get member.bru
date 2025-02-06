@@ -1,0 +1,21 @@
+meta {
+  name: Get member
+  type: http
+  seq: 2
+}
+
+get {
+  url: http://localhost:3000/members/:id
+  body: none
+  auth: none
+}
+
+params:path {
+  id: b31470e8-9153-440e-b828-456daab3b8b5
+}
+
+body:json {
+  {
+    "name": "Jake Harper"
+  }
+}

@@ -1,0 +1,17 @@
+meta {
+  name: Register member
+  type: http
+  seq: 1
+}
+
+post {
+  url: http://localhost:3000/members
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "name": "Jake Harper"
+  }
+}

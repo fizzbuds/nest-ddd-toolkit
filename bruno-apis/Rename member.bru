@@ -1,0 +1,21 @@
+meta {
+  name: Rename member
+  type: http
+  seq: 4
+}
+
+put {
+  url: http://localhost:3000/members/:id
+  body: json
+  auth: none
+}
+
+params:path {
+  id: b31470e8-9153-440e-b828-456daab3b8b5
+}
+
+body:json {
+  {
+    "name": "Jake Harper 2"
+  }
+}

@@ -1,0 +1,17 @@
+meta {
+  name: Cred amounts
+  type: http
+  seq: 10
+}
+
+get {
+  url: http://localhost:3000/accounting/credit-amounts
+  body: none
+  auth: none
+}
+
+body:json {
+  {
+    "name": "Jake Harper"
+  }
+}

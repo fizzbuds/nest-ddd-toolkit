@@ -1,0 +1,22 @@
+meta {
+  name: Remove fee
+  type: http
+  seq: 7
+}
+
+delete {
+  url: http://localhost:3000/accounting/members/:id/fees/:feeId
+  body: json
+  auth: none
+}
+
+params:path {
+  feeId: ace455ce-6bd6-42ca-be6c-4547e932227c
+  id: b31470e8-9153-440e-b828-456daab3b8b5
+}
+
+body:json {
+  {
+    "amount": 100
+  }
+}

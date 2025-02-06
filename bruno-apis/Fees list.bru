@@ -1,0 +1,17 @@
+meta {
+  name: Fees list
+  type: http
+  seq: 9
+}
+
+get {
+  url: http://localhost:3000/accounting/fees
+  body: none
+  auth: none
+}
+
+body:json {
+  {
+    "name": "Jake Harper"
+  }
+}
