@@ -1,13 +1,12 @@
 import { Controller, Get } from '@nestjs/common';
-import { GetFeesQuery } from '../queries/get-fees.query-handler';
-import { AccountingQueryBus } from '../@infra/accounting.query-bus';
+import { AccountingService } from '../accounting.service';
 
 @Controller('accounting/fees')
 export class FeesController {
-    constructor(private readonly accountingQueryBus: AccountingQueryBus) {}
+    constructor(private readonly service: AccountingService) {}
 
     @Get('/')
     public async feesList() {
-        return await this.accountingQueryBus.execute(new GetFeesQuery({}));
+        return this.service.getFees();
     }
 }

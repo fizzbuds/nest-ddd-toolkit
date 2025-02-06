@@ -6,18 +6,12 @@ import { MongoClient } from 'mongodb';
 import { AccountingProviders } from '../accounting.module';
 import { EventBusModule } from '../../@infra/event-bus/event-bus.module';
 import { MembersService } from '../../registration/members.service';
-import { AccountingCommandBus } from '../@infra/accounting.command-bus';
-import { AccountingQueryBus } from '../@infra/accounting.query-bus';
-import { AddFeeCommand } from '../commands/add-fee.command-handler';
-import { PayFeeCommand } from '../commands/pay-fee.command-handler';
-import { GetFeesQuery } from '../queries/get-fees.query-handler';
-import { DeleteFeeCommand } from '../commands/delete-fee.command-handler';
+import { AccountingService } from '../accounting.service';
 
 describe('Fee Component Test', () => {
     let module: TestingModule;
     let mongodb: MongoMemoryReplSet;
-    let accountingCommandBus: AccountingCommandBus;
-    let accountingQueryBus: AccountingQueryBus;
+    let service: AccountingService;
 
     beforeAll(async () => {
         mongodb = await MongoMemoryReplSet.create({
@@ -41,8 +35,7 @@ describe('Fee Component Test', () => {
 
         await module.get(MemberFeesAggregateRepo).init();
 
-        accountingCommandBus = module.get(AccountingCommandBus);
-        accountingQueryBus = module.get(AccountingQueryBus);
+        service = module.get(AccountingService);
     });
 
     afterEach(async () => {
@@ -59,9 +52,9 @@ describe('Fee Component Test', () => {
 
     describe('Add fee', () => {
         it('get fees query should return added fee', async () => {
-            await accountingCommandBus.sendSync(new AddFeeCommand({ memberId, amount: 100 }));
+            await service.addFee({ memberId, amount: 100 });
 
-            expect(await accountingQueryBus.execute(new GetFeesQuery({}))).toEqual([
+            expect(await service.getFees()).toEqual([
                 expect.objectContaining({
                     deleted: false,
                     memberId: 'foo-member-id',
@@ -75,14 +68,14 @@ describe('Fee Component Test', () => {
     describe('Pay fee', () => {
         let feeId: string;
         beforeEach(async () => {
-            const _ = await accountingCommandBus.sendSync(new AddFeeCommand({ memberId, amount: 100 }));
+            const _ = await service.addFee({ memberId, amount: 100 });
             feeId = _.feeId;
         });
 
         it('get fees query should return paid fee', async () => {
-            await accountingCommandBus.sendSync(new PayFeeCommand({ memberId, feeId }));
+            await service.payFee({ memberId, feeId });
 
-            expect(await accountingQueryBus.execute(new GetFeesQuery({}))).toEqual([
+            expect(await service.getFees()).toEqual([
                 expect.objectContaining({
                     deleted: false,
                     memberId: 'foo-member-id',
@@ -96,14 +89,14 @@ describe('Fee Component Test', () => {
     describe('Delete fee', () => {
         let feeId: string;
         beforeEach(async () => {
-            const _ = await accountingCommandBus.sendSync(new AddFeeCommand({ memberId, amount: 100 }));
+            const _ = await service.addFee({ memberId, amount: 100 });
             feeId = _.feeId;
         });
 
         it('get fees query should return nothing', async () => {
-            await accountingCommandBus.sendSync(new DeleteFeeCommand({ memberId, feeId }));
+            await service.deleteFee({ memberId, feeId });
 
-            expect(await accountingQueryBus.execute(new GetFeesQuery({}))).toEqual([]);
+            expect(await service.getFees()).toEqual([]);
         });
     });
 });
