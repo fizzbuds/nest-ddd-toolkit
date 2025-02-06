@@ -4,18 +4,15 @@ import { MemberFeesAggregateRepo } from '../@infra/member-fees.aggregate-repo';
 import { getMongoToken, MongoModule } from '@golee/mongo-nest';
 import { MongoClient } from 'mongodb';
 import { AccountingProviders } from '../accounting.module';
-import { EventBus, EventBusModule } from '../../@infra/event-bus/event-bus.module';
 import { MembersService } from '../../registration/members.service';
-import { MemberRegistered } from '../../registration/events/member-registered.event';
-import { MemberRenamed } from '../../registration/events/member-renamed.event';
-import { MemberDeleted } from '../../registration/events/member-deleted.event';
 import { AccountingService } from '../accounting.service';
+import { AccountingHooks } from '../accounting.hooks';
 
 describe('Credit Amount Component Test', () => {
     let module: TestingModule;
     let mongodb: MongoMemoryReplSet;
     let service: AccountingService;
-    let eventBus: EventBus;
+    let hooks: AccountingHooks;
 
     beforeAll(async () => {
         mongodb = await MongoMemoryReplSet.create({
@@ -34,13 +31,13 @@ describe('Credit Amount Component Test', () => {
                     useValue: { getMember: jest.fn() },
                 },
             ],
-            imports: [MongoModule.forRoot({ uri: mongodb.getUri('test') }), EventBusModule],
+            imports: [MongoModule.forRoot({ uri: mongodb.getUri('test') })],
         }).compile();
 
         await module.get(MemberFeesAggregateRepo).init();
 
-        eventBus = module.get(EventBus);
         service = module.get(AccountingService);
+        hooks = module.get(AccountingHooks);
     });
 
     afterEach(async () => {
@@ -57,7 +54,7 @@ describe('Credit Amount Component Test', () => {
 
     describe('On MemberRegistered event ', () => {
         it('get credit amounts query should should return member credit amount', async () => {
-            await eventBus.publishAndWaitForHandlers(new MemberRegistered({ memberId, memberName: 'Nina Jolt' }));
+            await hooks.onMemberRegistered({ memberId, memberName: 'Nina Jolt' });
 
             expect(await service.getCreditAmounts()).toEqual([
                 {
@@ -72,7 +69,7 @@ describe('Credit Amount Component Test', () => {
 
     describe('Add fee', () => {
         beforeEach(async () => {
-            await eventBus.publishAndWaitForHandlers(new MemberRegistered({ memberId, memberName: 'Nina Jolt' }));
+            await hooks.onMemberRegistered({ memberId, memberName: 'Nina Jolt' });
         });
 
         it('get credit amounts query should return increased credit amount', async () => {
@@ -89,7 +86,7 @@ describe('Credit Amount Component Test', () => {
     describe('Pay fee', () => {
         let feeId: string;
         beforeEach(async () => {
-            await eventBus.publishAndWaitForHandlers(new MemberRegistered({ memberId, memberName: 'Nina Jolt' }));
+            await hooks.onMemberRegistered({ memberId, memberName: 'Nina Jolt' });
             const _ = await service.addFee({ memberId, amount: 100 });
             feeId = _.feeId;
         });
@@ -107,11 +104,11 @@ describe('Credit Amount Component Test', () => {
 
     describe('On MemberRenamed event', () => {
         beforeEach(async () => {
-            await eventBus.publishAndWaitForHandlers(new MemberRegistered({ memberId, memberName: 'Nina Jolt' }));
+            await hooks.onMemberRegistered({ memberId, memberName: 'Nina Jolt' });
         });
 
         it('get credit amounts query should return the updated member name', async () => {
-            await eventBus.publishAndWaitForHandlers(new MemberRenamed({ memberId, memberName: 'Luna Jett' }));
+            await hooks.onMemberRenamed({ memberId, memberName: 'Luna Jett' });
 
             expect(await service.getCreditAmounts()).toEqual([
                 {
@@ -126,11 +123,11 @@ describe('Credit Amount Component Test', () => {
 
     describe('On MemberDeleted event', () => {
         beforeEach(async () => {
-            await eventBus.publishAndWaitForHandlers(new MemberRegistered({ memberId, memberName: 'Nina Jolt' }));
+            await hooks.onMemberRegistered({ memberId, memberName: 'Nina Jolt' });
         });
 
         it('get credit amounts query should return nothing', async () => {
-            await eventBus.publishAndWaitForHandlers(new MemberDeleted({ memberId }));
+            await hooks.onMemberDeleted({ memberId });
 
             expect(await service.getCreditAmounts()).toEqual([]);
         });

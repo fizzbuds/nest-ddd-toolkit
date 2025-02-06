@@ -4,7 +4,6 @@ import { MemberFeesAggregateRepo } from '../@infra/member-fees.aggregate-repo';
 import { getMongoToken, MongoModule } from '@golee/mongo-nest';
 import { MongoClient } from 'mongodb';
 import { AccountingProviders } from '../accounting.module';
-import { EventBusModule } from '../../@infra/event-bus/event-bus.module';
 import { MembersService } from '../../registration/members.service';
 import { AccountingService } from '../accounting.service';
 
@@ -30,7 +29,7 @@ describe('Fee Component Test', () => {
                     useValue: { getMember: jest.fn() },
                 },
             ],
-            imports: [MongoModule.forRoot({ uri: mongodb.getUri('test') }), EventBusModule],
+            imports: [MongoModule.forRoot({ uri: mongodb.getUri('test') })],
         }).compile();
 
         await module.get(MemberFeesAggregateRepo).init();

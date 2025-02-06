@@ -2,14 +2,14 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { v4 as uuidV4 } from 'uuid';
 import { MemberAggregate } from './domain/member.aggregate';
 import { MemberAggregateRepo } from './@infra/member.aggregate-repo';
-import { MemberDeleted } from './events/member-deleted.event';
-import { EventBus } from '../@infra/event-bus/event-bus.module';
-import { MemberRegistered } from './events/member-registered.event';
-import { MemberRenamed } from './events/member-renamed.event';
+import { AccountingHooks } from '../accounting/accounting.hooks';
 
 @Injectable()
 export class MembersService {
-    constructor(private readonly memberAggregateRepo: MemberAggregateRepo, private readonly eventBus: EventBus) {}
+    constructor(
+        private readonly memberAggregateRepo: MemberAggregateRepo,
+        private readonly accountingHooks: AccountingHooks,
+    ) {}
 
     public async registerMember(name: string) {
         const memberId = uuidV4();
@@ -17,7 +17,7 @@ export class MembersService {
 
         await this.memberAggregateRepo.save(memberAggregate);
 
-        await this.eventBus.publishAndWaitForHandlers(new MemberRegistered({ memberId, memberName: name }));
+        await this.accountingHooks.onMemberRegistered({ memberId, memberName: name });
         return { memberId };
     }
 
@@ -28,7 +28,7 @@ export class MembersService {
         member.delete();
         await this.memberAggregateRepo.save(member);
 
-        await this.eventBus.publishAndWaitForHandlers(new MemberDeleted({ memberId: member.id }));
+        await this.accountingHooks.onMemberDeleted({ memberId: member.id });
     }
 
     public async getMember(memberId: string) {
@@ -45,7 +45,7 @@ export class MembersService {
         member.rename(newName);
         await this.memberAggregateRepo.save(member);
 
-        await this.eventBus.publishAndWaitForHandlers(new MemberRenamed({ memberId: member.id, memberName: newName }));
+        await this.accountingHooks.onMemberRenamed({ memberId: member.id, memberName: newName });
         return { id: member.id, name: member.name };
     }
 }
