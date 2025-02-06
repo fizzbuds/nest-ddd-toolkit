@@ -6,21 +6,16 @@ import { MongoClient } from 'mongodb';
 import { AccountingProviders } from '../accounting.module';
 import { EventBus, EventBusModule } from '../../@infra/event-bus/event-bus.module';
 import { MembersService } from '../../registration/members.service';
-import { AccountingCommandBus } from '../@infra/accounting.command-bus';
-import { AccountingQueryBus } from '../@infra/accounting.query-bus';
 import { MemberRegistered } from '../../registration/events/member-registered.event';
-import { GetCreditAmountsQuery } from '../queries/get-credit-amounts.query-handler';
 import { MemberRenamed } from '../../registration/events/member-renamed.event';
 import { MemberDeleted } from '../../registration/events/member-deleted.event';
-import { AddFeeCommand } from '../commands/add-fee.command-handler';
-import { PayFeeCommand } from '../commands/pay-fee.command-handler';
+import { AccountingService } from '../accounting.service';
 
 describe('Credit Amount Component Test', () => {
     let module: TestingModule;
     let mongodb: MongoMemoryReplSet;
-    let accountingCommandBus: AccountingCommandBus;
+    let service: AccountingService;
     let eventBus: EventBus;
-    let accountingQueryBus: AccountingQueryBus;
 
     beforeAll(async () => {
         mongodb = await MongoMemoryReplSet.create({
@@ -45,8 +40,7 @@ describe('Credit Amount Component Test', () => {
         await module.get(MemberFeesAggregateRepo).init();
 
         eventBus = module.get(EventBus);
-        accountingCommandBus = module.get(AccountingCommandBus);
-        accountingQueryBus = module.get(AccountingQueryBus);
+        service = module.get(AccountingService);
     });
 
     afterEach(async () => {
@@ -65,7 +59,7 @@ describe('Credit Amount Component Test', () => {
         it('get credit amounts query should should return member credit amount', async () => {
             await eventBus.publishAndWaitForHandlers(new MemberRegistered({ memberId, memberName: 'Nina Jolt' }));
 
-            expect(await accountingQueryBus.execute(new GetCreditAmountsQuery({}))).toEqual([
+            expect(await service.getCreditAmounts()).toEqual([
                 {
                     creditAmount: 0,
                     deleted: false,
@@ -82,9 +76,9 @@ describe('Credit Amount Component Test', () => {
         });
 
         it('get credit amounts query should return increased credit amount', async () => {
-            await accountingCommandBus.sendSync(new AddFeeCommand({ memberId, amount: 100 }));
+            await service.addFee({ memberId, amount: 100 });
 
-            expect(await accountingQueryBus.execute(new GetCreditAmountsQuery({}))).toEqual([
+            expect(await service.getCreditAmounts()).toEqual([
                 expect.objectContaining({
                     creditAmount: 100,
                 }),
@@ -96,14 +90,14 @@ describe('Credit Amount Component Test', () => {
         let feeId: string;
         beforeEach(async () => {
             await eventBus.publishAndWaitForHandlers(new MemberRegistered({ memberId, memberName: 'Nina Jolt' }));
-            const _ = await accountingCommandBus.sendSync(new AddFeeCommand({ memberId, amount: 100 }));
+            const _ = await service.addFee({ memberId, amount: 100 });
             feeId = _.feeId;
         });
 
         it('get credit amounts query should return decreased credit amount', async () => {
-            await accountingCommandBus.sendSync(new PayFeeCommand({ memberId, feeId }));
+            await service.payFee({ memberId, feeId });
 
-            expect(await accountingQueryBus.execute(new GetCreditAmountsQuery({}))).toEqual([
+            expect(await service.getCreditAmounts()).toEqual([
                 expect.objectContaining({
                     creditAmount: 0,
                 }),
@@ -119,7 +113,7 @@ describe('Credit Amount Component Test', () => {
         it('get credit amounts query should return the updated member name', async () => {
             await eventBus.publishAndWaitForHandlers(new MemberRenamed({ memberId, memberName: 'Luna Jett' }));
 
-            expect(await accountingQueryBus.execute(new GetCreditAmountsQuery({}))).toEqual([
+            expect(await service.getCreditAmounts()).toEqual([
                 {
                     creditAmount: 0,
                     deleted: false,
@@ -138,7 +132,7 @@ describe('Credit Amount Component Test', () => {
         it('get credit amounts query should return nothing', async () => {
             await eventBus.publishAndWaitForHandlers(new MemberDeleted({ memberId }));
 
-            expect(await accountingQueryBus.execute(new GetCreditAmountsQuery({}))).toEqual([]);
+            expect(await service.getCreditAmounts()).toEqual([]);
         });
     });
 });

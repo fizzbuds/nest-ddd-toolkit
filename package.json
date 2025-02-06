@@ -94,5 +94,6 @@
     "lint-staged": {
         "*.ts": "eslint --fix",
         "*.json": "prettier --write"
-    }
+    },
+    "packageManager": "pnpm@9.15.0"
 }

@@ -7,17 +7,13 @@ import { getMongoToken, MongoModule } from '@golee/mongo-nest';
 import { MongoClient } from 'mongodb';
 import { AccountingProviders } from '../accounting.module';
 import { EventBusModule } from '../../@infra/event-bus/event-bus.module';
-import { AddFeeCommand } from '../commands/add-fee.command-handler';
-import { DeleteFeeCommand } from '../commands/delete-fee.command-handler';
 import { MembersService } from '../../registration/members.service';
-import { DeleteAllFeeCommand } from '../commands/delete-all-fee.command-handler';
-import { PayFeeCommand } from '../commands/pay-fee.command-handler';
-import { AccountingCommandBus } from '../@infra/accounting.command-bus';
+import { AccountingService } from '../accounting.service';
 
 describe('Member Fees Component Test', () => {
     let module: TestingModule;
     let mongodb: MongoMemoryReplSet;
-    let accountingCommandBus: AccountingCommandBus;
+    let service: AccountingService;
     let aggregateRepo: MongoAggregateRepo<MemberFeesAggregate, MemberFeesAggregateModel>;
 
     beforeAll(async () => {
@@ -42,7 +38,7 @@ describe('Member Fees Component Test', () => {
 
         await module.get(MemberFeesAggregateRepo).init();
 
-        accountingCommandBus = module.get(AccountingCommandBus);
+        service = module.get(AccountingService);
         aggregateRepo = module.get(MemberFeesAggregateRepo);
     });
 
@@ -60,7 +56,7 @@ describe('Member Fees Component Test', () => {
 
     describe('Add Fee', () => {
         it('should add a fee', async () => {
-            const { feeId } = await accountingCommandBus.sendSync(new AddFeeCommand({ memberId, amount: 100 }));
+            const { feeId } = await service.addFee({ memberId, amount: 100 });
 
             expect(await aggregateRepo.getById(memberId)).toMatchObject({
                 feesEntity: { fees: [{ feeId, value: 100, deleted: false }] },
@@ -71,12 +67,12 @@ describe('Member Fees Component Test', () => {
     describe('Delete Fee', () => {
         let feeId: string;
         beforeEach(async () => {
-            const _ = await accountingCommandBus.sendSync(new AddFeeCommand({ memberId, amount: 100 }));
+            const _ = await service.addFee({ memberId, amount: 100 });
             feeId = _.feeId;
         });
 
         it('should delete fee', async () => {
-            await accountingCommandBus.sendSync(new DeleteFeeCommand({ memberId, feeId }));
+            await service.deleteFee({ memberId, feeId });
 
             expect(await aggregateRepo.getById(memberId)).toMatchObject({
                 feesEntity: { fees: [{ feeId, value: 100, deleted: true }] },
@@ -87,12 +83,12 @@ describe('Member Fees Component Test', () => {
     describe('Pay Fee', () => {
         let feeId: string;
         beforeEach(async () => {
-            const _ = await accountingCommandBus.sendSync(new AddFeeCommand({ memberId, amount: 100 }));
+            const _ = await service.addFee({ memberId, amount: 100 });
             feeId = _.feeId;
         });
 
         it('should pay fee', async () => {
-            await accountingCommandBus.sendSync(new PayFeeCommand({ memberId, feeId }));
+            await service.payFee({ memberId, feeId });
 
             expect(await aggregateRepo.getById(memberId)).toMatchObject({
                 feesEntity: { fees: [{ feeId, value: 100, deleted: false, paid: true }] },
@@ -102,12 +98,12 @@ describe('Member Fees Component Test', () => {
 
     describe('Delete All Fee', () => {
         beforeEach(async () => {
-            await accountingCommandBus.sendSync(new AddFeeCommand({ memberId, amount: 100 }));
-            await accountingCommandBus.sendSync(new AddFeeCommand({ memberId, amount: 200 }));
+            await service.addFee({ memberId, amount: 100 });
+            await service.addFee({ memberId, amount: 200 });
         });
 
         it('should delete all fees', async () => {
-            await accountingCommandBus.sendSync(new DeleteAllFeeCommand({ memberId }));
+            await service.deleteAllFees({ memberId });
 
             expect(await aggregateRepo.getById(memberId)).toMatchObject({
                 feesEntity: {
