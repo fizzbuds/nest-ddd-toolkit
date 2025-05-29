@@ -7,10 +7,10 @@ export class MemberFeesAggregate {
         return new MemberFeesAggregate(id);
     }
 
-    public addFee(number: number) {
-        const { feeId } = this.feesEntity.add(number);
+    public addFee(value: number) {
+        const { feeId } = this.feesEntity.add(value);
 
-        this.creditAmount += number;
+        this.creditAmount += value;
         return feeId;
     }
 
