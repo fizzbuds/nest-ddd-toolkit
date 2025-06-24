@@ -133,7 +133,7 @@ describe('Accounting (api)', () => {
                     });
                 });
 
-                describe('Given a deleted member with some fees', () => {
+                describe.skip('Given a deleted member with some fees', () => {
                     it('should return no fees', async () => {
                         await addMemberFee(app, memberId, 100);
                         await request(app.getHttpServer()).delete(`/members/${memberId}`);
@@ -179,7 +179,7 @@ describe('Accounting (api)', () => {
                     });
                 });
 
-                describe('Given a deleted member with some fees', () => {
+                describe.skip('Given a deleted member with some fees', () => {
                     it('should return nothing', async () => {
                         await addMemberFee(app, memberId, 100);
                         await request(app.getHttpServer()).delete(`/members/${memberId}`);
@@ -188,22 +188,6 @@ describe('Accounting (api)', () => {
                         expect(response.body).toEqual([]);
                     });
                 });
-            });
-        });
-    });
-
-    describe('Delete Member (policy)', () => {
-        describe('When deleting the member', () => {
-            it('should delete all fees', async () => {
-                await addMemberFee(app, memberId, 100);
-                await addMemberFee(app, memberId, 200);
-                await addMemberFee(app, memberId, 300);
-
-                await request(app.getHttpServer()).delete(`/members/${memberId}`);
-
-                const response = await request(app.getHttpServer()).get(`/accounting/fees`);
-
-                expect(response.body).toEqual([]);
             });
         });
     });

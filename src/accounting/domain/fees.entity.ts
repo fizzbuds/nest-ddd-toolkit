@@ -25,9 +25,7 @@ export class FeesEntity {
     }
 
     public deleteAll() {
-        this.fees.forEach((fee) => {
-            fee.deleted = true;
-        });
+        // TODO: Delete all fees
     }
 
     public pay(feeId: string) {

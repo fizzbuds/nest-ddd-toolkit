@@ -7,10 +7,10 @@ import { AccountingService } from '../accounting.service';
 @Injectable()
 export class MemberDeletedPolicy implements IEventHandler<MemberDeleted> {
     constructor(private readonly eventBus: EventBus, private readonly service: AccountingService) {
-        this.eventBus.subscribe(MemberDeleted, this);
+        // TODO: Register this policy to the event bus
     }
 
     public async handle(event: MemberDeleted): Promise<void> {
-        return await this.service.deleteAllFees({ memberId: event.payload.memberId });
+        // TODO: When a member is deleted, we need to delete all their fees
     }
 }

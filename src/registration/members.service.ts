@@ -2,7 +2,6 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { v4 as uuidV4 } from 'uuid';
 import { MemberAggregate } from './domain/member.aggregate';
 import { MemberAggregateRepo } from './@infra/member.aggregate-repo';
-import { MemberDeleted } from './events/member-deleted.event';
 import { EventBus } from '../@infra/event-bus/event-bus.module';
 import { MemberRegistered } from './events/member-registered.event';
 import { MemberRenamed } from './events/member-renamed.event';
@@ -28,7 +27,7 @@ export class MembersService {
         member.delete();
         await this.memberAggregateRepo.save(member);
 
-        await this.eventBus.publishAndWaitForHandlers(new MemberDeleted({ memberId: member.id }));
+        // TODO: Publish MemberDeleted event
     }
 
     public async getMember(memberId: string) {

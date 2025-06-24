@@ -22,12 +22,7 @@ export class AccountingService {
     }
 
     async deleteAllFees(command: { memberId: string }) {
-        const aggregate = await this.aggregateRepo.getById(command.memberId);
-        if (!aggregate) return;
-
-        aggregate.deleteAllFees();
-
-        await this.aggregateRepo.save(aggregate);
+        // TODO: Implement this command
     }
 
     async deleteFee(command: { memberId: string; feeId: string }) {

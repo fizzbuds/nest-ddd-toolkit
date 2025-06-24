@@ -30,8 +30,7 @@ export class MemberFeesAggregate {
     }
 
     public deleteAllFees() {
-        this.feesEntity.deleteAll();
-        this.creditAmount = 0;
+        // TODO: implement delete all fees logic (use feesEntity.deleteAll())
     }
 
     public payFee(feeId: string) {

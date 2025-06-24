@@ -117,5 +117,11 @@ describe('Member Fees Component Test', () => {
                 },
             });
         });
+
+        it('should set credit amount to 0', async () => {
+            await service.deleteAllFees({ memberId });
+
+            expect((await aggregateRepo.getById(memberId))?.getCreditAmount()).toBe(0);
+        });
     });
 });
