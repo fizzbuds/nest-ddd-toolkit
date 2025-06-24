@@ -30,8 +30,8 @@ export class CreditAmountQueryRepo extends MongoQueryRepo<CreditAmountQueryModel
         await this.collection.updateOne({ memberId }, { $set: queryModel }, { upsert: true });
     }
 
-    public async onMemberRenamed({ memberName, memberId }: { memberName: string; memberId: string }) {
-        await this.collection.updateOne({ memberId }, { $set: { memberName } }, { upsert: true });
+    public async onMemberRenamed(params: { memberName: string; memberId: string }) {
+        // TODO: Implement member renaming logic
     }
 
     public async onMemberFeesSave(aggregateModel: MemberFeesAggregateModel, session?: ClientSession) {

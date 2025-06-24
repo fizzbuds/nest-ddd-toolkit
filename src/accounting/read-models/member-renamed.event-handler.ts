@@ -7,13 +7,10 @@ import { MemberRenamed } from '../../registration/events/member-renamed.event';
 @Injectable()
 export class MemberRenamedEventHandler implements IEventHandler<MemberRenamed> {
     constructor(eventBus: EventBus, private readonly creditAmountQueryRepo: CreditAmountQueryRepo) {
-        eventBus.subscribe(MemberRenamed, this);
+        // TODO: Register this handler to the event bus
     }
 
     public async handle({ payload }: MemberRenamed): Promise<void> {
-        await this.creditAmountQueryRepo.onMemberRenamed({
-            memberId: payload.memberId,
-            memberName: payload.memberName,
-        });
+        //TODO When a member is renamed, we need to rename in the credit amount query repo
     }
 }
