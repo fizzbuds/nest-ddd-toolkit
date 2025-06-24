@@ -45,7 +45,7 @@ export class MembersService {
         member.rename(newName);
         await this.memberAggregateRepo.save(member);
 
-        await this.eventBus.publishAndWaitForHandlers(new MemberRenamed({ memberId: member.id, memberName: newName }));
+        //TODO publish MemberRenamedEvent
         return { id: member.id, name: member.name };
     }
 }
