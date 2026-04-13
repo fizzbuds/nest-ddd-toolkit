@@ -1,5 +1,5 @@
 import { Body, Controller, Delete, HttpCode, HttpStatus, Param, Post } from '@nestjs/common';
-import { AddFeeDto } from './dto/add-fee.dto';
+import { IssueFeeDto } from './dto/issue-fee.dto';
 import { AccountingService } from '../accounting.service';
 
 @Controller('accounting/members/:memberId/fees')
@@ -7,13 +7,13 @@ export class MemberFeesController {
     constructor(private readonly service: AccountingService) {}
 
     @Post('')
-    public async addFee(@Param('memberId') memberId: string, @Body() body: AddFeeDto) {
-        return await this.service.addFee({ memberId, amount: body.amount });
+    public async issueFee(@Param('memberId') memberId: string, @Body() body: IssueFeeDto) {
+        return await this.service.issueFee({ memberId, amount: body.amount });
     }
 
     @Delete(':feeId')
-    public async deleteFee(@Param('memberId') memberId: string, @Param('feeId') feeId: string) {
-        await this.service.deleteFee({ memberId, feeId });
+    public async voidFee(@Param('memberId') memberId: string, @Param('feeId') feeId: string) {
+        await this.service.voidFee({ memberId, feeId });
     }
 
     @Post(':feeId/pay')

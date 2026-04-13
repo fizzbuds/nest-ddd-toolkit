@@ -54,28 +54,28 @@ describe('Member Fees Component Test', () => {
 
     const memberId = 'foo-member-id';
 
-    describe('Add Fee', () => {
-        it('should add a fee', async () => {
-            const { feeId } = await service.addFee({ memberId, amount: 100 });
+    describe('Issue Fee', () => {
+        it('should issue a fee', async () => {
+            const { feeId } = await service.issueFee({ memberId, amount: 100 });
 
             expect(await aggregateRepo.getById(memberId)).toMatchObject({
-                feesEntity: { fees: [{ feeId, value: 100, deleted: false }] },
+                feesEntity: { fees: [{ feeId, value: 100, voided: false }] },
             });
         });
     });
 
-    describe('Delete Fee', () => {
+    describe('Void Fee', () => {
         let feeId: string;
         beforeEach(async () => {
-            const _ = await service.addFee({ memberId, amount: 100 });
+            const _ = await service.issueFee({ memberId, amount: 100 });
             feeId = _.feeId;
         });
 
-        it('should delete fee', async () => {
-            await service.deleteFee({ memberId, feeId });
+        it('should void fee', async () => {
+            await service.voidFee({ memberId, feeId });
 
             expect(await aggregateRepo.getById(memberId)).toMatchObject({
-                feesEntity: { fees: [{ feeId, value: 100, deleted: true }] },
+                feesEntity: { fees: [{ feeId, value: 100, voided: true }] },
             });
         });
     });
@@ -83,7 +83,7 @@ describe('Member Fees Component Test', () => {
     describe('Pay Fee', () => {
         let feeId: string;
         beforeEach(async () => {
-            const _ = await service.addFee({ memberId, amount: 100 });
+            const _ = await service.issueFee({ memberId, amount: 100 });
             feeId = _.feeId;
         });
 
@@ -91,27 +91,27 @@ describe('Member Fees Component Test', () => {
             await service.payFee({ memberId, feeId });
 
             expect(await aggregateRepo.getById(memberId)).toMatchObject({
-                feesEntity: { fees: [{ feeId, value: 100, deleted: false, paid: true }] },
+                feesEntity: { fees: [{ feeId, value: 100, voided: false, paid: true }] },
             });
         });
     });
 
-    describe('Delete All Fee', () => {
+    describe('Void All Fees', () => {
         beforeEach(async () => {
-            await service.addFee({ memberId, amount: 100 });
-            await service.addFee({ memberId, amount: 200 });
+            await service.issueFee({ memberId, amount: 100 });
+            await service.issueFee({ memberId, amount: 200 });
         });
 
-        it('should delete all fees', async () => {
-            await service.deleteAllFees({ memberId });
+        it('should void all fees', async () => {
+            await service.voidAllFees({ memberId });
 
             expect(await aggregateRepo.getById(memberId)).toMatchObject({
                 feesEntity: {
                     fees: [
-                        expect.objectContaining({ value: 100, deleted: true }),
+                        expect.objectContaining({ value: 100, voided: true }),
                         expect.objectContaining({
                             value: 200,
-                            deleted: true,
+                            voided: true,
                         }),
                     ],
                 },

@@ -6,11 +6,11 @@ import { getMongoToken } from '@golee/mongo-nest';
 import { createMember, setupMongoMemoryReplSet, setupNestApp } from './api-utils';
 import { MemberFeesAggregateRepo } from '../src/accounting/@infra/member-fees.aggregate-repo';
 
-async function addMemberFee(app: INestApplication, memberId: string, amount: number): Promise<request.Response> {
+async function issueMemberFee(app: INestApplication, memberId: string, amount: number): Promise<request.Response> {
     return request(app.getHttpServer()).post(`/accounting/members/${memberId}/fees`).send({ amount });
 }
 
-async function deleteMemberFee(app: INestApplication<any>, memberId: string, feeId: any) {
+async function voidMemberFee(app: INestApplication<any>, memberId: string, feeId: any) {
     return request(app.getHttpServer()).delete(`/accounting/members/${memberId}/fees/${feeId}`);
 }
 
@@ -51,14 +51,14 @@ describe('Accounting (api)', () => {
         describe('/members/:memberId/fees (aggregate commands)', () => {
             describe('POST /accounting/members/:memberId/fees', () => {
                 it('should create a membership fee and return a feeId', async () => {
-                    const response = await addMemberFee(app, memberId, 100);
+                    const response = await issueMemberFee(app, memberId, 100);
 
                     expect(response.statusCode).toBe(201);
                     expect(response.body).toMatchObject({ feeId: expect.any(String) });
                 });
 
                 it('should create a membership fee with a value', async () => {
-                    const response = await addMemberFee(app, memberId, 100);
+                    const response = await issueMemberFee(app, memberId, 100);
                     const feeId = response.body.feeId;
 
                     const memberFeesAggregate = await memberFeesAggregateRepo.getById(memberId);
@@ -67,20 +67,20 @@ describe('Accounting (api)', () => {
             });
 
             describe('DELETE /accounting/members/:memberId/fees/:feeId', () => {
-                it('should soft delete the fee', async () => {
-                    const feeId = (await addMemberFee(app, memberId, 100)).body.feeId;
+                it('should void the fee', async () => {
+                    const feeId = (await issueMemberFee(app, memberId, 100)).body.feeId;
 
-                    const response = await deleteMemberFee(app, memberId, feeId);
+                    const response = await voidMemberFee(app, memberId, feeId);
 
                     expect(response.statusCode).toBe(200);
                     const memberFeesAggregate = await memberFeesAggregateRepo.getById(memberId);
-                    expect(memberFeesAggregate?.getFee(feeId).deleted).toBeTruthy();
+                    expect(memberFeesAggregate?.getFee(feeId).voided).toBeTruthy();
                 });
 
                 it('should decrease creditAmount', async () => {
-                    const feeId = (await addMemberFee(app, memberId, 100)).body.feeId;
+                    const feeId = (await issueMemberFee(app, memberId, 100)).body.feeId;
 
-                    await deleteMemberFee(app, memberId, feeId);
+                    await voidMemberFee(app, memberId, feeId);
 
                     const memberFeesAggregate = await memberFeesAggregateRepo.getById(memberId);
                     expect(memberFeesAggregate?.getCreditAmount()).toEqual(0);
@@ -89,7 +89,7 @@ describe('Accounting (api)', () => {
 
             describe('POST /accounting/members/:memberId/fees/:feeId/pay', () => {
                 it('should mark the fee as paid', async () => {
-                    const feeId = (await addMemberFee(app, memberId, 100)).body.feeId;
+                    const feeId = (await issueMemberFee(app, memberId, 100)).body.feeId;
                     const response = await payMemberFee(app, memberId, feeId);
 
                     expect(response.statusCode).toBe(202);
@@ -98,7 +98,7 @@ describe('Accounting (api)', () => {
                 });
 
                 it('should decrease creditAmount', async () => {
-                    const feeId = (await addMemberFee(app, memberId, 100)).body.feeId;
+                    const feeId = (await issueMemberFee(app, memberId, 100)).body.feeId;
 
                     await payMemberFee(app, memberId, feeId);
 
@@ -119,12 +119,12 @@ describe('Accounting (api)', () => {
 
                 describe('Given a member with some fees', () => {
                     it('should return some fees', async () => {
-                        await addMemberFee(app, memberId, 100);
+                        await issueMemberFee(app, memberId, 100);
 
                         const response = await request(app.getHttpServer()).get(`/accounting/fees`);
                         expect(response.body).toEqual([
                             expect.objectContaining({
-                                deleted: false,
+                                voided: false,
                                 memberId,
                                 paid: false,
                                 value: 100,
@@ -133,9 +133,9 @@ describe('Accounting (api)', () => {
                     });
                 });
 
-                describe('Given a deleted member with some fees', () => {
+                describe('Given an unregistered member with some fees', () => {
                     it('should return no fees', async () => {
-                        await addMemberFee(app, memberId, 100);
+                        await issueMemberFee(app, memberId, 100);
                         await request(app.getHttpServer()).delete(`/members/${memberId}`);
 
                         const response = await request(app.getHttpServer()).get(`/accounting/fees`);
@@ -158,7 +158,7 @@ describe('Accounting (api)', () => {
 
                 describe('Given a member with some fees', () => {
                     it('should return name and right creditAmount', async () => {
-                        await addMemberFee(app, memberId, 100);
+                        await issueMemberFee(app, memberId, 100);
 
                         const response = await request(app.getHttpServer()).get(`/accounting/credit-amounts`);
                         expect(response.body).toEqual([
@@ -169,7 +169,7 @@ describe('Accounting (api)', () => {
 
                 describe('Given a renamed member with some fees', () => {
                     it('should return right name and creditAmount', async () => {
-                        await addMemberFee(app, memberId, 100);
+                        await issueMemberFee(app, memberId, 100);
                         await request(app.getHttpServer()).put(`/members/${memberId}`).send({ name: 'Jane Doe' });
 
                         const response = await request(app.getHttpServer()).get(`/accounting/credit-amounts`);
@@ -179,9 +179,9 @@ describe('Accounting (api)', () => {
                     });
                 });
 
-                describe('Given a deleted member with some fees', () => {
+                describe('Given an unregistered member with some fees', () => {
                     it('should return nothing', async () => {
-                        await addMemberFee(app, memberId, 100);
+                        await issueMemberFee(app, memberId, 100);
                         await request(app.getHttpServer()).delete(`/members/${memberId}`);
 
                         const response = await request(app.getHttpServer()).get(`/accounting/credit-amounts`);
@@ -192,12 +192,12 @@ describe('Accounting (api)', () => {
         });
     });
 
-    describe('Delete Member (policy)', () => {
-        describe('When deleting the member', () => {
-            it('should delete all fees', async () => {
-                await addMemberFee(app, memberId, 100);
-                await addMemberFee(app, memberId, 200);
-                await addMemberFee(app, memberId, 300);
+    describe('Unregister Member (policy)', () => {
+        describe('When unregistering the member', () => {
+            it('should void all fees', async () => {
+                await issueMemberFee(app, memberId, 100);
+                await issueMemberFee(app, memberId, 200);
+                await issueMemberFee(app, memberId, 300);
 
                 await request(app.getHttpServer()).delete(`/members/${memberId}`);
 

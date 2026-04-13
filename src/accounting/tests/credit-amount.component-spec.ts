@@ -8,7 +8,7 @@ import { EventBus, EventBusModule } from '../../@infra/event-bus/event-bus.modul
 import { MembersService } from '../../registration/members.service';
 import { MemberRegistered } from '../../registration/events/member-registered.event';
 import { MemberRenamed } from '../../registration/events/member-renamed.event';
-import { MemberDeleted } from '../../registration/events/member-deleted.event';
+import { MemberUnregistered } from '../../registration/events/member-unregistered.event';
 import { AccountingService } from '../accounting.service';
 
 describe('Credit Amount Component Test', () => {
@@ -62,7 +62,7 @@ describe('Credit Amount Component Test', () => {
             expect(await service.getCreditAmounts()).toEqual([
                 {
                     creditAmount: 0,
-                    deleted: false,
+                    unregistered: false,
                     memberId: 'foo-member-id',
                     memberName: 'Nina Jolt',
                 },
@@ -70,13 +70,13 @@ describe('Credit Amount Component Test', () => {
         });
     });
 
-    describe('Add fee', () => {
+    describe('Issue fee', () => {
         beforeEach(async () => {
             await eventBus.publishAndWaitForHandlers(new MemberRegistered({ memberId, memberName: 'Nina Jolt' }));
         });
 
         it('get credit amounts query should return increased credit amount', async () => {
-            await service.addFee({ memberId, amount: 100 });
+            await service.issueFee({ memberId, amount: 100 });
 
             expect(await service.getCreditAmounts()).toEqual([
                 expect.objectContaining({
@@ -90,7 +90,7 @@ describe('Credit Amount Component Test', () => {
         let feeId: string;
         beforeEach(async () => {
             await eventBus.publishAndWaitForHandlers(new MemberRegistered({ memberId, memberName: 'Nina Jolt' }));
-            const _ = await service.addFee({ memberId, amount: 100 });
+            const _ = await service.issueFee({ memberId, amount: 100 });
             feeId = _.feeId;
         });
 
@@ -116,7 +116,7 @@ describe('Credit Amount Component Test', () => {
             expect(await service.getCreditAmounts()).toEqual([
                 {
                     creditAmount: 0,
-                    deleted: false,
+                    unregistered: false,
                     memberId: 'foo-member-id',
                     memberName: 'Luna Jett',
                 },
@@ -124,13 +124,13 @@ describe('Credit Amount Component Test', () => {
         });
     });
 
-    describe('On MemberDeleted event', () => {
+    describe('On MemberUnregistered event', () => {
         beforeEach(async () => {
             await eventBus.publishAndWaitForHandlers(new MemberRegistered({ memberId, memberName: 'Nina Jolt' }));
         });
 
         it('get credit amounts query should return nothing', async () => {
-            await eventBus.publishAndWaitForHandlers(new MemberDeleted({ memberId }));
+            await eventBus.publishAndWaitForHandlers(new MemberUnregistered({ memberId }));
 
             expect(await service.getCreditAmounts()).toEqual([]);
         });

@@ -25,7 +25,7 @@ export class MembersController {
     }
 
     @Delete(':id')
-    public async delete(@Param('id') memberId: string) {
-        await this.membersService.deleteMember(memberId);
+    public async unregister(@Param('id') memberId: string) {
+        await this.membersService.unregisterMember(memberId);
     }
 }

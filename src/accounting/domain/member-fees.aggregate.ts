@@ -7,15 +7,15 @@ export class MemberFeesAggregate {
         return new MemberFeesAggregate(id);
     }
 
-    public addFee(value: number) {
-        const { feeId } = this.feesEntity.add(value);
+    public issueFee(value: number) {
+        const { feeId } = this.feesEntity.issue(value);
 
         this.creditAmount += value;
         return feeId;
     }
 
-    public deleteFee(feeId: string) {
-        this.feesEntity.delete(feeId);
+    public voidFee(feeId: string) {
+        this.feesEntity.void(feeId);
 
         const fee = this.getFee(feeId);
         this.creditAmount -= fee.value;
@@ -29,8 +29,8 @@ export class MemberFeesAggregate {
         return this.creditAmount;
     }
 
-    public deleteAllFees() {
-        this.feesEntity.deleteAll();
+    public voidAllFees() {
+        this.feesEntity.voidAll();
         this.creditAmount = 0;
     }
 
