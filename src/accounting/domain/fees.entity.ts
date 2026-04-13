@@ -1,21 +1,21 @@
 import { v4 as uuidV4 } from 'uuid';
 
-export type Fee = { feeId: string; value: number; deleted: boolean; paid: boolean };
+export type Fee = { feeId: string; value: number; voided: boolean; paid: boolean };
 
 export class FeesEntity {
     constructor(private readonly fees: Fee[] = []) {}
 
-    public add(value: number) {
+    public issue(value: number) {
         const feeId = uuidV4();
-        this.fees.push({ feeId: feeId, value, deleted: false, paid: false });
+        this.fees.push({ feeId: feeId, value, voided: false, paid: false });
         return { feeId };
     }
 
-    public delete(feeId: string) {
+    public void(feeId: string) {
         const index = this.fees.findIndex(({ feeId: id }) => id === feeId);
         if (index === -1) throw new Error(`Cannot find fee with given id: ${feeId}`);
 
-        this.fees[index].deleted = true;
+        this.fees[index].voided = true;
     }
 
     public get(feeId: string) {
@@ -24,9 +24,9 @@ export class FeesEntity {
         return fee;
     }
 
-    public deleteAll() {
+    public voidAll() {
         this.fees.forEach((fee) => {
-            fee.deleted = true;
+            fee.voided = true;
         });
     }
 

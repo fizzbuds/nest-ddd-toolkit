@@ -8,7 +8,7 @@ import { MongoClient } from 'mongodb';
 export interface MemberAggregateModel {
     id: string;
     name: string;
-    deleted: boolean;
+    unregistered: boolean;
 }
 
 export class MemberAggregateRepo

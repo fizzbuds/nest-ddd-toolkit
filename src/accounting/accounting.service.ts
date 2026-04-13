@@ -13,28 +13,28 @@ export class AccountingService {
         private readonly membershipFeesQueryRepo: FeeQueryRepo,
     ) {}
 
-    async addFee(command: { memberId: string; amount: number }): Promise<{ feeId: string }> {
+    async issueFee(command: { memberId: string; amount: number }): Promise<{ feeId: string }> {
         const aggregate = await this.getOrCreateAggregate(command.memberId);
-        const feeId = aggregate.addFee(command.amount);
+        const feeId = aggregate.issueFee(command.amount);
 
         await this.aggregateRepo.save(aggregate);
         return { feeId };
     }
 
-    async deleteAllFees(command: { memberId: string }) {
+    async voidAllFees(command: { memberId: string }) {
         const aggregate = await this.aggregateRepo.getById(command.memberId);
         if (!aggregate) return;
 
-        aggregate.deleteAllFees();
+        aggregate.voidAllFees();
 
         await this.aggregateRepo.save(aggregate);
     }
 
-    async deleteFee(command: { memberId: string; feeId: string }) {
+    async voidFee(command: { memberId: string; feeId: string }) {
         const aggregate = await this.aggregateRepo.getById(command.memberId);
         if (!aggregate) return;
 
-        aggregate.deleteFee(command.feeId);
+        aggregate.voidFee(command.feeId);
 
         await this.aggregateRepo.save(aggregate);
     }

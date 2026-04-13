@@ -50,13 +50,13 @@ describe('Fee Component Test', () => {
 
     const memberId = 'foo-member-id';
 
-    describe('Add fee', () => {
-        it('get fees query should return added fee', async () => {
-            await service.addFee({ memberId, amount: 100 });
+    describe('Issue fee', () => {
+        it('get fees query should return issued fee', async () => {
+            await service.issueFee({ memberId, amount: 100 });
 
             expect(await service.getFees()).toEqual([
                 expect.objectContaining({
-                    deleted: false,
+                    voided: false,
                     memberId: 'foo-member-id',
                     paid: false,
                     value: 100,
@@ -68,7 +68,7 @@ describe('Fee Component Test', () => {
     describe('Pay fee', () => {
         let feeId: string;
         beforeEach(async () => {
-            const _ = await service.addFee({ memberId, amount: 100 });
+            const _ = await service.issueFee({ memberId, amount: 100 });
             feeId = _.feeId;
         });
 
@@ -77,7 +77,7 @@ describe('Fee Component Test', () => {
 
             expect(await service.getFees()).toEqual([
                 expect.objectContaining({
-                    deleted: false,
+                    voided: false,
                     memberId: 'foo-member-id',
                     paid: true,
                     value: 100,
@@ -86,15 +86,15 @@ describe('Fee Component Test', () => {
         });
     });
 
-    describe('Delete fee', () => {
+    describe('Void fee', () => {
         let feeId: string;
         beforeEach(async () => {
-            const _ = await service.addFee({ memberId, amount: 100 });
+            const _ = await service.issueFee({ memberId, amount: 100 });
             feeId = _.feeId;
         });
 
         it('get fees query should return nothing', async () => {
-            await service.deleteFee({ memberId, feeId });
+            await service.voidFee({ memberId, feeId });
 
             expect(await service.getFees()).toEqual([]);
         });

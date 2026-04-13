@@ -8,7 +8,7 @@ export type CreditAmountQueryModel = {
     memberId: string;
     memberName: string;
     creditAmount: number;
-    deleted: boolean;
+    unregistered: boolean;
 };
 
 @Injectable()
@@ -25,7 +25,7 @@ export class CreditAmountQueryRepo extends MongoQueryRepo<CreditAmountQueryModel
     }
 
     public async onMemberRegistered({ memberName, memberId }: { memberName: string; memberId: string }) {
-        const queryModel: CreditAmountQueryModel = { memberId, memberName, creditAmount: 0, deleted: false };
+        const queryModel: CreditAmountQueryModel = { memberId, memberName, creditAmount: 0, unregistered: false };
 
         await this.collection.updateOne({ memberId }, { $set: queryModel }, { upsert: true });
     }
@@ -44,12 +44,12 @@ export class CreditAmountQueryRepo extends MongoQueryRepo<CreditAmountQueryModel
         );
     }
 
-    public async onMemberDeleted(memberId: string) {
-        await this.collection.updateOne({ memberId }, { $set: { deleted: true } });
+    public async onMemberUnregistered(memberId: string) {
+        await this.collection.updateOne({ memberId }, { $set: { unregistered: true } });
     }
 
-    public async getCreditAmounts(deleted = false) {
-        return this.collection.find({ deleted }, { projection: { _id: 0 } }).toArray();
+    public async getCreditAmounts(unregistered = false) {
+        return this.collection.find({ unregistered }, { projection: { _id: 0 } }).toArray();
     }
 
     private async composeQueryModel(

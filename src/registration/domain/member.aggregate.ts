@@ -1,5 +1,5 @@
 export class MemberAggregate {
-    constructor(readonly id: string, private _name: string, private deleted: boolean) {}
+    constructor(readonly id: string, private _name: string, private unregistered: boolean) {}
 
     public static create(id: string, name: string) {
         return new MemberAggregate(id, name, false);
@@ -13,11 +13,11 @@ export class MemberAggregate {
         this._name = newName;
     }
 
-    public delete() {
-        this.deleted = true;
+    public unregister() {
+        this.unregistered = true;
     }
 
-    public isDeleted() {
-        return this.deleted;
+    public isUnregistered() {
+        return this.unregistered;
     }
 }

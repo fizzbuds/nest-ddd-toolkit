@@ -7,7 +7,7 @@ import { getMongoToken, MongoModule } from '@golee/mongo-nest';
 import { MongoClient } from 'mongodb';
 import { EventBus, EventBusModule } from '../../@infra/event-bus/event-bus.module';
 import { MembersService } from '../members.service';
-import { MemberDeleted } from '../events/member-deleted.event';
+import { MemberUnregistered } from '../events/member-unregistered.event';
 import { MemberRegistered } from '../events/member-registered.event';
 import { MemberRenamed } from '../events/member-renamed.event';
 
@@ -86,22 +86,22 @@ describe('Member Component Test', () => {
         });
     });
 
-    describe(`Delete member`, () => {
-        it('should delete the member', async () => {
+    describe(`Unregister member`, () => {
+        it('should unregister the member', async () => {
             const { memberId } = await membersService.registerMember('John Doe');
 
-            await membersService.deleteMember(memberId);
+            await membersService.unregisterMember(memberId);
 
             expect(await membersService.getMember(memberId)).toBeNull();
         });
 
-        it('should publish member deleted event', async () => {
+        it('should publish member unregistered event', async () => {
             const { memberId } = await membersService.registerMember('John Doe');
 
-            await membersService.deleteMember(memberId);
+            await membersService.unregisterMember(memberId);
 
             expect(eventBus.publishAndWaitForHandlers).toHaveBeenCalledWith({
-                name: MemberDeleted.name,
+                name: MemberUnregistered.name,
                 payload: { memberId },
             });
         });

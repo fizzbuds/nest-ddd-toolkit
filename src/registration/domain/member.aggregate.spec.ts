@@ -21,11 +21,11 @@ describe('MemberAggregate', () => {
             memberAggregate = MemberAggregate.create(uuidV4(), 'John Doe');
         });
 
-        describe('When deleting it', () => {
-            it('should mark it as deleted', () => {
-                memberAggregate.delete();
+        describe('When unregistering it', () => {
+            it('should mark it as unregistered', () => {
+                memberAggregate.unregister();
 
-                expect(memberAggregate.isDeleted()).toBeTruthy();
+                expect(memberAggregate.isUnregistered()).toBeTruthy();
             });
         });
     });

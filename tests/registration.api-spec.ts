@@ -56,7 +56,7 @@ describe('Registration (api)', () => {
         });
 
         describe('DELETE /members/:id', () => {
-            it('should delete the member', async () => {
+            it('should unregister the member', async () => {
                 const memberId = await createMember(app);
                 const deleteResponse = await request(app.getHttpServer()).delete(`/members/${memberId}`);
                 expect(deleteResponse.statusCode).toBe(200);

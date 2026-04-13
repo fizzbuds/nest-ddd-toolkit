@@ -9,13 +9,13 @@ export type FeeQueryModel = {
     memberId: string;
     value: number;
     paid: boolean;
-    deleted: boolean;
+    voided: boolean;
 };
 
 @Injectable()
 export class FeeQueryRepo extends MongoQueryRepo<FeeQueryModel & Document> implements OnModuleInit {
     private static logger = new Logger(FeeQueryRepo.name);
-    protected readonly indexes = [{ indexSpec: { deleted: 1 } }];
+    protected readonly indexes = [{ indexSpec: { voided: 1 } }];
 
     constructor(@InjectMongo() mongoClient: MongoClient) {
         super(mongoClient, 'fees_read_model', undefined, FeeQueryRepo.logger);
@@ -43,8 +43,8 @@ export class FeeQueryRepo extends MongoQueryRepo<FeeQueryModel & Document> imple
         );
     }
 
-    public async getFees(deleted = false) {
-        return this.collection.find({ deleted }, { projection: { _id: 0 } }).toArray();
+    public async getFees(voided = false) {
+        return this.collection.find({ voided }, { projection: { _id: 0 } }).toArray();
     }
 
     private async composeQueryModel(aggregateModel: MemberFeesAggregateModel): Promise<FeeQueryModel[]> {
@@ -54,7 +54,7 @@ export class FeeQueryRepo extends MongoQueryRepo<FeeQueryModel & Document> imple
                 id: fee.feeId,
                 value: fee.value,
                 paid: fee.paid,
-                deleted: fee.deleted,
+                voided: fee.voided,
             };
         });
     }

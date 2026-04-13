@@ -5,10 +5,10 @@ import { ISerializer } from '@fizzbuds/ddd-toolkit';
 
 export class MemberSerializer implements ISerializer<MemberAggregate, MemberAggregateModel> {
     public modelToAggregate(aggregateModel: MemberAggregateModel): MemberAggregate {
-        return new MemberAggregate(aggregateModel.id, aggregateModel.name, aggregateModel.deleted);
+        return new MemberAggregate(aggregateModel.id, aggregateModel.name, aggregateModel.unregistered);
     }
 
     public aggregateToModel(aggregate: MemberAggregate): MemberAggregateModel {
-        return { id: aggregate.id, name: aggregate.name, deleted: aggregate.isDeleted() };
+        return { id: aggregate.id, name: aggregate.name, unregistered: aggregate.isUnregistered() };
     }
 }

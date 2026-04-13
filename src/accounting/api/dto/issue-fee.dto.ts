@@ -1,6 +1,6 @@
 import { IsNotEmpty, IsNumber } from 'class-validator';
 
-export class AddFeeDto {
+export class IssueFeeDto {
     @IsNotEmpty()
     @IsNumber()
     amount: number;
